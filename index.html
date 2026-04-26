@@ -926,6 +926,278 @@
   .toast .toast-icon { font-size: 1.2rem; margin-bottom: 4px; display: block; }
   .toast .toast-msg { color: var(--muted); font-size: 0.68rem; margin-top: 2px; }
 
+  /* Footer */
+  footer {
+    position: relative;
+    z-index: 10;
+    border-top: 1px solid var(--border);
+    padding: 18px 40px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    font-size: 0.68rem;
+    color: var(--muted);
+  }
+
+  footer a {
+    color: var(--green);
+    text-decoration: none;
+    transition: color 0.2s;
+  }
+
+  footer a:hover { color: var(--text); }
+
+  .footer-heart { color: #f472b6; }
+
+  /* Bulletin Ad Popup */
+  .bulletin-ad {
+    position: fixed;
+    bottom: 80px;
+    left: 24px;
+    background: var(--panel2);
+    border: 1px solid var(--gold);
+    border-radius: 12px;
+    padding: 16px 20px;
+    font-size: 0.72rem;
+    color: var(--text);
+    z-index: 10000;
+    max-width: 260px;
+    box-shadow: 0 4px 24px rgba(0,0,0,0.5), 0 0 20px rgba(251,191,36,0.08);
+    transform: translateX(-120%);
+    transition: transform 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
+  }
+
+  .bulletin-ad.show { transform: translateX(0); }
+
+  .bulletin-ad .ad-label {
+    font-size: 0.55rem;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    color: var(--gold);
+    margin-bottom: 6px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+  }
+
+  .bulletin-ad .ad-close {
+    cursor: pointer;
+    color: var(--muted);
+    font-size: 0.9rem;
+    line-height: 1;
+    padding: 0 2px;
+  }
+
+  .bulletin-ad .ad-close:hover { color: var(--text); }
+
+  .bulletin-ad .ad-icon { font-size: 1.8rem; margin-bottom: 8px; display: block; }
+
+  .bulletin-ad .ad-headline {
+    font-family: 'Playfair Display', serif;
+    font-size: 0.88rem;
+    color: var(--text);
+    margin-bottom: 4px;
+    line-height: 1.3;
+  }
+
+  .bulletin-ad .ad-body {
+    color: var(--muted);
+    font-size: 0.65rem;
+    line-height: 1.5;
+    margin-bottom: 10px;
+  }
+
+  .bulletin-ad .ad-cta {
+    display: inline-block;
+    padding: 6px 14px;
+    background: rgba(251,191,36,0.12);
+    border: 1px solid rgba(251,191,36,0.4);
+    border-radius: 6px;
+    color: var(--gold);
+    font-size: 0.62rem;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    text-decoration: none;
+    transition: all 0.2s;
+  }
+
+  .bulletin-ad .ad-cta:hover {
+    background: rgba(251,191,36,0.22);
+    color: var(--text);
+  }
+
+
+  /* ========== SHARED NEW GAME STYLES ========== */
+  .game-canvas-wrap {
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 16px;
+  }
+  .game-canvas {
+    border-radius: 14px;
+    border: 1px solid var(--border);
+    display: block;
+    max-width: 100%;
+    background: #050804;
+  }
+  .game-hud {
+    display: flex;
+    gap: 24px;
+    align-items: center;
+    justify-content: center;
+    flex-wrap: wrap;
+  }
+  .hud-block { text-align: center; }
+  .hud-val {
+    font-family: 'Unbounded', sans-serif;
+    font-size: 1.4rem;
+    font-weight: 700;
+    color: var(--green);
+  }
+  .hud-val.gold { color: var(--gold); }
+  .hud-val.purple { color: var(--purple); }
+  .hud-label {
+    font-size: 0.6rem;
+    color: var(--muted);
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+  }
+  .game-action-btn {
+    padding: 12px 28px;
+    background: linear-gradient(135deg, rgba(74,222,128,0.15), rgba(74,222,128,0.05));
+    border: 1px solid var(--green);
+    color: var(--green);
+    font-family: 'Unbounded', sans-serif;
+    font-size: 0.78rem;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: all 0.2s;
+    letter-spacing: 0.04em;
+  }
+  .game-action-btn:hover { background: rgba(74,222,128,0.25); box-shadow: 0 0 20px rgba(74,222,128,0.2); }
+  .game-tip {
+    font-size: 0.68rem;
+    color: var(--muted);
+    font-style: italic;
+    text-align: center;
+  }
+
+  /* ========== VIBE SEQUENCER ========== */
+  #game-vibe.active { display: flex; flex-direction: column; align-items: center; gap: 24px; }
+  .vibe-pads {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 14px;
+    max-width: 500px;
+    width: 100%;
+  }
+  .vibe-pad {
+    aspect-ratio: 1;
+    border-radius: 14px;
+    border: 2px solid transparent;
+    cursor: pointer;
+    transition: all 0.1s;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 2rem;
+    user-select: none;
+    position: relative;
+    overflow: hidden;
+  }
+  .vibe-pad::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: white;
+    opacity: 0;
+    border-radius: inherit;
+    transition: opacity 0.08s;
+  }
+  .vibe-pad.flash::after { opacity: 0.35; }
+  .vibe-pad[data-pad="0"] { background: rgba(74,222,128,0.12); border-color: rgba(74,222,128,0.3); }
+  .vibe-pad[data-pad="1"] { background: rgba(168,85,247,0.12); border-color: rgba(168,85,247,0.3); }
+  .vibe-pad[data-pad="2"] { background: rgba(251,191,36,0.12); border-color: rgba(251,191,36,0.3); }
+  .vibe-pad[data-pad="3"] { background: rgba(244,114,182,0.12); border-color: rgba(244,114,182,0.3); }
+  .vibe-pad.active-pad[data-pad="0"] { background: rgba(74,222,128,0.45); border-color: var(--green); box-shadow: 0 0 24px rgba(74,222,128,0.5); }
+  .vibe-pad.active-pad[data-pad="1"] { background: rgba(168,85,247,0.45); border-color: var(--purple); box-shadow: 0 0 24px rgba(168,85,247,0.5); }
+  .vibe-pad.active-pad[data-pad="2"] { background: rgba(251,191,36,0.45); border-color: var(--gold); box-shadow: 0 0 24px rgba(251,191,36,0.5); }
+  .vibe-pad.active-pad[data-pad="3"] { background: rgba(244,114,182,0.45); border-color: var(--pink); box-shadow: 0 0 24px rgba(244,114,182,0.5); }
+  .vibe-status {
+    font-family: 'Playfair Display', serif;
+    font-size: 1.1rem;
+    color: var(--text);
+    text-align: center;
+    min-height: 32px;
+  }
+
+  /* ========== HIGHER OR LOWER ========== */
+  #game-higher.active { display: flex; flex-direction: column; align-items: center; gap: 28px; }
+  .card-arena {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 40px;
+    flex-wrap: wrap;
+  }
+  .playing-card {
+    width: 130px; height: 180px;
+    border-radius: 14px;
+    border: 1px solid var(--border);
+    background: linear-gradient(145deg, #1a2e14, #0e1a0a);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    font-family: 'Playfair Display', serif;
+    position: relative;
+    box-shadow: 0 8px 32px rgba(0,0,0,0.5);
+    transition: all 0.3s;
+  }
+  .playing-card.revealed { border-color: var(--green); box-shadow: 0 8px 32px rgba(74,222,128,0.15); }
+  .playing-card.facedown { background: repeating-linear-gradient(45deg, #0e1a0a 0px, #0e1a0a 8px, #111a0e 8px, #111a0e 16px); }
+  .card-rank { font-size: 2.4rem; font-weight: 900; }
+  .card-suit { font-size: 1.8rem; margin-top: -4px; }
+  .card-corner {
+    position: absolute;
+    top: 10px; left: 12px;
+    font-size: 0.9rem;
+    font-weight: 700;
+    line-height: 1;
+  }
+  .card-corner.br { top: auto; left: auto; bottom: 10px; right: 12px; transform: rotate(180deg); }
+  .card-vs {
+    font-family: 'Unbounded', sans-serif;
+    font-size: 0.7rem;
+    color: var(--muted);
+    letter-spacing: 0.1em;
+  }
+  .hl-btns { display: flex; gap: 14px; }
+  .hl-btn {
+    padding: 14px 32px;
+    border-radius: 10px;
+    font-family: 'Unbounded', sans-serif;
+    font-size: 0.85rem;
+    cursor: pointer;
+    transition: all 0.2s;
+    border: 1px solid;
+    letter-spacing: 0.04em;
+  }
+  .hl-btn.high { background: rgba(74,222,128,0.12); border-color: var(--green); color: var(--green); }
+  .hl-btn.low { background: rgba(244,114,182,0.12); border-color: var(--pink); color: var(--pink); }
+  .hl-btn:hover { filter: brightness(1.3); transform: translateY(-2px); }
+  .hl-result {
+    font-family: 'Playfair Display', serif;
+    font-size: 1.3rem;
+    text-align: center;
+    min-height: 36px;
+    font-style: italic;
+  }
+  .hl-result.win { color: var(--green); }
+  .hl-result.lose { color: var(--pink); }
+
   /* Scrollbar */
   ::-webkit-scrollbar { width: 6px; }
   ::-webkit-scrollbar-track { background: var(--bg); }
@@ -977,6 +1249,18 @@
     <button class="game-tab" onclick="showGame('trip')">
       🌀 The Trip
     </button>
+    <button class="game-tab" onclick="showGame('skate')">
+      🛹 Skate or Bake
+    </button>
+    <button class="game-tab" onclick="showGame('vibe')">
+      🎵 Vibe Sequencer
+    </button>
+    <button class="game-tab" onclick="showGame('asteroid')">
+      🌌 Asteroid Munchies
+    </button>
+    <button class="game-tab" onclick="showGame('higher')">
+      🃏 Higher or Lower
+    </button>
   </nav>
 
   <!-- HOME DASHBOARD -->
@@ -1016,6 +1300,30 @@
         <div class="game-card-title">The Trip</div>
         <div class="game-card-desc">A generative psychedelic canvas. Click to spawn cosmic geometry. Change modes. Watch the universe breathe. It's art, baby.</div>
         <span class="game-card-tag">● Ambient Art</span>
+      </div>
+      <div class="game-card" onclick="showGame('skate')">
+        <span class="game-card-icon">🛹</span>
+        <div class="game-card-title">Skate or Bake</div>
+        <div class="game-card-desc">Ollie over traffic cones, dodge cops, collect snacks. A side-scrolling skater for the chronically chill. No helmet required.</div>
+        <span class="game-card-tag">● Side Scroller</span>
+      </div>
+      <div class="game-card" onclick="showGame('vibe')">
+        <span class="game-card-icon">🎵</span>
+        <div class="game-card-title">Vibe Sequencer</div>
+        <div class="game-card-desc">Simon Says meets a drum machine. Watch the pattern, repeat it, don't overthink it. The beat will find you if you let it.</div>
+        <span class="game-card-tag">● Memory / Rhythm</span>
+      </div>
+      <div class="game-card" onclick="showGame('asteroid')">
+        <span class="game-card-icon">🌌</span>
+        <div class="game-card-title">Asteroid Munchies</div>
+        <div class="game-card-desc">Space is full of snacks disguised as asteroids. Shoot them. Collect the points. Don't get hit. Classic, but make it elevated.</div>
+        <span class="game-card-tag">● Space Shooter</span>
+      </div>
+      <div class="game-card" onclick="showGame('higher')">
+        <span class="game-card-icon">🃏</span>
+        <div class="game-card-title">Higher or Lower</div>
+        <div class="game-card-desc">Is the next card higher or lower? Easy question, cosmic consequences. Build your streak and face the philosophical implications.</div>
+        <span class="game-card-tag">● Card Game</span>
       </div>
     </div>
   </div>
@@ -1205,7 +1513,104 @@
       Click anywhere on the canvas to create cosmic formations. Each mode generates different geometries.
     </div>
   </div>
+
+  <!-- GAME 5: SKATE OR BAKE -->
+  <div id="game-skate" class="game-screen">
+    <div class="game-canvas-wrap">
+      <div class="game-hud">
+        <div class="hud-block"><div class="hud-val" id="skate-score">0</div><div class="hud-label">Score</div></div>
+        <div class="hud-block"><div class="hud-val gold" id="skate-dist">0m</div><div class="hud-label">Distance</div></div>
+        <div class="hud-block"><div class="hud-val purple" id="skate-best">0</div><div class="hud-label">Best</div></div>
+      </div>
+      <canvas id="skateCanvas" class="game-canvas" width="720" height="280"></canvas>
+      <div class="game-hud">
+        <button class="game-action-btn" id="skate-start-btn" onclick="startSkate()">Drop In 🛹</button>
+      </div>
+      <div class="game-tip">SPACE or TAP to ollie. Double-tap for a kickflip. Don't slam into the cones.</div>
+    </div>
+  </div>
+
+  <!-- GAME 6: VIBE SEQUENCER -->
+  <div id="game-vibe" class="game-screen">
+    <div class="vibe-status" id="vibe-status">Press Start to begin the sequence</div>
+    <div class="game-hud">
+      <div class="hud-block"><div class="hud-val" id="vibe-level">1</div><div class="hud-label">Level</div></div>
+      <div class="hud-block"><div class="hud-val gold" id="vibe-streak">0</div><div class="hud-label">Streak</div></div>
+      <div class="hud-block"><div class="hud-val purple" id="vibe-best-level">1</div><div class="hud-label">Best Level</div></div>
+    </div>
+    <div class="vibe-pads">
+      <div class="vibe-pad" data-pad="0" onclick="vibePress(0)">🌿</div>
+      <div class="vibe-pad" data-pad="1" onclick="vibePress(1)">🌀</div>
+      <div class="vibe-pad" data-pad="2" onclick="vibePress(2)">🔥</div>
+      <div class="vibe-pad" data-pad="3" onclick="vibePress(3)">💎</div>
+    </div>
+    <button class="game-action-btn" id="vibe-start-btn" onclick="startVibe()">Start Sequence 🎵</button>
+    <div class="game-tip">Watch the sequence light up, then repeat it in order. Each level adds one more step.</div>
+  </div>
+
+  <!-- GAME 7: ASTEROID MUNCHIES -->
+  <div id="game-asteroid" class="game-screen">
+    <div class="game-canvas-wrap">
+      <div class="game-hud">
+        <div class="hud-block"><div class="hud-val" id="ast-score">0</div><div class="hud-label">Score</div></div>
+        <div class="hud-block"><div class="hud-val gold" id="ast-level">1</div><div class="hud-label">Wave</div></div>
+        <div class="hud-block"><div class="hud-val purple" id="ast-lives">♥♥♥</div><div class="hud-label">Lives</div></div>
+        <div class="hud-block"><div class="hud-val" id="ast-best">0</div><div class="hud-label">Best</div></div>
+      </div>
+      <canvas id="asteroidCanvas" class="game-canvas" width="720" height="380"></canvas>
+      <div class="game-hud">
+        <button class="game-action-btn" id="ast-start-btn" onclick="startAsteroid()">Launch 🚀</button>
+      </div>
+      <div class="game-tip">Arrow keys / WASD to move · SPACE to shoot · Destroy all snack-roids to advance</div>
+    </div>
+  </div>
+
+  <!-- GAME 8: HIGHER OR LOWER -->
+  <div id="game-higher" class="game-screen">
+    <div class="game-hud">
+      <div class="hud-block"><div class="hud-val" id="hl-streak">0</div><div class="hud-label">Streak</div></div>
+      <div class="hud-block"><div class="hud-val gold" id="hl-best">0</div><div class="hud-label">Best Streak</div></div>
+      <div class="hud-block"><div class="hud-val purple" id="hl-score">0</div><div class="hud-label">Total Score</div></div>
+    </div>
+    <div class="card-arena">
+      <div class="playing-card revealed" id="hl-current">
+        <div class="card-corner" id="hl-corner-tl"></div>
+        <div class="card-rank" id="hl-rank">?</div>
+        <div class="card-suit" id="hl-suit">🃏</div>
+        <div class="card-corner br" id="hl-corner-br"></div>
+      </div>
+      <div class="card-vs">vs</div>
+      <div class="playing-card facedown" id="hl-next">
+        <div class="card-rank" style="font-size:2rem;color:var(--muted)">?</div>
+      </div>
+    </div>
+    <div class="hl-result" id="hl-result"></div>
+    <div class="hl-btns" id="hl-btns">
+      <button class="hl-btn high" onclick="hlGuess('high')">⬆ Higher</button>
+      <button class="hl-btn low" onclick="hlGuess('low')">⬇ Lower</button>
+    </div>
+    <div class="game-tip">Guess whether the next card will be higher or lower. Aces are wild. Or are they low? Nobody's sure.</div>
+  </div>
+
 </main>
+
+<footer>
+  <div>Built with <span class="footer-heart">♥</span> by <a href="https://businesshustle.co.za" target="_blank">Business Hustle</a></div>
+  <div style="color:var(--border)">·</div>
+  <div>Powered by good energy & <a href="https://kloofstreet.online" target="_blank">Kloof Street</a></div>
+</footer>
+
+<!-- Bulletin Ad -->
+<div class="bulletin-ad" id="bulletinAd">
+  <div class="ad-label">
+    <span>📋 Kloof St Bulletin</span>
+    <span class="ad-close" onclick="dismissAd()">✕</span>
+  </div>
+  <span class="ad-icon" id="adIcon">🏪</span>
+  <div class="ad-headline" id="adHeadline">Loading vibes...</div>
+  <div class="ad-body" id="adBody">Stay tuned.</div>
+  <a href="https://kloofstreet.online" target="_blank" class="ad-cta">Visit Kloof Street →</a>
+</div>
 
 <!-- Toast -->
 <div class="toast" id="toast">
@@ -1240,7 +1645,7 @@ function showGame(name) {
   if (screen) screen.classList.add('active');
 
   const tabs = document.querySelectorAll('.game-tab');
-  const labels = { home: 0, blunt: 1, grow: 2, munchie: 3, trip: 4 };
+  const labels = { home: 0, blunt: 1, grow: 2, munchie: 3, trip: 4, skate: 5, vibe: 6, asteroid: 7, higher: 8 };
   if (tabs[labels[name]]) tabs[labels[name]].classList.add('active');
 
   currentGame = name;
@@ -1762,8 +2167,561 @@ setInterval(() => {
   }
 }, 8000);
 
+
+// ===== KLOOF STREET BULLETIN ADS =====
+const KLOOF_ADS = [
+  { icon: '🏄', headline: 'Lost: One surfboard, one sense of time', body: 'Last seen on Kloof Street. Owner was "just grabbing a quick coffee." That was Tuesday. Check kloofstreet.online.', },
+  { icon: '🧘', headline: 'Yoga studio seeks chill vibes', body: 'We have the mats. We have the incense. We just need you. Find us on Kloof Street before we achieve enlightenment without you.' },
+  { icon: '☕', headline: 'Cape Town\'s most philosophical barista', body: '"Is an oat latte still a latte?" he asked. Nobody knows. Come debate it on Kloof Street.' },
+  { icon: '🌿', headline: 'Wellness spa with strong opinions', body: 'Ubuntu Wellness & Cape Town Medi-Spa: where your pores go to think deeply. kloofstreet.online' },
+  { icon: '🦁', headline: 'On Safari called. You didn\'t answer.', body: 'They had the perfect adventure planned. Now the lions are waiting. Very patiently. Very hungry. kloofstreet.online' },
+  { icon: '🎨', headline: 'Local street art judging your life choices', body: 'It\'s fine. The murals on Kloof Street have seen worse. Come be seen.' },
+  { icon: '🍷', headline: 'Wine bar found with no Wi-Fi password', body: 'Experts say this is intentional. "Connection," the owner said mysteriously. Located spiritually on Kloof Street.' },
+  { icon: '🐈', headline: 'Cat seen leaving yoga class refreshed', body: 'Witnesses report she went straight to a Kloof Street café and ordered something oat-based. Iconic.' },
+  { icon: '🌞', headline: 'Dr Wendy Dicks would like a word', body: 'About your skin. Gently. Professionally. On Kloof Street. She\'s very nice, we promise.' },
+  { icon: '🏡', headline: 'Kloof Street: where Capetonians pretend to work', body: 'MacBooks open. Matcha in hand. Zero spreadsheets visible. Find your tribe. kloofstreet.online' },
+  { icon: '🛍️', headline: 'SALE: Crystals, candles & good decisions', body: '2 out of 3 items guaranteed at your nearest Kloof Street boutique. The good decisions are on you.' },
+  { icon: '🚗', headline: 'Parking on Kloof Street: a spiritual test', body: 'Pass it and you deserve whatever you came for. Fail it and... there\'s always Uber.' },
+];
+
+let adVisible = false;
+let adDismissTimer;
+
+function showBulletinAd() {
+  if (adVisible) return;
+  const ad = KLOOF_ADS[Math.floor(Math.random() * KLOOF_ADS.length)];
+  document.getElementById('adIcon').textContent = ad.icon;
+  document.getElementById('adHeadline').textContent = ad.headline;
+  document.getElementById('adBody').textContent = ad.body;
+  adVisible = true;
+  document.getElementById('bulletinAd').classList.add('show');
+  adDismissTimer = setTimeout(dismissAd, 9000);
+}
+
+function dismissAd() {
+  clearTimeout(adDismissTimer);
+  adVisible = false;
+  document.getElementById('bulletinAd').classList.remove('show');
+}
+
+// Show first ad after 20s, then randomly every 45–90s
+setTimeout(() => {
+  showBulletinAd();
+  setInterval(() => {
+    const delay = 45000 + Math.random() * 45000;
+    setTimeout(showBulletinAd, delay);
+  }, 90000);
+}, 20000);
+
 // Welcome toast
 setTimeout(() => showToast('🌿', 'Welcome to the Arcade', 'Pick a game. Embrace the vibe.'), 1500);
+
+// ===================================================
+// GAME 5: SKATE OR BAKE
+// ===================================================
+(function() {
+  let sc, ctx, running=false, raf, skater, obstacles, particles, score, dist, best=0, frame, jumpCount;
+  const GH=280, GW=720, GROUND=220, GRAVITY=0.7, JUMP_FORCE=-14;
+  const OBS = ['🚧','🚦','🐦','🗑️','🌵','🪨'];
+  const COLLECT = ['🍕','⭐','🌿','💎','🍩'];
+
+  function init() {
+    sc = document.getElementById('skateCanvas');
+    ctx = sc.getContext('2d');
+    sc.addEventListener('click', doJump);
+    document.addEventListener('keydown', e => { if(e.code==='Space'&&running){e.preventDefault();doJump();} });
+  }
+
+  function startSkate() {
+    if(!sc) init();
+    skater = {x:100, y:GROUND, vy:0, w:36, h:44, grounded:true};
+    obstacles = []; particles = []; score=0; dist=0; frame=0; jumpCount=0;
+    running = true;
+    document.getElementById('skate-start-btn').textContent = 'Running... 🛹';
+    document.getElementById('skate-start-btn').disabled = true;
+    if(raf) cancelAnimationFrame(raf);
+    loop();
+  }
+  window.startSkate = startSkate;
+
+  function doJump() {
+    if(!running) return;
+    if(skater.grounded) {
+      skater.vy = JUMP_FORCE; skater.grounded=false; jumpCount=1;
+    } else if(jumpCount < 2) {
+      skater.vy = JUMP_FORCE*0.8; jumpCount++;
+      spawnParticles(skater.x+18, skater.y, '✨', 4);
+    }
+  }
+
+  function spawnParticles(x,y,emoji,n) {
+    for(let i=0;i<n;i++) particles.push({x,y,emoji,vx:(Math.random()-0.5)*4,vy:-Math.random()*3-1,life:30});
+  }
+
+  function loop() {
+    if(!running){return;}
+    raf = requestAnimationFrame(loop);
+    frame++;
+    const speed = 4 + Math.floor(dist/200)*0.4;
+
+    // Update skater
+    skater.vy += GRAVITY;
+    skater.y += skater.vy;
+    if(skater.y >= GROUND) { skater.y=GROUND; skater.vy=0; skater.grounded=true; jumpCount=0; }
+
+    // Spawn obstacles & collectibles
+    if(frame % Math.max(55, 90 - Math.floor(dist/100)) === 0) {
+      const isCollect = Math.random()<0.35;
+      obstacles.push({
+        x: GW+40,
+        y: isCollect ? GROUND-30 : GROUND,
+        emoji: isCollect ? COLLECT[Math.floor(Math.random()*COLLECT.length)] : OBS[Math.floor(Math.random()*OBS.length)],
+        w:36, h:36,
+        collect: isCollect,
+        pts: isCollect ? (10+Math.floor(dist/50)*2) : 0
+      });
+    }
+
+    // Update obstacles
+    obstacles = obstacles.filter(o => {
+      o.x -= speed;
+      if(o.collect && !o.hit && collide(skater, o)) {
+        o.hit=true; score+=o.pts; dist++;
+        spawnParticles(o.x,o.y,'⭐',5);
+        return false;
+      }
+      if(!o.collect && collide(skater, o)) { endSkate(); return false; }
+      return o.x > -60;
+    });
+
+    // Update particles
+    particles = particles.filter(p => {
+      p.x+=p.vx; p.y+=p.vy; p.life--;
+      return p.life>0;
+    });
+
+    dist++;
+    score = Math.floor(dist/10);
+    document.getElementById('skate-score').textContent = score;
+    document.getElementById('skate-dist').textContent = Math.floor(dist) + 'm';
+
+    draw(speed);
+  }
+
+  function collide(a, b) {
+    return a.x+8 < b.x+b.w-8 && a.x+a.w-8 > b.x+8 && a.y+4 < b.y+b.h && a.y+a.h > b.y+4;
+  }
+
+  function draw(speed) {
+    ctx.clearRect(0,0,GW,GH);
+
+    // Sky gradient
+    const sky = ctx.createLinearGradient(0,0,0,GH);
+    sky.addColorStop(0,'#060d04'); sky.addColorStop(1,'#0e1a0a');
+    ctx.fillStyle=sky; ctx.fillRect(0,0,GW,GH);
+
+    // Stars
+    ctx.fillStyle='rgba(255,255,255,0.5)';
+    for(let i=0;i<30;i++){
+      const sx=(i*73+frame*0.3*(i%3?1:-1))%GW;
+      const sy=(i*37)%140;
+      ctx.fillRect(sx,sy,1,1);
+    }
+
+    // Ground
+    ctx.fillStyle='#1a2e14';
+    ctx.fillRect(0,GROUND+44,GW,GH-GROUND-44);
+    ctx.fillStyle='#2d4a20';
+    ctx.fillRect(0,GROUND+44,GW,4);
+
+    // Moving road dashes
+    ctx.fillStyle='rgba(74,222,128,0.2)';
+    for(let i=0;i<8;i++){
+      const rx=((i*120-frame*speed)%GW+GW)%GW;
+      ctx.fillRect(rx,GROUND+52,60,4);
+    }
+
+    // Obstacles & collectibles
+    ctx.font='28px serif';
+    ctx.textAlign='center';
+    obstacles.forEach(o => { ctx.fillText(o.emoji, o.x+18, o.y+28); });
+
+    // Skater
+    ctx.save();
+    ctx.font='36px serif';
+    const bob = skater.grounded ? Math.sin(frame*0.25)*2 : 0;
+    const tilt = skater.vy < 0 ? -0.2 : skater.vy > 2 ? 0.15 : 0;
+    ctx.translate(skater.x+18, skater.y+bob);
+    ctx.rotate(tilt);
+    ctx.fillText('🛹', -18, 36);
+    ctx.font='26px serif';
+    ctx.fillText('🧍', -14, 10);
+    ctx.restore();
+
+    // Particles
+    particles.forEach(p => {
+      ctx.globalAlpha = p.life/30;
+      ctx.font='16px serif';
+      ctx.fillText(p.emoji, p.x, p.y);
+    });
+    ctx.globalAlpha=1;
+    ctx.textAlign='left';
+  }
+
+  function endSkate() {
+    running=false;
+    cancelAnimationFrame(raf);
+    if(score > best) best = score;
+    document.getElementById('skate-best').textContent = best;
+    document.getElementById('skate-start-btn').textContent = 'Drop In Again 🛹';
+    document.getElementById('skate-start-btn').disabled = false;
+    updateVibe(score);
+    showToast('🛹','Bailed!','You scored ' + score + ' pts. ' + (score>50?'Respect.':'Shake it off.'));
+
+    // Draw game over
+    const sc2 = document.getElementById('skateCanvas');
+    const c = sc2.getContext('2d');
+    c.fillStyle='rgba(10,13,8,0.75)';
+    c.fillRect(0,0,GW,GH);
+    c.fillStyle='#4ade80';
+    c.font='bold 28px Unbounded, sans-serif';
+    c.textAlign='center';
+    c.fillText('SLAMMED 🛹', GW/2, GH/2-20);
+    c.fillStyle='#6b7c64';
+    c.font='16px DM Mono, monospace';
+    c.fillText('Score: ' + score + '  ·  Best: ' + best, GW/2, GH/2+16);
+    c.textAlign='left';
+  }
+})();
+
+// ===================================================
+// GAME 6: VIBE SEQUENCER
+// ===================================================
+(function(){
+  let sequence=[], playerSeq=[], level=1, bestLevel=1, streak=0, accepting=false, playing=false;
+  const PAD_EMOJIS = ['🌿','🌀','🔥','💎'];
+  const PAD_TONES = [261.63, 329.63, 392.00, 523.25]; // C4 E4 G4 C5
+  let audioCtx;
+
+  function getAudio(){ if(!audioCtx) audioCtx=new (window.AudioContext||window.webkitAudioContext)(); return audioCtx; }
+
+  function playTone(freq, dur=0.18){
+    try{
+      const ac=getAudio();
+      const o=ac.createOscillator();
+      const g=ac.createGain();
+      o.connect(g); g.connect(ac.destination);
+      o.frequency.value=freq;
+      o.type='sine';
+      g.gain.setValueAtTime(0.3,ac.currentTime);
+      g.gain.exponentialRampToValueAtTime(0.001,ac.currentTime+dur);
+      o.start(); o.stop(ac.currentTime+dur);
+    }catch(e){}
+  }
+
+  function flashPad(i, dur=400){
+    const pad=document.querySelector('.vibe-pad[data-pad="'+i+'"]');
+    pad.classList.add('active-pad');
+    playTone(PAD_TONES[i]);
+    setTimeout(()=>pad.classList.remove('active-pad'), dur);
+  }
+
+  function startVibe(){
+    sequence=[]; playerSeq=[]; level=1; streak=0; accepting=false;
+    document.getElementById('vibe-start-btn').disabled=true;
+    document.getElementById('vibe-level').textContent=1;
+    document.getElementById('vibe-streak').textContent=0;
+    nextRound();
+  }
+  window.startVibe=startVibe;
+
+  function nextRound(){
+    playerSeq=[];
+    accepting=false;
+    sequence.push(Math.floor(Math.random()*4));
+    document.getElementById('vibe-status').textContent='Watch the pattern...';
+    playSequence();
+  }
+
+  function playSequence(){
+    let i=0;
+    const iv=setInterval(()=>{
+      if(i>=sequence.length){ clearInterval(iv); accepting=true; document.getElementById('vibe-status').textContent='Your turn! Repeat the sequence.'; return; }
+      flashPad(sequence[i]); i++;
+    }, 650);
+  }
+
+  function vibePress(i){
+    if(!accepting) return;
+    playerSeq.push(i);
+    flashPad(i, 200);
+    const pos=playerSeq.length-1;
+    if(playerSeq[pos]!==sequence[pos]){
+      accepting=false;
+      document.getElementById('vibe-status').textContent='😵 Wrong vibe. Starting over.';
+      if(level>bestLevel){ bestLevel=level; document.getElementById('vibe-best-level').textContent=bestLevel; }
+      updateVibe(streak*5);
+      playTone(100, 0.4);
+      setTimeout(()=>{ sequence=[]; level=1; streak=0; document.getElementById('vibe-level').textContent=1; document.getElementById('vibe-streak').textContent=0; document.getElementById('vibe-start-btn').disabled=false; document.getElementById('vibe-status').textContent='Press Start to begin the sequence'; }, 1800);
+      return;
+    }
+    if(playerSeq.length===sequence.length){
+      accepting=false; level++; streak++;
+      document.getElementById('vibe-level').textContent=level;
+      document.getElementById('vibe-streak').textContent=streak;
+      document.getElementById('vibe-status').textContent='🌿 Perfect. Level ' + level + ' incoming...';
+      updateVibe(10);
+      setTimeout(nextRound, 1100);
+    }
+  }
+  window.vibePress=vibePress;
+})();
+
+// ===================================================
+// GAME 7: ASTEROID MUNCHIES
+// ===================================================
+(function(){
+  let sc, ctx, running=false, raf;
+  let ship, bullets, asteroids, particles, score, lives, wave, best=0, frame, keys={};
+  const GW=720, GH=380;
+  const SNACK_ROIDS=['🍕','🍔','🍩','🌮','🍟','🍫','🌯','🥐'];
+
+  function init(){
+    sc=document.getElementById('asteroidCanvas');
+    ctx=sc.getContext('2d');
+    document.addEventListener('keydown',e=>{ keys[e.code]=true; if(e.code==='Space'&&running){ e.preventDefault(); shoot(); } });
+    document.addEventListener('keyup',e=>{ keys[e.code]=false; });
+    sc.addEventListener('click', e=>{ if(running){ const r=sc.getBoundingClientRect(); aimShoot(e.clientX-r.left,e.clientY-r.top); } });
+  }
+
+  function startAsteroid(){
+    if(!sc) init();
+    ship={x:GW/2,y:GH/2,angle:-Math.PI/2,vx:0,vy:0,radius:14};
+    bullets=[]; asteroids=[]; particles=[];
+    score=0; lives=3; wave=1; frame=0; running=true;
+    document.getElementById('ast-start-btn').textContent='Flying... 🚀';
+    document.getElementById('ast-start-btn').disabled=true;
+    spawnWave();
+    if(raf) cancelAnimationFrame(raf);
+    astLoop();
+  }
+  window.startAsteroid=startAsteroid;
+
+  function spawnWave(){
+    for(let i=0;i<3+wave;i++){
+      let x,y;
+      do{ x=Math.random()*GW; y=Math.random()*GH; } while(Math.hypot(x-ship.x,y-ship.y)<120);
+      asteroids.push({ x,y,vx:(Math.random()-0.5)*1.5*(1+wave*0.15),vy:(Math.random()-0.5)*1.5*(1+wave*0.15),radius:30+Math.random()*20,emoji:SNACK_ROIDS[Math.floor(Math.random()*SNACK_ROIDS.length)],size:2 });
+    }
+  }
+
+  function shoot(){
+    bullets.push({ x:ship.x+Math.cos(ship.angle)*16, y:ship.y+Math.sin(ship.angle)*16, vx:Math.cos(ship.angle)*9, vy:Math.sin(ship.angle)*9, life:55 });
+  }
+
+  function aimShoot(mx,my){
+    const ang=Math.atan2(my-ship.y,mx-ship.x);
+    bullets.push({ x:ship.x+Math.cos(ang)*16, y:ship.y+Math.sin(ang)*16, vx:Math.cos(ang)*9, vy:Math.sin(ang)*9, life:55 });
+  }
+
+  let shootCooldown=0;
+  function astLoop(){
+    if(!running) return;
+    raf=requestAnimationFrame(astLoop);
+    frame++;
+    shootCooldown=Math.max(0,shootCooldown-1);
+
+    // Ship controls
+    if(keys['ArrowLeft']||keys['KeyA']) ship.angle-=0.06;
+    if(keys['ArrowRight']||keys['KeyD']) ship.angle+=0.06;
+    if(keys['ArrowUp']||keys['KeyW']||keys['Space']&&false){
+      ship.vx+=Math.cos(ship.angle)*0.25; ship.vy+=Math.sin(ship.angle)*0.25;
+    }
+    if(keys['Space']&&shootCooldown===0){ shoot(); shootCooldown=12; }
+    ship.vx*=0.97; ship.vy*=0.97;
+    ship.x=(ship.x+ship.vx+GW)%GW; ship.y=(ship.y+ship.vy+GH)%GH;
+
+    // Bullets
+    bullets=bullets.filter(b=>{ b.x+=b.vx; b.y+=b.vy; b.life--; return b.life>0&&b.x>0&&b.x<GW&&b.y>0&&b.y<GH; });
+
+    // Asteroids
+    asteroids.forEach(a=>{ a.x=(a.x+a.vx+GW)%GW; a.y=(a.y+a.vy+GH)%GH; });
+
+    // Bullet-asteroid collisions
+    bullets.forEach((b,bi)=>{
+      asteroids.forEach((a,ai)=>{
+        if(Math.hypot(b.x-a.x,b.y-a.y)<a.radius){
+          bullets.splice(bi,1);
+          if(a.size>1){
+            for(let k=0;k<2;k++) asteroids.push({ x:a.x+(Math.random()-0.5)*20,y:a.y+(Math.random()-0.5)*20,vx:(Math.random()-0.5)*3,vy:(Math.random()-0.5)*3,radius:a.radius*0.55,emoji:SNACK_ROIDS[Math.floor(Math.random()*SNACK_ROIDS.length)],size:1 });
+          }
+          for(let k=0;k<6;k++) particles.push({x:a.x,y:a.y,vx:(Math.random()-0.5)*5,vy:(Math.random()-0.5)*5,life:25,color:['#4ade80','#fbbf24','#f472b6'][k%3]});
+          asteroids.splice(ai,1);
+          score+=a.size===2?100:50; updateVibe(a.size===2?5:2);
+          document.getElementById('ast-score').textContent=score;
+        }
+      });
+    });
+
+    // Ship-asteroid collision
+    asteroids.forEach(a=>{
+      if(Math.hypot(ship.x-a.x,ship.y-a.y)<a.radius+ship.radius){
+        lives--;
+        document.getElementById('ast-lives').textContent='♥'.repeat(Math.max(0,lives));
+        ship.x=GW/2; ship.y=GH/2; ship.vx=0; ship.vy=0;
+        if(lives<=0){ endAsteroid(); }
+      }
+    });
+
+    // Next wave
+    if(asteroids.length===0){ wave++; document.getElementById('ast-level').textContent=wave; spawnWave(); showToast('🌌','Wave '+wave+'!','Nice shooting. It escalates.'); }
+
+    // Particles
+    particles=particles.filter(p=>{ p.x+=p.vx; p.y+=p.vy; p.life--; return p.life>0; });
+
+    // Draw
+    ctx.fillStyle='#05080a';
+    ctx.fillRect(0,0,GW,GH);
+
+    // Stars bg
+    ctx.fillStyle='rgba(255,255,255,0.6)';
+    for(let i=0;i<60;i++){ ctx.fillRect((i*137)%GW,(i*89)%GH,1,1); }
+
+    // Particles
+    particles.forEach(p=>{ ctx.globalAlpha=p.life/25; ctx.fillStyle=p.color; ctx.beginPath(); ctx.arc(p.x,p.y,3,0,Math.PI*2); ctx.fill(); });
+    ctx.globalAlpha=1;
+
+    // Asteroids
+    ctx.font='36px serif'; ctx.textAlign='center';
+    asteroids.forEach(a=>{ ctx.font=Math.round(a.radius*1.2)+'px serif'; ctx.fillText(a.emoji,a.x,a.y+a.radius*0.4); });
+
+    // Bullets
+    ctx.fillStyle='#4ade80';
+    bullets.forEach(b=>{ ctx.beginPath(); ctx.arc(b.x,b.y,3,0,Math.PI*2); ctx.fill(); });
+
+    // Ship
+    ctx.save();
+    ctx.translate(ship.x,ship.y);
+    ctx.rotate(ship.angle+Math.PI/2);
+    ctx.font='28px serif';
+    ctx.fillText('🚀',- 14,-14);
+    ctx.restore();
+
+    if((keys['ArrowUp']||keys['KeyW'])&&frame%3===0){
+      particles.push({x:ship.x-Math.cos(ship.angle)*16,y:ship.y-Math.sin(ship.angle)*16,vx:-Math.cos(ship.angle)*2+(Math.random()-0.5),vy:-Math.sin(ship.angle)*2+(Math.random()-0.5),life:10,color:'#fbbf24'});
+    }
+    ctx.textAlign='left';
+  }
+
+  function endAsteroid(){
+    running=false; cancelAnimationFrame(raf);
+    if(score>best) best=score;
+    document.getElementById('ast-best').textContent=best;
+    document.getElementById('ast-start-btn').textContent='Launch Again 🚀';
+    document.getElementById('ast-start-btn').disabled=false;
+    ctx.fillStyle='rgba(5,8,10,0.8)';
+    ctx.fillRect(0,0,GW,GH);
+    ctx.fillStyle='#4ade80'; ctx.font='bold 26px Unbounded,sans-serif'; ctx.textAlign='center';
+    ctx.fillText('SHIP DESTROYED 🚀',GW/2,GH/2-16);
+    ctx.fillStyle='#6b7c64'; ctx.font='15px DM Mono,monospace';
+    ctx.fillText('Score: '+score+'  ·  Wave: '+wave+'  ·  Best: '+best,GW/2,GH/2+16);
+    ctx.textAlign='left';
+    showToast('🌌','Ship down!','Score: '+score+' · Wave '+wave+'. Deep breaths.');
+  }
+})();
+
+// ===================================================
+// GAME 8: HIGHER OR LOWER
+// ===================================================
+(function(){
+  const RANKS=['2','3','4','5','6','7','8','9','10','J','Q','K','A'];
+  const SUITS=['♠','♥','♦','♣'];
+  const SUIT_EMOJI=['♠️','♥️','♦️','♣️'];
+  const SUIT_COLOR=['#e8f5e2','#f472b6','#f472b6','#e8f5e2'];
+  let streak=0,bestStreak=0,totalScore=0,currentCard=null;
+
+  function randCard(){ return { rank:Math.floor(Math.random()*13), suit:Math.floor(Math.random()*4) }; }
+  function cardVal(c){ return c.rank; }
+
+  function renderCard(id,card){
+    const rankEl=document.getElementById(id==='hl-current'?'hl-rank':'hl-rank-next');
+    const suitEl=document.getElementById(id==='hl-current'?'hl-suit':'hl-suit-next');
+    const tl=document.getElementById(id==='hl-current'?'hl-corner-tl':'hl-corner-tl-next');
+    const br=document.getElementById(id==='hl-current'?'hl-corner-br':'hl-corner-br-next');
+    const r=RANKS[card.rank], s=SUITS[card.suit], sc2=SUIT_COLOR[card.suit];
+    if(rankEl){ rankEl.textContent=r; rankEl.style.color=sc2; }
+    if(suitEl){ suitEl.textContent=s; suitEl.style.color=sc2; }
+    if(tl){ tl.textContent=r+' '+s; tl.style.color=sc2; }
+    if(br){ br.textContent=r+' '+s; br.style.color=sc2; }
+  }
+
+  function initHL(){
+    currentCard=randCard();
+    renderCard('hl-current',currentCard);
+    document.getElementById('hl-rank').textContent=RANKS[currentCard.rank];
+    document.getElementById('hl-suit').textContent=SUITS[currentCard.suit];
+    document.getElementById('hl-suit').style.color=SUIT_COLOR[currentCard.suit];
+    document.getElementById('hl-rank').style.color=SUIT_COLOR[currentCard.suit];
+    document.getElementById('hl-corner-tl').textContent=RANKS[currentCard.rank]+' '+SUITS[currentCard.suit];
+    document.getElementById('hl-corner-tl').style.color=SUIT_COLOR[currentCard.suit];
+    document.getElementById('hl-corner-br').textContent=RANKS[currentCard.rank]+' '+SUITS[currentCard.suit];
+    document.getElementById('hl-corner-br').style.color=SUIT_COLOR[currentCard.suit];
+    document.getElementById('hl-result').textContent='';
+    document.getElementById('hl-result').className='hl-result';
+    const next=document.getElementById('hl-next');
+    next.className='playing-card facedown';
+    next.innerHTML='<div class="card-rank" style="font-size:2rem;color:var(--muted)">?</div>';
+    document.getElementById('hl-btns').style.display='flex';
+  }
+
+  function hlGuess(dir){
+    const next=randCard();
+    const cv=cardVal(currentCard), nv=cardVal(next);
+    const won=(dir==='high'&&nv>cv)||(dir==='low'&&nv<cv);
+    const tie=(nv===cv);
+
+    // Reveal next card
+    const nEl=document.getElementById('hl-next');
+    nEl.className='playing-card revealed';
+    nEl.innerHTML=`
+      <div class="card-corner" style="color:${SUIT_COLOR[next.suit]}">${RANKS[next.rank]} ${SUITS[next.suit]}</div>
+      <div class="card-rank" style="color:${SUIT_COLOR[next.suit]}">${RANKS[next.rank]}</div>
+      <div class="card-suit" style="color:${SUIT_COLOR[next.suit]}">${SUITS[next.suit]}</div>
+      <div class="card-corner br" style="color:${SUIT_COLOR[next.suit]}">${RANKS[next.rank]} ${SUITS[next.suit]}</div>
+    `;
+
+    const res=document.getElementById('hl-result');
+    document.getElementById('hl-btns').style.display='none';
+
+    if(tie){
+      res.textContent="It's a tie. Cosmic indifference.";
+      res.className='hl-result';
+      streak=0;
+    } else if(won){
+      streak++; totalScore+=streak*10;
+      if(streak>bestStreak) bestStreak=streak;
+      res.textContent=['🌿 Nice.','✨ Prophetic.','🔥 Vibing.','🧿 Third eye open.','👁️ You KNEW.'][Math.min(streak-1,4)];
+      res.className='hl-result win';
+      updateVibe(streak*5);
+    } else {
+      res.textContent=['💀 Ouch.','😵 Harsh.','🌀 The cards have spoken.','🫠 Bummer.'][Math.floor(Math.random()*4)];
+      res.className='hl-result lose';
+      streak=0;
+    }
+
+    document.getElementById('hl-streak').textContent=streak;
+    document.getElementById('hl-best').textContent=bestStreak;
+    document.getElementById('hl-score').textContent=totalScore;
+    currentCard=next;
+
+    setTimeout(initHL, 1600);
+  }
+  window.hlGuess=hlGuess;
+
+  // Init on load
+  setTimeout(initHL, 200);
+})();
+
 </script>
 </body>
 </html>
