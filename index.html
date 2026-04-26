@@ -1,0 +1,1769 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>The High Score Arcade 🌿</title>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;700;900&family=DM+Mono:wght@300;400;500&family=Unbounded:wght@300;700;900&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #0a0d08;
+    --bg2: #0e1409;
+    --panel: #111a0e;
+    --panel2: #162012;
+    --green: #4ade80;
+    --green2: #22c55e;
+    --gold: #fbbf24;
+    --purple: #a855f7;
+    --pink: #f472b6;
+    --dim: #2d3a28;
+    --text: #e8f5e2;
+    --muted: #6b7c64;
+    --border: #1e2d18;
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: 'DM Mono', monospace;
+    min-height: 100vh;
+    overflow-x: hidden;
+    cursor: default;
+  }
+
+  /* Grain overlay */
+  body::before {
+    content: '';
+    position: fixed;
+    inset: 0;
+    background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='0.04'/%3E%3C/svg%3E");
+    pointer-events: none;
+    z-index: 9999;
+    opacity: 0.4;
+  }
+
+  /* Ambient glow */
+  .ambient {
+    position: fixed;
+    width: 600px; height: 600px;
+    border-radius: 50%;
+    filter: blur(120px);
+    pointer-events: none;
+    z-index: 0;
+    opacity: 0.06;
+  }
+  .ambient-1 { background: var(--green); top: -200px; left: -200px; }
+  .ambient-2 { background: var(--purple); bottom: -200px; right: -200px; }
+  .ambient-3 { background: var(--gold); top: 50%; left: 50%; transform: translate(-50%,-50%); opacity: 0.03; }
+
+  /* Header */
+  header {
+    position: relative;
+    z-index: 10;
+    padding: 28px 40px 20px;
+    border-bottom: 1px solid var(--border);
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    background: rgba(10,13,8,0.8);
+    backdrop-filter: blur(12px);
+  }
+
+  .logo {
+    font-family: 'Unbounded', sans-serif;
+    font-weight: 900;
+    font-size: 1.4rem;
+    letter-spacing: -0.02em;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+
+  .logo span {
+    background: linear-gradient(135deg, var(--green), var(--gold));
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+  }
+
+  .logo .leaf { font-size: 1.6rem; animation: sway 3s ease-in-out infinite; }
+
+  @keyframes sway {
+    0%,100% { transform: rotate(-5deg); }
+    50% { transform: rotate(5deg); }
+  }
+
+  .tagline {
+    color: var(--muted);
+    font-size: 0.7rem;
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+  }
+
+  .session-info {
+    text-align: right;
+    font-size: 0.7rem;
+    color: var(--muted);
+  }
+
+  .session-info .vibe-score {
+    font-family: 'Unbounded', sans-serif;
+    font-size: 1.1rem;
+    color: var(--gold);
+    font-weight: 700;
+  }
+
+  /* Main layout */
+  main {
+    position: relative;
+    z-index: 2;
+    padding: 32px 40px;
+    max-width: 1400px;
+    margin: 0 auto;
+  }
+
+  /* Arcade nav */
+  .arcade-nav {
+    display: flex;
+    gap: 8px;
+    margin-bottom: 32px;
+    flex-wrap: wrap;
+  }
+
+  .game-tab {
+    padding: 10px 20px;
+    border: 1px solid var(--border);
+    background: var(--panel);
+    color: var(--muted);
+    font-family: 'DM Mono', monospace;
+    font-size: 0.75rem;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    cursor: pointer;
+    border-radius: 6px;
+    transition: all 0.2s;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+
+  .game-tab:hover {
+    border-color: var(--green);
+    color: var(--text);
+    background: var(--panel2);
+  }
+
+  .game-tab.active {
+    border-color: var(--green);
+    color: var(--green);
+    background: rgba(74,222,128,0.08);
+  }
+
+  .game-tab .tab-dot {
+    width: 6px; height: 6px;
+    border-radius: 50%;
+    background: currentColor;
+    animation: pulse-dot 2s ease-in-out infinite;
+  }
+
+  @keyframes pulse-dot {
+    0%,100% { opacity: 1; }
+    50% { opacity: 0.3; }
+  }
+
+  /* Game screens */
+  .game-screen { display: none; }
+  .game-screen.active { display: block; }
+
+  /* ========== GAME 1: BLUNT ROLLER ========== */
+  #game-blunt {
+    display: none;
+  }
+  #game-blunt.active {
+    display: grid;
+    grid-template-columns: 1fr 320px;
+    gap: 24px;
+    align-items: start;
+  }
+
+  .blunt-main {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 24px;
+  }
+
+  .blunt-stats {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 12px;
+    width: 100%;
+  }
+
+  .stat-card {
+    background: var(--panel);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 16px;
+    text-align: center;
+  }
+
+  .stat-card .stat-val {
+    font-family: 'Unbounded', sans-serif;
+    font-size: 1.4rem;
+    font-weight: 700;
+    color: var(--green);
+  }
+
+  .stat-card .stat-label {
+    font-size: 0.65rem;
+    color: var(--muted);
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    margin-top: 4px;
+  }
+
+  .blunt-clickzone {
+    position: relative;
+    width: 240px;
+    height: 240px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .blunt-ring {
+    position: absolute;
+    border-radius: 50%;
+    border: 1px solid rgba(74,222,128,0.2);
+    animation: expand-ring 3s ease-out infinite;
+  }
+
+  .blunt-ring:nth-child(1) { width: 240px; height: 240px; animation-delay: 0s; }
+  .blunt-ring:nth-child(2) { width: 200px; height: 200px; animation-delay: 0.8s; }
+  .blunt-ring:nth-child(3) { width: 160px; height: 160px; animation-delay: 1.6s; }
+
+  @keyframes expand-ring {
+    0% { transform: scale(0.8); opacity: 0.6; }
+    100% { transform: scale(1.2); opacity: 0; }
+  }
+
+  .blunt-btn {
+    position: relative;
+    z-index: 2;
+    width: 130px; height: 130px;
+    border-radius: 50%;
+    border: 2px solid var(--green);
+    background: radial-gradient(circle at 40% 35%, #1a2e14, #0a1508);
+    cursor: pointer;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 4px;
+    box-shadow: 0 0 40px rgba(74,222,128,0.15), inset 0 0 20px rgba(0,0,0,0.5);
+    transition: all 0.1s;
+    user-select: none;
+  }
+
+  .blunt-btn:hover {
+    box-shadow: 0 0 60px rgba(74,222,128,0.25), inset 0 0 20px rgba(0,0,0,0.5);
+    border-color: var(--green2);
+  }
+
+  .blunt-btn:active {
+    transform: scale(0.94);
+    box-shadow: 0 0 80px rgba(74,222,128,0.4), inset 0 0 20px rgba(0,0,0,0.5);
+  }
+
+  .blunt-btn .btn-icon { font-size: 2.4rem; }
+  .blunt-btn .btn-label {
+    font-size: 0.6rem;
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    color: var(--green);
+  }
+
+  .click-floater {
+    position: absolute;
+    font-family: 'Unbounded', sans-serif;
+    font-size: 0.85rem;
+    color: var(--green);
+    pointer-events: none;
+    animation: float-up 1s ease-out forwards;
+    z-index: 100;
+  }
+
+  @keyframes float-up {
+    0% { opacity: 1; transform: translateY(0) scale(1); }
+    100% { opacity: 0; transform: translateY(-60px) scale(1.3); }
+  }
+
+  .smoke-particle {
+    position: absolute;
+    width: 8px; height: 8px;
+    border-radius: 50%;
+    background: rgba(74,222,128,0.4);
+    pointer-events: none;
+    animation: smoke 1.5s ease-out forwards;
+  }
+
+  @keyframes smoke {
+    0% { opacity: 0.8; transform: scale(1) translate(0,0); }
+    100% { opacity: 0; transform: scale(3) translate(var(--dx), var(--dy)); }
+  }
+
+  .upgrade-panel {
+    background: var(--panel);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 20px;
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+  }
+
+  .upgrade-panel h3 {
+    font-family: 'Playfair Display', serif;
+    font-size: 1rem;
+    color: var(--gold);
+    margin-bottom: 12px;
+    padding-bottom: 12px;
+    border-bottom: 1px solid var(--border);
+  }
+
+  .upgrade-item {
+    padding: 12px;
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    background: var(--bg2);
+    cursor: pointer;
+    transition: all 0.2s;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+  }
+
+  .upgrade-item:hover:not(.locked) {
+    border-color: var(--green);
+    background: rgba(74,222,128,0.05);
+  }
+
+  .upgrade-item.locked { opacity: 0.4; cursor: not-allowed; }
+  .upgrade-item.locked:hover { border-color: var(--border); background: var(--bg2); }
+
+  .upgrade-item .upg-icon { font-size: 1.4rem; }
+
+  .upgrade-item .upg-info { flex: 1; }
+  .upgrade-item .upg-name {
+    font-size: 0.75rem;
+    color: var(--text);
+    font-weight: 500;
+  }
+  .upgrade-item .upg-desc {
+    font-size: 0.62rem;
+    color: var(--muted);
+    margin-top: 2px;
+  }
+
+  .upgrade-item .upg-cost {
+    font-family: 'Unbounded', sans-serif;
+    font-size: 0.7rem;
+    color: var(--gold);
+    white-space: nowrap;
+  }
+
+  .quip-box {
+    background: var(--panel);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 14px 18px;
+    font-size: 0.75rem;
+    color: var(--muted);
+    font-style: italic;
+    text-align: center;
+    min-height: 48px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  /* ========== GAME 2: GROW ROOM ========== */
+  #game-grow {
+    display: none;
+  }
+  #game-grow.active {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 20px;
+  }
+
+  .plant-card {
+    background: var(--panel);
+    border: 1px solid var(--border);
+    border-radius: 14px;
+    padding: 24px;
+    text-align: center;
+    position: relative;
+    overflow: hidden;
+    transition: all 0.3s;
+  }
+
+  .plant-card:hover { border-color: var(--green); }
+
+  .plant-card .plant-glow {
+    position: absolute;
+    inset: 0;
+    background: radial-gradient(circle at 50% 80%, rgba(74,222,128,0.06), transparent 70%);
+    pointer-events: none;
+  }
+
+  .plant-emoji {
+    font-size: 4rem;
+    display: block;
+    margin: 0 auto 12px;
+    animation: breathe 4s ease-in-out infinite;
+    filter: drop-shadow(0 0 12px rgba(74,222,128,0.3));
+  }
+
+  @keyframes breathe {
+    0%,100% { transform: scale(1); }
+    50% { transform: scale(1.06); }
+  }
+
+  .plant-name {
+    font-family: 'Playfair Display', serif;
+    font-size: 1.1rem;
+    color: var(--text);
+    margin-bottom: 4px;
+  }
+
+  .plant-strain {
+    font-size: 0.65rem;
+    color: var(--muted);
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    margin-bottom: 16px;
+  }
+
+  .grow-bar-wrap {
+    background: var(--dim);
+    border-radius: 4px;
+    height: 8px;
+    overflow: hidden;
+    margin-bottom: 8px;
+  }
+
+  .grow-bar {
+    height: 100%;
+    background: linear-gradient(90deg, var(--green2), var(--green));
+    border-radius: 4px;
+    transition: width 0.5s ease;
+    box-shadow: 0 0 8px rgba(74,222,128,0.5);
+  }
+
+  .grow-stage {
+    font-size: 0.65rem;
+    color: var(--muted);
+    margin-bottom: 16px;
+  }
+
+  .plant-actions {
+    display: flex;
+    gap: 8px;
+    justify-content: center;
+  }
+
+  .plant-btn {
+    padding: 8px 16px;
+    border-radius: 6px;
+    border: 1px solid var(--border);
+    background: var(--bg2);
+    color: var(--text);
+    font-family: 'DM Mono', monospace;
+    font-size: 0.68rem;
+    cursor: pointer;
+    transition: all 0.2s;
+  }
+
+  .plant-btn:hover {
+    border-color: var(--green);
+    color: var(--green);
+  }
+
+  .plant-btn.primary {
+    background: rgba(74,222,128,0.12);
+    border-color: var(--green);
+    color: var(--green);
+  }
+
+  .plant-reward {
+    position: absolute;
+    top: 12px; right: 12px;
+    background: rgba(251,191,36,0.1);
+    border: 1px solid rgba(251,191,36,0.3);
+    border-radius: 20px;
+    padding: 3px 10px;
+    font-size: 0.62rem;
+    color: var(--gold);
+  }
+
+  /* Grow room bottom row */
+  .grow-bottom {
+    grid-column: 1 / -1;
+    background: var(--panel);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 20px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 20px;
+  }
+
+  .grow-stat {
+    text-align: center;
+  }
+
+  .grow-stat .gs-val {
+    font-family: 'Unbounded', sans-serif;
+    font-size: 1.3rem;
+    font-weight: 700;
+    color: var(--green);
+  }
+
+  .grow-stat .gs-label {
+    font-size: 0.6rem;
+    color: var(--muted);
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+  }
+
+  /* ========== GAME 3: MUNCHIE MADNESS ========== */
+  #game-munchie {
+    display: none;
+  }
+  #game-munchie.active {
+    display: grid;
+    grid-template-columns: 1fr 280px;
+    gap: 24px;
+    align-items: start;
+  }
+
+  .munchie-arena {
+    background: var(--panel);
+    border: 1px solid var(--border);
+    border-radius: 14px;
+    padding: 20px;
+    position: relative;
+  }
+
+  .munchie-arena h3 {
+    font-family: 'Playfair Display', serif;
+    font-size: 1.1rem;
+    color: var(--text);
+    margin-bottom: 4px;
+  }
+  .munchie-arena p {
+    font-size: 0.68rem;
+    color: var(--muted);
+    margin-bottom: 20px;
+  }
+
+  .munchie-grid {
+    display: grid;
+    grid-template-columns: repeat(5, 1fr);
+    gap: 10px;
+    margin-bottom: 20px;
+  }
+
+  .munchie-hole {
+    aspect-ratio: 1;
+    background: var(--bg2);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 2rem;
+    cursor: pointer;
+    transition: all 0.1s;
+    position: relative;
+    overflow: hidden;
+    user-select: none;
+  }
+
+  .munchie-hole .food-item {
+    transition: all 0.15s;
+    transform: scale(0);
+  }
+
+  .munchie-hole.active .food-item {
+    transform: scale(1);
+    animation: pop-in 0.15s ease-out;
+  }
+
+  @keyframes pop-in {
+    0% { transform: scale(0); }
+    60% { transform: scale(1.2); }
+    100% { transform: scale(1); }
+  }
+
+  .munchie-hole.hit {
+    background: rgba(74,222,128,0.15);
+    border-color: var(--green);
+  }
+
+  .munchie-hole.missed {
+    background: rgba(239,68,68,0.1);
+    border-color: rgba(239,68,68,0.3);
+    animation: shake 0.3s ease;
+  }
+
+  @keyframes shake {
+    0%,100% { transform: translateX(0); }
+    25% { transform: translateX(-4px); }
+    75% { transform: translateX(4px); }
+  }
+
+  .munchie-hud {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+  }
+
+  .munchie-score-big {
+    font-family: 'Unbounded', sans-serif;
+    font-size: 2rem;
+    font-weight: 900;
+    color: var(--green);
+  }
+
+  .munchie-timer {
+    font-family: 'Unbounded', sans-serif;
+    font-size: 1.2rem;
+    color: var(--gold);
+  }
+
+  .munchie-start {
+    padding: 14px 32px;
+    background: linear-gradient(135deg, rgba(74,222,128,0.2), rgba(74,222,128,0.08));
+    border: 1px solid var(--green);
+    color: var(--green);
+    font-family: 'Unbounded', sans-serif;
+    font-size: 0.8rem;
+    letter-spacing: 0.05em;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: all 0.2s;
+  }
+
+  .munchie-start:hover {
+    background: rgba(74,222,128,0.3);
+    box-shadow: 0 0 20px rgba(74,222,128,0.2);
+  }
+
+  .munchie-side {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+  }
+
+  .munchie-leaderboard {
+    background: var(--panel);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 20px;
+  }
+
+  .munchie-leaderboard h3 {
+    font-family: 'Playfair Display', serif;
+    font-size: 0.95rem;
+    color: var(--gold);
+    margin-bottom: 14px;
+  }
+
+  .lb-row {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 8px 0;
+    border-bottom: 1px solid var(--border);
+    font-size: 0.72rem;
+  }
+
+  .lb-row:last-child { border-bottom: none; }
+
+  .lb-row .lb-rank { color: var(--muted); width: 20px; }
+  .lb-row .lb-name { flex: 1; color: var(--text); }
+  .lb-row .lb-pts { color: var(--green); font-family: 'Unbounded', sans-serif; font-size: 0.65rem; }
+
+  /* ========== GAME 4: THE TRIP ========== */
+  #game-trip {
+    display: none;
+  }
+  #game-trip.active {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 28px;
+  }
+
+  .trip-canvas-wrap {
+    width: 100%;
+    max-width: 700px;
+    position: relative;
+  }
+
+  #tripCanvas {
+    width: 100%;
+    border-radius: 16px;
+    border: 1px solid var(--border);
+    cursor: crosshair;
+    display: block;
+  }
+
+  .trip-controls {
+    display: flex;
+    gap: 12px;
+    align-items: center;
+    flex-wrap: wrap;
+    justify-content: center;
+  }
+
+  .trip-btn {
+    padding: 10px 22px;
+    border-radius: 8px;
+    border: 1px solid var(--border);
+    background: var(--panel);
+    color: var(--muted);
+    font-family: 'DM Mono', monospace;
+    font-size: 0.72rem;
+    cursor: pointer;
+    transition: all 0.2s;
+    letter-spacing: 0.05em;
+  }
+
+  .trip-btn:hover, .trip-btn.active-mode {
+    border-color: var(--purple);
+    color: var(--purple);
+    background: rgba(168,85,247,0.08);
+  }
+
+  .trip-stats {
+    display: flex;
+    gap: 32px;
+    text-align: center;
+  }
+
+  .trip-stat .ts-val {
+    font-family: 'Unbounded', sans-serif;
+    font-size: 1.5rem;
+    font-weight: 700;
+    background: linear-gradient(135deg, var(--purple), var(--pink));
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+  }
+
+  .trip-stat .ts-label {
+    font-size: 0.62rem;
+    color: var(--muted);
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+  }
+
+  /* ========== DASHBOARD HOME ========== */
+  #game-home {
+    display: none;
+  }
+  #game-home.active {
+    display: block;
+  }
+
+  .dashboard-hero {
+    background: var(--panel);
+    border: 1px solid var(--border);
+    border-radius: 16px;
+    padding: 40px;
+    margin-bottom: 24px;
+    position: relative;
+    overflow: hidden;
+    text-align: center;
+  }
+
+  .dashboard-hero::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: radial-gradient(ellipse at 50% 100%, rgba(74,222,128,0.08), transparent 60%);
+    pointer-events: none;
+  }
+
+  .hero-headline {
+    font-family: 'Playfair Display', serif;
+    font-size: clamp(2rem, 4vw, 3.2rem);
+    font-weight: 900;
+    line-height: 1.1;
+    margin-bottom: 14px;
+  }
+
+  .hero-headline em {
+    font-style: italic;
+    color: var(--green);
+  }
+
+  .hero-sub {
+    color: var(--muted);
+    font-size: 0.85rem;
+    max-width: 480px;
+    margin: 0 auto 28px;
+    line-height: 1.7;
+  }
+
+  .games-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 16px;
+  }
+
+  .game-card {
+    background: var(--panel);
+    border: 1px solid var(--border);
+    border-radius: 14px;
+    padding: 28px;
+    cursor: pointer;
+    transition: all 0.25s;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .game-card::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: radial-gradient(circle at var(--mx,50%) var(--my,50%), rgba(74,222,128,0.06), transparent 60%);
+    opacity: 0;
+    transition: opacity 0.3s;
+    pointer-events: none;
+  }
+
+  .game-card:hover::after { opacity: 1; }
+  .game-card:hover { border-color: var(--green); transform: translateY(-2px); }
+
+  .game-card-icon { font-size: 2.8rem; margin-bottom: 12px; display: block; }
+
+  .game-card-title {
+    font-family: 'Playfair Display', serif;
+    font-size: 1.2rem;
+    margin-bottom: 6px;
+  }
+
+  .game-card-desc {
+    font-size: 0.72rem;
+    color: var(--muted);
+    line-height: 1.6;
+    margin-bottom: 14px;
+  }
+
+  .game-card-tag {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 0.62rem;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--green);
+    border: 1px solid rgba(74,222,128,0.3);
+    border-radius: 20px;
+    padding: 3px 10px;
+  }
+
+  .scrolling-ticker {
+    overflow: hidden;
+    white-space: nowrap;
+    border-top: 1px solid var(--border);
+    border-bottom: 1px solid var(--border);
+    padding: 10px 0;
+    margin: 24px 0;
+    background: var(--panel);
+  }
+
+  .ticker-inner {
+    display: inline-block;
+    animation: ticker 30s linear infinite;
+    font-size: 0.68rem;
+    color: var(--muted);
+    letter-spacing: 0.08em;
+  }
+
+  @keyframes ticker {
+    0% { transform: translateX(0); }
+    100% { transform: translateX(-50%); }
+  }
+
+  /* Notification toast */
+  .toast {
+    position: fixed;
+    bottom: 24px;
+    right: 24px;
+    background: var(--panel2);
+    border: 1px solid var(--green);
+    border-radius: 10px;
+    padding: 14px 20px;
+    font-size: 0.75rem;
+    color: var(--text);
+    z-index: 10000;
+    transform: translateX(120%);
+    transition: transform 0.3s ease;
+    max-width: 280px;
+    box-shadow: 0 4px 24px rgba(0,0,0,0.4);
+  }
+
+  .toast.show { transform: translateX(0); }
+  .toast .toast-icon { font-size: 1.2rem; margin-bottom: 4px; display: block; }
+  .toast .toast-msg { color: var(--muted); font-size: 0.68rem; margin-top: 2px; }
+
+  /* Scrollbar */
+  ::-webkit-scrollbar { width: 6px; }
+  ::-webkit-scrollbar-track { background: var(--bg); }
+  ::-webkit-scrollbar-thumb { background: var(--dim); border-radius: 3px; }
+  ::-webkit-scrollbar-thumb:hover { background: var(--muted); }
+</style>
+</head>
+<body>
+
+<div class="ambient ambient-1"></div>
+<div class="ambient ambient-2"></div>
+<div class="ambient ambient-3"></div>
+
+<header>
+  <div>
+    <div class="logo">
+      <span class="leaf">🌿</span>
+      <span>High Score Arcade</span>
+    </div>
+    <div class="tagline">Games for the elevated mind</div>
+  </div>
+  <div class="session-info">
+    <div class="vibe-score" id="total-vibe">0</div>
+    <div style="color:var(--muted);font-size:0.62rem;letter-spacing:0.1em;text-transform:uppercase;">Total Vibe Points</div>
+  </div>
+</header>
+
+<div class="scrolling-ticker">
+  <span class="ticker-inner">
+    🌿 &nbsp;BREAKING: Local man reports snacks have never tasted this good &nbsp;·&nbsp; 🏆 High score in Munchie Madness: 420pts &nbsp;·&nbsp; 🌱 Your Blue Dream seedling is vibing nicely &nbsp;·&nbsp; 🍕 Scientists confirm: pizza is better at 2am &nbsp;·&nbsp; ✨ New upgrade unlocked: Himalayan Salts &nbsp;·&nbsp; 🌀 The cosmos called, it said "chill out" &nbsp;·&nbsp; 💨 Sessions completed today: many &nbsp;·&nbsp; 🎮 High Score Arcade — games for the elevated mind &nbsp;·&nbsp;
+    🌿 &nbsp;BREAKING: Local man reports snacks have never tasted this good &nbsp;·&nbsp; 🏆 High score in Munchie Madness: 420pts &nbsp;·&nbsp; 🌱 Your Blue Dream seedling is vibing nicely &nbsp;·&nbsp; 🍕 Scientists confirm: pizza is better at 2am &nbsp;·&nbsp; ✨ New upgrade unlocked: Himalayan Salts &nbsp;·&nbsp; 🌀 The cosmos called, it said "chill out" &nbsp;·&nbsp; 💨 Sessions completed today: many &nbsp;·&nbsp; 🎮 High Score Arcade — games for the elevated mind &nbsp;·&nbsp;
+  </span>
+</div>
+
+<main>
+  <nav class="arcade-nav">
+    <button class="game-tab active" onclick="showGame('home')">
+      <span class="tab-dot"></span> Arcade
+    </button>
+    <button class="game-tab" onclick="showGame('blunt')">
+      🚬 Blunt Roller
+    </button>
+    <button class="game-tab" onclick="showGame('grow')">
+      🌱 Grow Room
+    </button>
+    <button class="game-tab" onclick="showGame('munchie')">
+      🍕 Munchie Madness
+    </button>
+    <button class="game-tab" onclick="showGame('trip')">
+      🌀 The Trip
+    </button>
+  </nav>
+
+  <!-- HOME DASHBOARD -->
+  <div id="game-home" class="game-screen active">
+    <div class="dashboard-hero">
+      <div class="hero-headline">
+        Welcome to the<br><em>most distinguished</em><br>digital arcade
+      </div>
+      <div class="hero-sub">Four games. Zero judgment. 100% vibes. Whether you're 18 or 80, couch-locked or hyper-focused — we've got your digits.</div>
+      <div style="display:flex;gap:12px;justify-content:center;flex-wrap:wrap;">
+        <button onclick="showGame('blunt')" class="munchie-start">Start Rolling 🚬</button>
+        <button onclick="showGame('trip')" style="padding:14px 32px;background:rgba(168,85,247,0.1);border:1px solid var(--purple);color:var(--purple);font-family:'Unbounded',sans-serif;font-size:0.8rem;border-radius:8px;cursor:pointer;transition:all 0.2s;">Enter The Trip 🌀</button>
+      </div>
+    </div>
+
+    <div class="games-grid">
+      <div class="game-card" onclick="showGame('blunt')">
+        <span class="game-card-icon">🚬</span>
+        <div class="game-card-title">Blunt Roller</div>
+        <div class="game-card-desc">The classic idle clicker, elevated. Roll blunts, buy upgrades, hire apprentices, corner the cosmic market. Cookie Clicker's chiller cousin.</div>
+        <span class="game-card-tag">● Idle Clicker</span>
+      </div>
+      <div class="game-card" onclick="showGame('grow')">
+        <span class="game-card-icon">🌱</span>
+        <div class="game-card-title">The Grow Room</div>
+        <div class="game-card-desc">Cultivate three legendary strains. Water, feed, wait — and harvest when the time is right. Patience is a virtue. So is good genetics.</div>
+        <span class="game-card-tag">● Idle Sim</span>
+      </div>
+      <div class="game-card" onclick="showGame('munchie')">
+        <span class="game-card-icon">🍕</span>
+        <div class="game-card-title">Munchie Madness</div>
+        <div class="game-card-desc">Snacks are appearing. TAP THEM. Don't let the broccoli slip through — even the healthy stuff counts when you're this hungry.</div>
+        <span class="game-card-tag">● Reflex Game</span>
+      </div>
+      <div class="game-card" onclick="showGame('trip')">
+        <span class="game-card-icon">🌀</span>
+        <div class="game-card-title">The Trip</div>
+        <div class="game-card-desc">A generative psychedelic canvas. Click to spawn cosmic geometry. Change modes. Watch the universe breathe. It's art, baby.</div>
+        <span class="game-card-tag">● Ambient Art</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- GAME 1: BLUNT ROLLER -->
+  <div id="game-blunt" class="game-screen">
+    <div class="blunt-main">
+      <div class="blunt-stats">
+        <div class="stat-card">
+          <div class="stat-val" id="blunt-count">0</div>
+          <div class="stat-label">Blunts Rolled</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-val" id="blunt-per-sec">0</div>
+          <div class="stat-label">Per Second</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-val" id="blunt-total">0</div>
+          <div class="stat-label">All Time</div>
+        </div>
+      </div>
+
+      <div class="blunt-clickzone" id="bluntZone">
+        <div class="blunt-ring"></div>
+        <div class="blunt-ring"></div>
+        <div class="blunt-ring"></div>
+        <button class="blunt-btn" id="bluntBtn" onclick="rollBlunt(event)">
+          <span class="btn-icon">🚬</span>
+          <span class="btn-label">Roll It</span>
+        </button>
+      </div>
+
+      <div class="quip-box" id="quipBox">Waiting for the vibe to settle...</div>
+    </div>
+
+    <div class="upgrade-panel">
+      <h3>✨ Upgrades</h3>
+      <div id="upgrade-list"></div>
+    </div>
+  </div>
+
+  <!-- GAME 2: GROW ROOM -->
+  <div id="game-grow" class="game-screen">
+    <div class="plant-card" id="plant-0">
+      <div class="plant-glow"></div>
+      <div class="plant-reward">+50 VP harvest</div>
+      <span class="plant-emoji" id="plant-emoji-0">🌱</span>
+      <div class="plant-name">Blue Dream</div>
+      <div class="plant-strain">Sativa Dominant · Euphoric</div>
+      <div class="grow-bar-wrap"><div class="grow-bar" id="grow-bar-0" style="width:0%"></div></div>
+      <div class="grow-stage" id="grow-stage-0">Stage: Germination</div>
+      <div class="plant-actions">
+        <button class="plant-btn" onclick="waterPlant(0)">💧 Water</button>
+        <button class="plant-btn" onclick="feedPlant(0)">🌿 Feed</button>
+        <button class="plant-btn primary" onclick="harvestPlant(0)" id="harvest-0" disabled>🌾 Harvest</button>
+      </div>
+    </div>
+
+    <div class="plant-card" id="plant-1">
+      <div class="plant-glow"></div>
+      <div class="plant-reward">+80 VP harvest</div>
+      <span class="plant-emoji" id="plant-emoji-1">🌱</span>
+      <div class="plant-name">OG Kush</div>
+      <div class="plant-strain">Indica Dominant · Relaxing</div>
+      <div class="grow-bar-wrap"><div class="grow-bar" id="grow-bar-1" style="width:0%"></div></div>
+      <div class="grow-stage" id="grow-stage-1">Stage: Germination</div>
+      <div class="plant-actions">
+        <button class="plant-btn" onclick="waterPlant(1)">💧 Water</button>
+        <button class="plant-btn" onclick="feedPlant(1)">🌿 Feed</button>
+        <button class="plant-btn primary" onclick="harvestPlant(1)" id="harvest-1" disabled>🌾 Harvest</button>
+      </div>
+    </div>
+
+    <div class="plant-card" id="plant-2">
+      <div class="plant-glow"></div>
+      <div class="plant-reward">+120 VP harvest</div>
+      <span class="plant-emoji" id="plant-emoji-2">🌱</span>
+      <div class="plant-name">Purple Haze</div>
+      <div class="plant-strain">Hybrid · Creative</div>
+      <div class="grow-bar-wrap"><div class="grow-bar" id="grow-bar-2" style="width:0%"></div></div>
+      <div class="grow-stage" id="grow-stage-2">Stage: Germination</div>
+      <div class="plant-actions">
+        <button class="plant-btn" onclick="waterPlant(2)">💧 Water</button>
+        <button class="plant-btn" onclick="feedPlant(2)">🌿 Feed</button>
+        <button class="plant-btn primary" onclick="harvestPlant(2)" id="harvest-2" disabled>🌾 Harvest</button>
+      </div>
+    </div>
+
+    <div class="grow-bottom">
+      <div class="grow-stat">
+        <div class="gs-val" id="grow-harvests">0</div>
+        <div class="gs-label">Harvests</div>
+      </div>
+      <div class="grow-stat">
+        <div class="gs-val" id="grow-vp">0</div>
+        <div class="gs-label">VP Earned</div>
+      </div>
+      <div class="grow-stat">
+        <div class="gs-val" id="grow-streak">0</div>
+        <div class="gs-label">Streak</div>
+      </div>
+      <div style="color:var(--muted);font-size:0.72rem;max-width:260px;line-height:1.6;font-style:italic;">
+        Water and feed your plants regularly. Harvest at 100% for maximum Vibe Points. Miss the window and they'll go to seed.
+      </div>
+    </div>
+  </div>
+
+  <!-- GAME 3: MUNCHIE MADNESS -->
+  <div id="game-munchie" class="game-screen">
+    <div class="munchie-arena">
+      <h3>Munchie Madness 🍕</h3>
+      <p>Tap the snacks before they disappear. Don't tap the 🥦 — unless you're that person.</p>
+
+      <div class="munchie-grid" id="munchieGrid">
+        <!-- holes generated by JS -->
+      </div>
+
+      <div class="munchie-hud">
+        <div>
+          <div style="font-size:0.62rem;color:var(--muted);letter-spacing:0.1em;text-transform:uppercase;margin-bottom:2px;">Score</div>
+          <div class="munchie-score-big" id="munchie-score">0</div>
+        </div>
+        <div id="munchie-ctrl">
+          <button class="munchie-start" id="munchie-start-btn" onclick="startMunchie()">Play 🍕</button>
+        </div>
+        <div style="text-align:right">
+          <div style="font-size:0.62rem;color:var(--muted);letter-spacing:0.1em;text-transform:uppercase;margin-bottom:2px;">Time</div>
+          <div class="munchie-timer" id="munchie-timer">30</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="munchie-side">
+      <div class="munchie-leaderboard">
+        <h3>🏆 High Scores</h3>
+        <div id="lb-rows">
+          <div class="lb-row"><span class="lb-rank">#1</span><span class="lb-name">GrannyTokes420</span><span class="lb-pts">420</span></div>
+          <div class="lb-row"><span class="lb-rank">#2</span><span class="lb-name">CouchLockKing</span><span class="lb-pts">390</span></div>
+          <div class="lb-row"><span class="lb-rank">#3</span><span class="lb-name">MunchieMonster</span><span class="lb-pts">315</span></div>
+          <div class="lb-row"><span class="lb-rank">#4</span><span class="lb-name">VibeCheckVera</span><span class="lb-pts">280</span></div>
+          <div class="lb-row"><span class="lb-rank">#5</span><span class="lb-name">You</span><span class="lb-pts" id="lb-you">—</span></div>
+        </div>
+      </div>
+
+      <div class="munchie-leaderboard">
+        <h3>📖 Score Guide</h3>
+        <div class="lb-row"><span>🍕 Pizza</span><span class="lb-pts">+10</span></div>
+        <div class="lb-row"><span>🍔 Burger</span><span class="lb-pts">+8</span></div>
+        <div class="lb-row"><span>🍩 Donut</span><span class="lb-pts">+6</span></div>
+        <div class="lb-row"><span>🍫 Choc</span><span class="lb-pts">+12</span></div>
+        <div class="lb-row"><span>🍟 Fries</span><span class="lb-pts">+7</span></div>
+        <div class="lb-row"><span>🥦 Broccoli</span><span class="lb-pts" style="color:#ef4444">-5</span></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- GAME 4: THE TRIP -->
+  <div id="game-trip" class="game-screen">
+    <div class="trip-canvas-wrap">
+      <canvas id="tripCanvas" width="700" height="420"></canvas>
+    </div>
+
+    <div class="trip-stats">
+      <div class="trip-stat">
+        <div class="ts-val" id="trip-clicks">0</div>
+        <div class="ts-label">Portals Opened</div>
+      </div>
+      <div class="trip-stat">
+        <div class="ts-val" id="trip-shapes">0</div>
+        <div class="ts-label">Shapes Born</div>
+      </div>
+      <div class="trip-stat">
+        <div class="ts-val" id="trip-depth">1</div>
+        <div class="ts-label">Trip Depth</div>
+      </div>
+    </div>
+
+    <div class="trip-controls">
+      <button class="trip-btn active-mode" id="mode-cosmic" onclick="setTripMode('cosmic')">🌌 Cosmic</button>
+      <button class="trip-btn" id="mode-mandala" onclick="setTripMode('mandala')">🌸 Mandala</button>
+      <button class="trip-btn" id="mode-lava" onclick="setTripMode('lava')">🔥 Lava Lamp</button>
+      <button class="trip-btn" id="mode-crystal" onclick="setTripMode('crystal')">💎 Crystal</button>
+      <button class="trip-btn" onclick="clearTrip()" style="border-color:rgba(239,68,68,0.3);color:rgba(239,68,68,0.6)">✕ Reset</button>
+    </div>
+
+    <div style="color:var(--muted);font-size:0.72rem;text-align:center;font-style:italic;">
+      Click anywhere on the canvas to create cosmic formations. Each mode generates different geometries.
+    </div>
+  </div>
+</main>
+
+<!-- Toast -->
+<div class="toast" id="toast">
+  <span class="toast-icon" id="toast-icon">🌿</span>
+  <div id="toast-title">Achievement</div>
+  <div class="toast-msg" id="toast-msg"></div>
+</div>
+
+<script>
+// ===== GLOBAL STATE =====
+let vibePoints = 0;
+let currentGame = 'home';
+
+function updateVibe(n) {
+  vibePoints += n;
+  document.getElementById('total-vibe').textContent = formatNum(vibePoints);
+}
+
+function formatNum(n) {
+  if (n >= 1e9) return (n/1e9).toFixed(1) + 'B';
+  if (n >= 1e6) return (n/1e6).toFixed(1) + 'M';
+  if (n >= 1e3) return (n/1e3).toFixed(1) + 'K';
+  return Math.floor(n).toString();
+}
+
+// ===== NAVIGATION =====
+function showGame(name) {
+  document.querySelectorAll('.game-screen').forEach(s => s.classList.remove('active'));
+  document.querySelectorAll('.game-tab').forEach(t => t.classList.remove('active'));
+
+  const screen = document.getElementById('game-' + name);
+  if (screen) screen.classList.add('active');
+
+  const tabs = document.querySelectorAll('.game-tab');
+  const labels = { home: 0, blunt: 1, grow: 2, munchie: 3, trip: 4 };
+  if (tabs[labels[name]]) tabs[labels[name]].classList.add('active');
+
+  currentGame = name;
+  if (name === 'trip') initTrip();
+}
+
+// ===== TOAST =====
+let toastTimer;
+function showToast(icon, title, msg) {
+  clearTimeout(toastTimer);
+  document.getElementById('toast-icon').textContent = icon;
+  document.getElementById('toast-title').textContent = title;
+  document.getElementById('toast-msg').textContent = msg;
+  const t = document.getElementById('toast');
+  t.classList.add('show');
+  toastTimer = setTimeout(() => t.classList.remove('show'), 3500);
+}
+
+// ===== GAME 1: BLUNT ROLLER =====
+const UPGRADES = [
+  { id: 0, name: 'Rizla Gold', desc: 'Better papers. +1 per click.', icon: '📜', cost: 25, cps: 0, cpc: 1 },
+  { id: 1, name: 'Herb Grinder', desc: 'Automatic grind. +1/sec.', icon: '⚙️', cost: 100, cps: 1, cpc: 0 },
+  { id: 2, name: 'Apprentice Roller', desc: 'Hire someone decent. +3/sec.', icon: '🧑', cost: 400, cps: 3, cpc: 0 },
+  { id: 3, name: 'Gold Filter Tips', desc: 'Luxury vibes. +3 per click.', icon: '✨', cost: 800, cps: 0, cpc: 3 },
+  { id: 4, name: 'The Rolling Machine', desc: 'Industrial efficiency. +10/sec.', icon: '🏭', cost: 2000, cps: 10, cpc: 0 },
+  { id: 5, name: 'Himalayan Salt Lamp', desc: 'Improves the energy. +5/sec.', icon: '🪨', cost: 5000, cps: 5, cpc: 0 },
+  { id: 6, name: 'Cosmic Dispensary', desc: 'You are the supply chain now. +50/sec.', icon: '🌌', cost: 15000, cps: 50, cpc: 0 },
+];
+
+let bluntState = {
+  count: 0,
+  total: 0,
+  cps: 0,
+  cpc: 1,
+  owned: [],
+};
+
+const QUIPS = [
+  "You're really good at this.",
+  "Grandma called. She wants tips.",
+  "The Dalai Lama would be impressed.",
+  "Are you even looking at what you're doing?",
+  "Rolling at legendary speed.",
+  "Your ancestors are vibing.",
+  "Don't stop. Never stop.",
+  "The universe approves.",
+  "You have achieved bliss.",
+  "Even sober people respect this."
+];
+
+function renderUpgrades() {
+  const list = document.getElementById('upgrade-list');
+  list.innerHTML = '';
+  UPGRADES.forEach(u => {
+    const owned = bluntState.owned.includes(u.id);
+    const canAfford = bluntState.count >= u.cost;
+    const div = document.createElement('div');
+    div.className = 'upgrade-item' + (owned ? ' locked' : (canAfford ? '' : ' locked'));
+    div.innerHTML = `
+      <span class="upg-icon">${u.icon}</span>
+      <div class="upg-info">
+        <div class="upg-name">${u.name} ${owned ? '✓' : ''}</div>
+        <div class="upg-desc">${u.desc}</div>
+      </div>
+      <div class="upg-cost">${owned ? 'Owned' : formatNum(u.cost) + ' 🚬'}</div>
+    `;
+    if (!owned && canAfford) {
+      div.onclick = () => buyUpgrade(u.id);
+    }
+    list.appendChild(div);
+  });
+}
+
+function buyUpgrade(id) {
+  const u = UPGRADES[id];
+  if (bluntState.owned.includes(id) || bluntState.count < u.cost) return;
+  bluntState.count -= u.cost;
+  bluntState.owned.push(id);
+  bluntState.cps += u.cps;
+  bluntState.cpc += u.cpc;
+  renderUpgrades();
+  updateBluntUI();
+  showToast(u.icon, u.name + ' unlocked!', u.desc);
+}
+
+function rollBlunt(e) {
+  bluntState.count += bluntState.cpc;
+  bluntState.total += bluntState.cpc;
+  updateBluntUI();
+  spawnFloater(e, '+' + bluntState.cpc);
+  spawnSmoke(e);
+  randomQuip();
+  updateVibe(bluntState.cpc);
+}
+
+function spawnFloater(e, text) {
+  const zone = document.getElementById('bluntZone');
+  const rect = zone.getBoundingClientRect();
+  const el = document.createElement('div');
+  el.className = 'click-floater';
+  el.textContent = text;
+  el.style.left = (e.clientX - rect.left - 10) + 'px';
+  el.style.top = (e.clientY - rect.top - 20) + 'px';
+  zone.appendChild(el);
+  setTimeout(() => el.remove(), 1000);
+}
+
+function spawnSmoke(e) {
+  const zone = document.getElementById('bluntZone');
+  const rect = zone.getBoundingClientRect();
+  for (let i = 0; i < 5; i++) {
+    const p = document.createElement('div');
+    p.className = 'smoke-particle';
+    const dx = (Math.random() - 0.5) * 60;
+    const dy = -(Math.random() * 60 + 20);
+    p.style.setProperty('--dx', dx + 'px');
+    p.style.setProperty('--dy', dy + 'px');
+    p.style.left = (e.clientX - rect.left) + 'px';
+    p.style.top = (e.clientY - rect.top) + 'px';
+    zone.appendChild(p);
+    setTimeout(() => p.remove(), 1500);
+  }
+}
+
+let lastQuip = -1;
+function randomQuip() {
+  if (Math.random() > 0.15) return;
+  let idx;
+  do { idx = Math.floor(Math.random() * QUIPS.length); } while (idx === lastQuip);
+  lastQuip = idx;
+  document.getElementById('quipBox').textContent = '"' + QUIPS[idx] + '"';
+}
+
+function updateBluntUI() {
+  document.getElementById('blunt-count').textContent = formatNum(bluntState.count);
+  document.getElementById('blunt-per-sec').textContent = formatNum(bluntState.cps);
+  document.getElementById('blunt-total').textContent = formatNum(bluntState.total);
+  renderUpgrades();
+}
+
+setInterval(() => {
+  if (bluntState.cps > 0) {
+    bluntState.count += bluntState.cps / 10;
+    bluntState.total += bluntState.cps / 10;
+    updateVibe(bluntState.cps / 10);
+    updateBluntUI();
+  }
+}, 100);
+
+renderUpgrades();
+
+// ===== GAME 2: GROW ROOM =====
+const STAGES = [
+  { name: 'Germination', emoji: '🌱', threshold: 0 },
+  { name: 'Seedling', emoji: '🌿', threshold: 20 },
+  { name: 'Vegetative', emoji: '🍀', threshold: 45 },
+  { name: 'Flowering', emoji: '🌸', threshold: 70 },
+  { name: 'Harvest Ready', emoji: '🌾', threshold: 100 },
+];
+
+const HARVEST_VP = [50, 80, 120];
+
+let plants = [
+  { growth: 0, water: 100, nutrients: 100, lastWater: Date.now(), lastFeed: Date.now() },
+  { growth: 0, water: 100, nutrients: 100, lastWater: Date.now(), lastFeed: Date.now() },
+  { growth: 0, water: 100, nutrients: 100, lastWater: Date.now(), lastFeed: Date.now() },
+];
+
+let growHarvests = 0, growVP = 0, growStreak = 0;
+
+function getStage(growth) {
+  let s = STAGES[0];
+  for (const st of STAGES) { if (growth >= st.threshold) s = st; }
+  return s;
+}
+
+function updatePlantUI(i) {
+  const p = plants[i];
+  const stage = getStage(p.growth);
+  const bar = document.getElementById('grow-bar-' + i);
+  const stageEl = document.getElementById('grow-stage-' + i);
+  const emoji = document.getElementById('plant-emoji-' + i);
+  const btn = document.getElementById('harvest-' + i);
+  bar.style.width = Math.min(p.growth, 100) + '%';
+  stageEl.textContent = 'Stage: ' + stage.name + ' · Water: ' + Math.round(p.water) + '% · Nutes: ' + Math.round(p.nutrients) + '%';
+  emoji.textContent = stage.emoji;
+  btn.disabled = p.growth < 100;
+}
+
+function waterPlant(i) {
+  plants[i].water = Math.min(100, plants[i].water + 30);
+  plants[i].lastWater = Date.now();
+  showToast('💧', 'Watered!', 'Your plant is happy.');
+  updatePlantUI(i);
+}
+
+function feedPlant(i) {
+  plants[i].nutrients = Math.min(100, plants[i].nutrients + 30);
+  plants[i].lastFeed = Date.now();
+  showToast('🌿', 'Fed!', 'Nutrients topped up.');
+  updatePlantUI(i);
+}
+
+function harvestPlant(i) {
+  if (plants[i].growth < 100) return;
+  const vp = HARVEST_VP[i];
+  updateVibe(vp);
+  growVP += vp;
+  growHarvests++;
+  growStreak++;
+  plants[i] = { growth: 0, water: 100, nutrients: 100, lastWater: Date.now(), lastFeed: Date.now() };
+  document.getElementById('grow-harvests').textContent = growHarvests;
+  document.getElementById('grow-vp').textContent = growVP;
+  document.getElementById('grow-streak').textContent = growStreak;
+  showToast('🌾', 'Harvested!', '+' + vp + ' Vibe Points earned.');
+  updatePlantUI(i);
+}
+
+setInterval(() => {
+  const now = Date.now();
+  plants.forEach((p, i) => {
+    if (p.growth >= 100) return;
+    const waterBonus = p.water > 50 ? 1 : 0.3;
+    const nuteBonus = p.nutrients > 50 ? 1 : 0.3;
+    p.growth = Math.min(100, p.growth + 0.04 * waterBonus * nuteBonus);
+    p.water = Math.max(0, p.water - 0.02);
+    p.nutrients = Math.max(0, p.nutrients - 0.015);
+    updatePlantUI(i);
+  });
+}, 200);
+
+// ===== GAME 3: MUNCHIE MADNESS =====
+const MUNCHIE_FOODS = [
+  { emoji: '🍕', pts: 10 },
+  { emoji: '🍔', pts: 8 },
+  { emoji: '🍩', pts: 6 },
+  { emoji: '🍫', pts: 12 },
+  { emoji: '🍟', pts: 7 },
+  { emoji: '🍕', pts: 10 },
+  { emoji: '🍦', pts: 9 },
+  { emoji: '🧀', pts: 5 },
+  { emoji: '🥨', pts: 4 },
+  { emoji: '🍕', pts: 10 },
+];
+
+let munchieState = {
+  score: 0,
+  timeLeft: 30,
+  running: false,
+  holes: Array(20).fill(null),
+  timers: [],
+  gameTimer: null
+};
+
+function buildMunchieGrid() {
+  const grid = document.getElementById('munchieGrid');
+  grid.innerHTML = '';
+  for (let i = 0; i < 20; i++) {
+    const h = document.createElement('div');
+    h.className = 'munchie-hole';
+    h.id = 'hole-' + i;
+    h.innerHTML = '<span class="food-item" id="food-' + i + '"></span>';
+    h.onclick = () => hitHole(i);
+    grid.appendChild(h);
+  }
+}
+
+buildMunchieGrid();
+
+function startMunchie() {
+  munchieState.score = 0;
+  munchieState.timeLeft = 30;
+  munchieState.running = true;
+  document.getElementById('munchie-start-btn').textContent = 'Running...';
+  document.getElementById('munchie-start-btn').disabled = true;
+  document.getElementById('munchie-score').textContent = '0';
+
+  clearAllMunchieTimers();
+
+  munchieState.gameTimer = setInterval(() => {
+    munchieState.timeLeft--;
+    document.getElementById('munchie-timer').textContent = munchieState.timeLeft;
+    if (munchieState.timeLeft <= 0) endMunchie();
+  }, 1000);
+
+  scheduleNextFood();
+}
+
+function scheduleNextFood() {
+  if (!munchieState.running) return;
+  const delay = 400 + Math.random() * 600;
+  const t = setTimeout(() => {
+    spawnFood();
+    scheduleNextFood();
+  }, delay);
+  munchieState.timers.push(t);
+}
+
+function spawnFood() {
+  const emptyHoles = [];
+  for (let i = 0; i < 20; i++) {
+    if (!munchieState.holes[i]) emptyHoles.push(i);
+  }
+  if (emptyHoles.length === 0) return;
+  const idx = emptyHoles[Math.floor(Math.random() * emptyHoles.length)];
+  const isBroc = Math.random() < 0.12;
+  const food = isBroc ? { emoji: '🥦', pts: -5 } : MUNCHIE_FOODS[Math.floor(Math.random() * MUNCHIE_FOODS.length)];
+  munchieState.holes[idx] = food;
+  const hole = document.getElementById('hole-' + idx);
+  const foodEl = document.getElementById('food-' + idx);
+  hole.classList.add('active');
+  foodEl.textContent = food.emoji;
+  const disappear = setTimeout(() => {
+    clearHole(idx);
+  }, 1200 + Math.random() * 600);
+  munchieState.timers.push(disappear);
+}
+
+function hitHole(i) {
+  if (!munchieState.running || !munchieState.holes[i]) return;
+  const food = munchieState.holes[i];
+  munchieState.score += food.pts;
+  if (munchieState.score < 0) munchieState.score = 0;
+  document.getElementById('munchie-score').textContent = munchieState.score;
+  const hole = document.getElementById('hole-' + i);
+  hole.classList.add(food.pts > 0 ? 'hit' : 'missed');
+  clearHole(i);
+  setTimeout(() => { hole.classList.remove('hit', 'missed'); }, 300);
+}
+
+function clearHole(i) {
+  munchieState.holes[i] = null;
+  const hole = document.getElementById('hole-' + i);
+  const foodEl = document.getElementById('food-' + i);
+  hole.classList.remove('active');
+  foodEl.textContent = '';
+}
+
+function clearAllMunchieTimers() {
+  munchieState.timers.forEach(t => clearTimeout(t));
+  munchieState.timers = [];
+  if (munchieState.gameTimer) clearInterval(munchieState.gameTimer);
+  for (let i = 0; i < 20; i++) clearHole(i);
+}
+
+function endMunchie() {
+  munchieState.running = false;
+  clearAllMunchieTimers();
+  document.getElementById('munchie-timer').textContent = '0';
+  document.getElementById('munchie-start-btn').textContent = 'Play Again 🍕';
+  document.getElementById('munchie-start-btn').disabled = false;
+  document.getElementById('lb-you').textContent = munchieState.score;
+  updateVibe(munchieState.score);
+  showToast('🏆', 'Game Over!', 'You scored ' + munchieState.score + ' points! +' + munchieState.score + ' VP');
+}
+
+// ===== GAME 4: THE TRIP =====
+let tripMode = 'cosmic';
+let tripClicks = 0;
+let tripShapes = 0;
+let tripDepth = 1;
+let tripCanvas, tripCtx;
+let tripParticles = [];
+let tripAnimFrame;
+let tripInitialized = false;
+
+function setTripMode(mode) {
+  tripMode = mode;
+  document.querySelectorAll('.trip-btn').forEach(b => b.classList.remove('active-mode'));
+  document.getElementById('mode-' + mode).classList.add('active-mode');
+}
+
+function initTrip() {
+  if (tripInitialized) return;
+  tripCanvas = document.getElementById('tripCanvas');
+  tripCtx = tripCanvas.getContext('2d');
+  tripCanvas.width = tripCanvas.offsetWidth;
+  tripCanvas.height = tripCanvas.offsetWidth * 0.6;
+  tripCanvas.onclick = (e) => handleTripClick(e);
+  tripInitialized = true;
+  fillBg();
+  animateTrip();
+}
+
+function fillBg() {
+  const grad = tripCtx.createRadialGradient(
+    tripCanvas.width/2, tripCanvas.height/2, 0,
+    tripCanvas.width/2, tripCanvas.height/2, tripCanvas.width/2
+  );
+  grad.addColorStop(0, '#111a0e');
+  grad.addColorStop(1, '#0a0d08');
+  tripCtx.fillStyle = grad;
+  tripCtx.fillRect(0, 0, tripCanvas.width, tripCanvas.height);
+}
+
+function handleTripClick(e) {
+  const rect = tripCanvas.getBoundingClientRect();
+  const x = (e.clientX - rect.left) * (tripCanvas.width / rect.width);
+  const y = (e.clientY - rect.top) * (tripCanvas.height / rect.height);
+  tripClicks++;
+  tripDepth = Math.min(10, Math.ceil(tripClicks / 5));
+  document.getElementById('trip-clicks').textContent = tripClicks;
+  document.getElementById('trip-depth').textContent = tripDepth;
+  updateVibe(tripDepth);
+  spawnTripShape(x, y);
+}
+
+function spawnTripShape(x, y) {
+  const count = tripMode === 'mandala' ? 8 : tripMode === 'crystal' ? 6 : 1;
+  for (let c = 0; c < count; c++) {
+    const angle = (c / count) * Math.PI * 2;
+    const r = tripMode === 'mandala' || tripMode === 'crystal' ? 80 : 0;
+    const sx = x + Math.cos(angle) * r;
+    const sy = y + Math.sin(angle) * r;
+    const colors = {
+      cosmic: ['#4ade80','#a855f7','#fbbf24','#f472b6','#60a5fa'],
+      mandala: ['#fbbf24','#f97316','#f472b6','#a855f7'],
+      lava: ['#ef4444','#f97316','#fbbf24','#dc2626'],
+      crystal: ['#60a5fa','#a855f7','#e0f2fe','#c7d2fe'],
+    };
+    const palette = colors[tripMode];
+    const color = palette[Math.floor(Math.random() * palette.length)];
+    const sides = tripMode === 'crystal' ? 6 : tripMode === 'mandala' ? 8 : (3 + Math.floor(Math.random() * 5));
+    const size = 20 + Math.random() * 60 * (tripDepth / 5);
+    const particle = {
+      x: sx, y: sy,
+      vx: (Math.random() - 0.5) * (tripMode === 'lava' ? 0.5 : 1.5),
+      vy: (Math.random() - 0.5) * (tripMode === 'lava' ? 0.3 : 1.5),
+      size,
+      color,
+      alpha: 0.8 + Math.random() * 0.2,
+      decay: 0.003 + Math.random() * 0.004,
+      rotation: Math.random() * Math.PI * 2,
+      rotSpeed: (Math.random() - 0.5) * 0.04,
+      sides,
+      pulse: Math.random() * Math.PI * 2,
+    };
+    tripParticles.push(particle);
+    tripShapes++;
+  }
+  document.getElementById('trip-shapes').textContent = tripShapes;
+}
+
+function drawPolygon(ctx, x, y, sides, size, rotation) {
+  ctx.beginPath();
+  for (let i = 0; i < sides; i++) {
+    const a = rotation + (i / sides) * Math.PI * 2;
+    const px = x + Math.cos(a) * size;
+    const py = y + Math.sin(a) * size;
+    i === 0 ? ctx.moveTo(px, py) : ctx.lineTo(px, py);
+  }
+  ctx.closePath();
+}
+
+function animateTrip() {
+  if (!tripCanvas) { tripAnimFrame = requestAnimationFrame(animateTrip); return; }
+  tripCtx.fillStyle = 'rgba(10,13,8,0.04)';
+  tripCtx.fillRect(0, 0, tripCanvas.width, tripCanvas.height);
+
+  tripParticles = tripParticles.filter(p => p.alpha > 0.01);
+
+  tripParticles.forEach(p => {
+    p.x += p.vx;
+    p.y += p.vy;
+    p.rotation += p.rotSpeed;
+    p.alpha -= p.decay;
+    p.pulse += 0.05;
+
+    const pulsedSize = p.size * (1 + 0.1 * Math.sin(p.pulse));
+    tripCtx.save();
+    tripCtx.globalAlpha = p.alpha;
+
+    // Glow
+    const grd = tripCtx.createRadialGradient(p.x, p.y, 0, p.x, p.y, pulsedSize);
+    grd.addColorStop(0, p.color + 'ff');
+    grd.addColorStop(0.5, p.color + '80');
+    grd.addColorStop(1, p.color + '00');
+    tripCtx.fillStyle = grd;
+    tripCtx.beginPath();
+    tripCtx.arc(p.x, p.y, pulsedSize * 1.5, 0, Math.PI * 2);
+    tripCtx.fill();
+
+    // Shape
+    tripCtx.strokeStyle = p.color;
+    tripCtx.lineWidth = 1.5;
+    tripCtx.fillStyle = p.color + '30';
+    drawPolygon(tripCtx, p.x, p.y, p.sides, pulsedSize * 0.6, p.rotation);
+    tripCtx.fill();
+    tripCtx.stroke();
+
+    tripCtx.restore();
+  });
+
+  tripAnimFrame = requestAnimationFrame(animateTrip);
+}
+
+function clearTrip() {
+  tripParticles = [];
+  fillBg();
+  tripClicks = 0; tripShapes = 0; tripDepth = 1;
+  document.getElementById('trip-clicks').textContent = 0;
+  document.getElementById('trip-shapes').textContent = 0;
+  document.getElementById('trip-depth').textContent = 1;
+}
+
+// Mouse-track glow on game cards
+document.querySelectorAll('.game-card').forEach(card => {
+  card.addEventListener('mousemove', e => {
+    const rect = card.getBoundingClientRect();
+    card.style.setProperty('--mx', ((e.clientX - rect.left) / rect.width * 100) + '%');
+    card.style.setProperty('--my', ((e.clientY - rect.top) / rect.height * 100) + '%');
+  });
+});
+
+// Auto-quip idle timer
+setInterval(() => {
+  if (currentGame === 'blunt' && bluntState.cps > 0) {
+    document.getElementById('quipBox').textContent = '"' + QUIPS[Math.floor(Math.random() * QUIPS.length)] + '"';
+  }
+}, 8000);
+
+// Welcome toast
+setTimeout(() => showToast('🌿', 'Welcome to the Arcade', 'Pick a game. Embrace the vibe.'), 1500);
+</script>
+</body>
+</html>
