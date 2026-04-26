@@ -4,7 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>The High Score Arcade 🌿</title>
-<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;700;900&family=DM+Mono:wght@300;400;500&family=Unbounded:wght@300;700;900&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;700;900&family=DM+Mono:wght@300;400;500&family=Unbounded:wght@300;700;900&family=Permanent+Marker&display=swap" rel="stylesheet">
 <style>
   :root {
     --bg: #0a0d08;
@@ -1200,7 +1200,7 @@
 
 
   /* ========== COMIC BOOK SECTION ========== */
-  @import url('https://fonts.googleapis.com/css2?family=Bangers&family=Comic+Neue:ital,wght@0,700;1,700&display=swap');
+
 
   #game-comics.active {
     display: flex;
@@ -1231,7 +1231,7 @@
   }
 
   .comics-header .subtitle {
-    font-family: 'Comic Neue', 'DM Mono', cursive;
+    font-family: 'Permanent Marker', 'Bangers', cursive;
     font-size: 0.9rem;
     color: var(--muted);
     margin-top: 8px;
@@ -1292,7 +1292,7 @@
   }
 
   .comic-title-bar .ct-episode {
-    font-family: 'Comic Neue', cursive;
+    font-family: 'Permanent Marker', cursive;
     font-size: 0.7rem;
     color: rgba(255,255,255,0.5);
     font-style: italic;
@@ -1358,7 +1358,7 @@
     border: 2.5px solid #000;
     border-radius: 18px;
     padding: 6px 12px;
-    font-family: 'Comic Neue', 'Bangers', cursive;
+    font-family: 'Permanent Marker', cursive;
     font-weight: 700;
     font-size: 0.78rem;
     line-height: 1.3;
@@ -1425,7 +1425,7 @@
   .panel-caption {
     background: #000;
     color: #fff;
-    font-family: 'Comic Neue', cursive;
+    font-family: 'Permanent Marker', cursive;
     font-size: 0.68rem;
     font-weight: 700;
     padding: 4px 10px;
@@ -1457,7 +1457,7 @@
   .comic-footer-bar {
     background: #000;
     color: rgba(255,255,255,0.4);
-    font-family: 'Comic Neue', cursive;
+    font-family: 'Permanent Marker', cursive;
     font-size: 0.62rem;
     padding: 4px 14px;
     text-align: right;
@@ -3065,523 +3065,387 @@ setTimeout(() => showToast('🌿', 'Welcome to the Arcade', 'Pick a game. Embrac
 
 
 // ===================================================
-// COMIC BOOK ENGINE
+// COMIC BOOK ENGINE v2 — Funnier. Better font.
 // ===================================================
 (function(){
 
-const COMICS = [
-  {
-    id: 1,
-    title: "HAROLD & THE SNACK QUEST",
-    episode: "Issue #1 · The Beginning of a Beautiful Problem",
-    category: "adventure",
-    footer: "To be continued... probably after a nap.",
-    panels: [
-      {
-        cols: 1, bg: 'panel-bg-indoor',
-        caption: { text: '11:47 PM. A suburban kitchen.', pos: 'top' },
-        art: `<svg viewBox="0 0 280 180" class="panel-art">
-          <!-- Fridge -->
-          <rect x="30" y="20" width="80" height="160" rx="4" fill="#e0e0e0" stroke="#000" stroke-width="2.5"/>
-          <rect x="30" y="20" width="80" height="85" rx="2" fill="#f5f5f5" stroke="#000" stroke-width="2"/>
-          <rect x="35" y="25" width="70" height="75" rx="2" fill="#ecf9ec"/>
-          <!-- Fridge contents -->
-          <text x="48" y="60" font-size="22">🍕</text><text x="78" y="60" font-size="18">🧀</text>
-          <text x="48" y="90" font-size="16">🥡</text><text x="75" y="90" font-size="18">🍫</text>
-          <!-- Handle -->
-          <rect x="102" y="50" width="8" height="30" rx="4" fill="#bbb" stroke="#000" stroke-width="1.5"/>
-          <!-- Floor -->
-          <rect x="0" y="168" width="280" height="12" fill="#d4a853" stroke="#000" stroke-width="2"/>
-          <!-- Harold the figure -->
-          <ellipse cx="200" cy="80" rx="28" ry="28" fill="#ffd29d" stroke="#000" stroke-width="2.5"/>
-          <text x="178" y="90" font-size="28">😐</text>
-          <!-- Body -->
-          <rect x="178" y="106" width="44" height="52" rx="8" fill="#4a7c59" stroke="#000" stroke-width="2"/>
-          <!-- Legs -->
-          <rect x="183" y="155" width="14" height="25" rx="4" fill="#2c3e50" stroke="#000" stroke-width="2"/>
-          <rect x="203" y="155" width="14" height="25" rx="4" fill="#2c3e50" stroke="#000" stroke-width="2"/>
-          <!-- Arms reaching -->
-          <line x1="178" y1="120" x2="145" y2="108" stroke="#ffd29d" stroke-width="10" stroke-linecap="round"/>
-          <line x1="222" y1="120" x2="245" y2="108" stroke="#ffd29d" stroke-width="10" stroke-linecap="round"/>
-        </svg>`,
-        bubble: { text: "I'm not even hungry.", pos: { top: '5px', right: '10px' }, tail: 'tail-down', style: '' }
-      },
-      {
-        cols: 1, bg: 'panel-bg-indoor',
-        art: `<svg viewBox="0 0 280 180" class="panel-art">
-          <!-- Clock -->
-          <circle cx="40" cy="30" r="24" fill="#fff" stroke="#000" stroke-width="2.5"/>
-          <text x="28" y="36" font-size="14" font-weight="bold" fill="#000">2:17</text>
-          <!-- Table covered in snacks -->
-          <rect x="10" y="110" width="260" height="20" rx="4" fill="#8B6914" stroke="#000" stroke-width="2.5"/>
-          <text x="15" y="108" font-size="20">🍕</text><text x="48" y="108" font-size="20">🍔</text>
-          <text x="82" y="108" font-size="18">🍩</text><text x="114" y="108" font-size="22">🌮</text>
-          <text x="148" y="108" font-size="18">🍟</text><text x="180" y="108" font-size="20">🧆</text>
-          <text x="214" y="108" font-size="18">🥨</text><text x="246" y="105" font-size="22">🍫</text>
-          <!-- Harold sitting, eyes wide -->
-          <ellipse cx="140" cy="55" rx="30" ry="30" fill="#ffd29d" stroke="#000" stroke-width="2.5"/>
-          <circle cx="129" cy="50" r="6" fill="#000"/>
-          <circle cx="151" cy="50" r="6" fill="#000"/>
-          <circle cx="131" cy="48" r="2" fill="#fff"/>
-          <circle cx="153" cy="48" r="2" fill="#fff"/>
-          <path d="M128 68 Q140 75 152 68" stroke="#000" stroke-width="2" fill="none"/>
-        </svg>`,
-        bubble: { text: "...just a little snack.", pos: { top: '5px', left: '10px' }, tail: 'tail-down', style: '' },
-        sfx: { text: 'MUNCH', pos: { bottom: '35px', right: '10px' }, color: 'green' }
-      },
-      {
-        cols: 2, bg: 'panel-bg-yellow',
-        caption: { text: '4 AM. The aftermath.', pos: 'top' },
-        art: `<svg viewBox="0 0 560 180" class="panel-art">
-          <!-- Destroyed kitchen -->
-          <rect x="0" y="140" width="560" height="40" fill="#d4a853" stroke="#000" stroke-width="2"/>
-          <!-- Empty boxes everywhere -->
-          <text x="20" y="138" font-size="28">📦</text><text x="70" y="135" font-size="24">🥡</text>
-          <text x="120" y="138" font-size="20">📦</text><text x="165" y="136" font-size="26">🍕</text>
-          <text x="220" y="135" font-size="22">📦</text><text x="270" y="138" font-size="18">🥡</text>
-          <!-- Harold lying on couch, satisfied -->
-          <rect x="320" y="100" width="200" height="60" rx="12" fill="#8B4513" stroke="#000" stroke-width="2.5"/>
-          <!-- Harold horizontal -->
-          <ellipse cx="370" cy="98" rx="28" ry="28" fill="#ffd29d" stroke="#000" stroke-width="2.5"/>
-          <text x="348" y="108" font-size="28">😌</text>
-          <rect x="380" y="96" width="130" height="40" rx="8" fill="#4a7c59" stroke="#000" stroke-width="2"/>
-          <!-- Belly -->
-          <ellipse cx="445" cy="116" rx="30" ry="18" fill="#ffd29d" stroke="#000" stroke-width="2"/>
-          <!-- Stars around head -->
-          <text x="325" y="80" font-size="16">⭐</text>
-          <text x="345" y="68" font-size="14">✨</text>
-          <text x="395" y="72" font-size="16">⭐</text>
-        </svg>`,
-        bubble: { text: "I regret nothing. Statistically.", pos: { top: '8px', left: '10px' }, tail: 'tail-down', style: '' }
-      }
-    ]
-  },
+// Comic font stack - Permanent Marker for handwritten, Bangers for SFX
+const CF = "'Permanent Marker', 'Bangers', cursive";
+const SFX_F = "'Bangers', 'Permanent Marker', cursive";
 
-  {
-    id: 2,
-    title: "DEEP THOUGHTS with GARY",
-    episode: "Issue #4 · The Couch Sessions",
-    category: "philosophy",
-    footer: "Gary has a philosophy degree. It cost $80,000. He uses it here.",
-    panels: [
-      {
-        cols: 1, bg: 'panel-bg-green',
-        caption: { text: 'Gary. The couch. Tuesday (or Thursday).', pos: 'top' },
-        art: `<svg viewBox="0 0 280 180" class="panel-art">
-          <!-- Couch -->
-          <rect x="10" y="100" width="260" height="70" rx="12" fill="#6b8e6b" stroke="#000" stroke-width="2.5"/>
-          <rect x="10" y="85" width="260" height="25" rx="8" fill="#7a9e7a" stroke="#000" stroke-width="2"/>
-          <rect x="10" y="90" width="30" height="80" rx="8" fill="#5c7a5c" stroke="#000" stroke-width="2.5"/>
-          <rect x="240" y="90" width="30" height="80" rx="8" fill="#5c7a5c" stroke="#000" stroke-width="2.5"/>
-          <!-- Gary sitting -->
-          <ellipse cx="140" cy="80" rx="32" ry="32" fill="#ffc87a" stroke="#000" stroke-width="2.5"/>
-          <text x="116" y="92" font-size="32">🤔</text>
-          <!-- Body -->
-          <rect x="110" y="108" width="60" height="55" rx="8" fill="#e74c3c" stroke="#000" stroke-width="2"/>
-          <!-- Plant -->
-          <rect x="230" y="70" width="10" height="30" rx="3" fill="#8B6914" stroke="#000" stroke-width="1.5"/>
-          <circle cx="235" cy="62" r="20" fill="#2ecc71" stroke="#000" stroke-width="2"/>
-          <text x="222" y="68" font-size="18">🌿</text>
-        </svg>`,
-        bubble: { text: "If a snack falls on the floor and nobody sees it... is it still calories?", pos: { top: '4px', right: '5px' }, tail: 'tail-down', style: 'thought' }
-      },
-      {
-        cols: 1, bg: 'panel-bg-sky',
-        art: `<svg viewBox="0 0 280 180" class="panel-art">
-          <!-- Sky with clouds -->
-          <ellipse cx="60" cy="40" rx="50" ry="25" fill="white" stroke="#ccc" stroke-width="1"/>
-          <ellipse cx="90" cy="30" rx="40" ry="22" fill="white" stroke="#ccc" stroke-width="1"/>
-          <ellipse cx="200" cy="55" rx="60" ry="28" fill="white" stroke="#ccc" stroke-width="1"/>
-          <ellipse cx="220" cy="42" rx="45" ry="24" fill="white" stroke="#ccc" stroke-width="1"/>
-          <!-- Gary looking up, tiny -->
-          <ellipse cx="140" cy="150" rx="18" ry="18" fill="#ffc87a" stroke="#000" stroke-width="2"/>
-          <text x="124" y="158" font-size="18">🤔</text>
-          <rect x="124" y="165" width="32" height="15" rx="4" fill="#e74c3c" stroke="#000" stroke-width="1.5"/>
-          <!-- Thought bubble chain -->
-          <circle cx="145" cy="128" r="4" fill="#fff" stroke="#000" stroke-width="1.5"/>
-          <circle cx="148" cy="114" r="6" fill="#fff" stroke="#000" stroke-width="1.5"/>
-          <circle cx="155" cy="96" r="10" fill="#fff" stroke="#000" stroke-width="2"/>
-          <!-- Big thought cloud -->
-          <ellipse cx="200" cy="68" rx="65" ry="38" fill="#fff9c4" stroke="#000" stroke-width="2.5"/>
-          <text x="156" y="60" font-size="11" font-weight="bold" fill="#000" font-family="Comic Neue, sans-serif">If the universe is</text>
-          <text x="162" y="74" font-size="11" font-weight="bold" fill="#000" font-family="Comic Neue, sans-serif">infinite... there's</text>
-          <text x="158" y="88" font-size="11" font-weight="bold" fill="#000" font-family="Comic Neue, sans-serif">a pizza for me.</text>
-          <text x="218" y="62" font-size="14">🍕</text>
-        </svg>`,
-        bubble: null
-      },
-      {
-        cols: 1, bg: 'panel-bg-indoor',
-        caption: { text: 'Three hours later.', pos: 'top' },
-        art: `<svg viewBox="0 0 280 180" class="panel-art">
-          <!-- Same couch, Gary asleep -->
-          <rect x="10" y="100" width="260" height="70" rx="12" fill="#6b8e6b" stroke="#000" stroke-width="2.5"/>
-          <rect x="10" y="85" width="260" height="25" rx="8" fill="#7a9e7a" stroke="#000" stroke-width="2"/>
-          <rect x="10" y="90" width="30" height="80" rx="8" fill="#5c7a5c" stroke="#000" stroke-width="2.5"/>
-          <rect x="240" y="90" width="30" height="80" rx="8" fill="#5c7a5c" stroke="#000" stroke-width="2.5"/>
-          <!-- Gary asleep horizontal -->
-          <ellipse cx="100" cy="92" rx="26" ry="26" fill="#ffc87a" stroke="#000" stroke-width="2.5"/>
-          <text x="78" y="102" font-size="26">😴</text>
-          <rect x="120" y="90" width="120" height="38" rx="6" fill="#e74c3c" stroke="#000" stroke-width="2"/>
-          <!-- Pizza box next to him -->
-          <rect x="225" y="76" width="40" height="30" rx="3" fill="#fff9c4" stroke="#000" stroke-width="2"/>
-          <text x="228" y="96" font-size="20">🍕</text>
-          <!-- Z's -->
-          <text x="108" y="68" font-size="18" font-weight="bold" fill="#000" font-family="Bangers, sans-serif">z</text>
-          <text x="124" y="54" font-size="22" font-weight="bold" fill="#000" font-family="Bangers, sans-serif">Z</text>
-          <text x="142" y="38" font-size="26" font-weight="bold" fill="#000" font-family="Bangers, sans-serif">Z Z</text>
-        </svg>`,
-        bubble: null,
-        caption2: { text: 'The pizza arrived. He slept through it.', pos: 'bottom' }
-      }
-    ]
-  },
+// ── PANEL BUILDER HELPERS ──────────────────────────────────────
+// Each comic is pure SVG - no external images, no font-face issues
+// Text uses dominant-baseline and text-anchor for reliable centering
 
-  {
-    id: 3,
-    title: "DR. GREENLEAF M.D.",
-    episode: "Issue #7 · Second Opinion",
-    category: "adventure",
-    footer: "Dr. Greenleaf is not a real doctor. His advice should not be taken medically. Or seriously.",
-    panels: [
-      {
-        cols: 1, bg: 'panel-bg-sky',
-        caption: { text: 'The waiting room. 9 AM.', pos: 'top' },
-        art: `<svg viewBox="0 0 280 180" class="panel-art">
-          <!-- Waiting room chairs -->
-          <rect x="15" y="110" width="50" height="40" rx="4" fill="#3498db" stroke="#000" stroke-width="2"/>
-          <rect x="15" y="90" width="50" height="25" rx="4" fill="#2980b9" stroke="#000" stroke-width="2"/>
-          <rect x="80" y="110" width="50" height="40" rx="4" fill="#3498db" stroke="#000" stroke-width="2"/>
-          <rect x="80" y="90" width="50" height="25" rx="4" fill="#2980b9" stroke="#000" stroke-width="2"/>
-          <!-- Sign -->
-          <rect x="160" y="20" width="110" height="50" rx="4" fill="#fff" stroke="#000" stroke-width="2.5"/>
-          <text x="170" y="42" font-size="10" font-weight="bold" fill="#2ecc71" font-family="Comic Neue, sans-serif">DR. GREENLEAF</text>
-          <text x="175" y="58" font-size="9" fill="#666" font-family="Comic Neue, sans-serif">Wellness Specialist</text>
-          <!-- Patient waiting -->
-          <ellipse cx="45" cy="84" rx="18" ry="18" fill="#ffd29d" stroke="#000" stroke-width="2"/>
-          <text x="30" y="92" font-size="18">😮</text>
-          <!-- Potted plant decor -->
-          <rect x="230" y="120" width="14" height="50" rx="3" fill="#8B6914" stroke="#000" stroke-width="1.5"/>
-          <circle cx="237" cy="112" r="22" fill="#27ae60" stroke="#000" stroke-width="2"/>
-          <text x="225" y="118" font-size="18">🌿</text>
-        </svg>`,
-        bubble: { text: "Doctor will see you now.", pos: { top: '80px', left: '60px' }, tail: 'tail-up', style: '' }
-      },
-      {
-        cols: 2, bg: 'panel-bg-green',
-        art: `<svg viewBox="0 0 560 180" class="panel-art">
-          <!-- Doctor's desk -->
-          <rect x="160" y="110" width="240" height="20" rx="4" fill="#8B6914" stroke="#000" stroke-width="2.5"/>
-          <!-- Dr Greenleaf - big plant hat, stethoscope -->
-          <ellipse cx="360" cy="68" rx="30" ry="30" fill="#a8d5a2" stroke="#000" stroke-width="2.5"/>
-          <text x="338" y="78" font-size="30">🌿</text>
-          <!-- Doctor body -->
-          <rect x="338" y="94" width="44" height="36" rx="8" fill="#fff" stroke="#000" stroke-width="2"/>
-          <!-- Stethoscope -->
-          <path d="M358 98 Q370 110 362 118" stroke="#000" stroke-width="3" fill="none" stroke-linecap="round"/>
-          <circle cx="362" cy="120" r="5" fill="#000"/>
-          <!-- Diploma on wall -->
-          <rect x="420" y="20" width="80" height="60" rx="2" fill="#fff9c4" stroke="#000" stroke-width="2"/>
-          <text x="430" y="45" font-size="9" fill="#8B6914" font-family="Comic Neue, sans-serif">DIPLOMA</text>
-          <text x="428" y="60" font-size="8" fill="#666" font-family="Comic Neue, sans-serif">Dr. Greenleaf</text>
-          <text x="432" y="72" font-size="7" fill="#666" font-family="Comic Neue, sans-serif">Vibeology, 2019</text>
-          <!-- Patient -->
-          <ellipse cx="220" cy="72" rx="26" ry="26" fill="#ffd29d" stroke="#000" stroke-width="2.5"/>
-          <text x="200" y="82" font-size="26">😟</text>
-          <rect x="202" y="94" width="36" height="36" rx="6" fill="#e74c3c" stroke="#000" stroke-width="2"/>
-          <!-- Arm reaching out -->
-          <line x1="202" y1="108" x2="175" y2="108" stroke="#ffd29d" stroke-width="10" stroke-linecap="round"/>
-          <!-- Text near patient -->
-          <text x="20" y="60" font-size="10" font-weight="bold" fill="#000" font-family="Comic Neue, sans-serif">Doc, I can't sleep,</text>
-          <text x="20" y="74" font-size="10" font-weight="bold" fill="#000" font-family="Comic Neue, sans-serif">I keep eating at</text>
-          <text x="20" y="88" font-size="10" font-weight="bold" fill="#000" font-family="Comic Neue, sans-serif">3am, and I think</text>
-          <text x="20" y="102" font-size="10" font-weight="bold" fill="#000" font-family="Comic Neue, sans-serif">my couch is alive.</text>
-        </svg>`,
-        sfx: { text: 'HMMMM', pos: { top: '10px', right: '10px' }, color: 'green' }
-      },
-      {
-        cols: 1, bg: 'panel-bg-green',
-        art: `<svg viewBox="0 0 280 180" class="panel-art">
-          <!-- Dr Greenleaf close-up writing prescription -->
-          <ellipse cx="140" cy="70" rx="38" ry="38" fill="#a8d5a2" stroke="#000" stroke-width="2.5"/>
-          <text x="114" y="82" font-size="38">🌿</text>
-          <!-- Prescription pad -->
-          <rect x="80" y="110" width="120" height="65" rx="4" fill="#fff" stroke="#000" stroke-width="2.5"/>
-          <text x="88" y="128" font-size="9" fill="#2ecc71" font-weight="bold" font-family="Comic Neue, sans-serif">Rx: DR. GREENLEAF</text>
-          <line x1="88" y1="133" x2="192" y2="133" stroke="#ccc" stroke-width="1"/>
-          <text x="90" y="148" font-size="9" fill="#000" font-family="Comic Neue, sans-serif">1x snack (any)</text>
-          <text x="90" y="160" font-size="9" fill="#000" font-family="Comic Neue, sans-serif">1x nap. Take daily.</text>
-          <text x="90" y="172" font-size="9" fill="#000" font-family="Comic Neue, sans-serif">Vibes: PRN</text>
-          <!-- Pen in hand (leaf) -->
-          <line x1="155" y1="105" x2="185" y2="125" stroke="#8B6914" stroke-width="5" stroke-linecap="round"/>
-        </svg>`,
-        bubble: { text: "Sounds like a classic case of... being alive. I prescribe snacks and a nap.", pos: { top: '4px', right: '4px' }, tail: 'tail-down', style: '' }
-      }
-    ]
-  },
+function bubble(x, y, w, h, text, tailDir='down', color='#fff', textColor='#000') {
+  const rx = 14;
+  const lines = wrapText(text, Math.floor(w/10));
+  const lineH = 20;
+  const textH = lines.length * lineH;
+  const bh = Math.max(h, textH + 20);
 
-  {
-    id: 4,
-    title: "COSMIC BARRY",
-    episode: "Issue #12 · The Parking Ticket",
-    category: "cosmic",
-    footer: "Barry's car was towed. He didn't notice for three weeks.",
-    panels: [
-      {
-        cols: 1, bg: 'panel-bg-cosmic',
-        caption: { text: 'The universe. Tuesday.', pos: 'top' },
-        art: `<svg viewBox="0 0 280 180" class="panel-art">
-          <!-- Stars -->
-          <circle cx="30" cy="30" r="2" fill="#fff"/><circle cx="80" cy="15" r="1.5" fill="#fff"/>
-          <circle cx="140" cy="25" r="2" fill="#fbbf24"/><circle cx="200" cy="10" r="1.5" fill="#fff"/>
-          <circle cx="250" cy="35" r="2" fill="#fff"/><circle cx="60" cy="80" r="1" fill="#fff"/>
-          <circle cx="220" cy="60" r="1.5" fill="#a855f7"/><circle cx="170" cy="90" r="1" fill="#fff"/>
-          <!-- Planet -->
-          <circle cx="60" cy="50" r="30" fill="#a855f7" stroke="#000" stroke-width="2"/>
-          <ellipse cx="60" cy="50" rx="50" ry="14" fill="none" stroke="#fbbf24" stroke-width="3"/>
-          <!-- Nebula blob -->
-          <ellipse cx="200" cy="80" rx="55" ry="40" fill="rgba(74,222,128,0.15)"/>
-          <!-- Barry floating in space with snack -->
-          <ellipse cx="145" cy="120" rx="26" ry="26" fill="#ffc87a" stroke="#000" stroke-width="2.5"/>
-          <text x="124" y="130" font-size="26">😌</text>
-          <!-- Spacesuit body -->
-          <rect x="126" y="142" width="38" height="38" rx="10" fill="#ecf0f1" stroke="#000" stroke-width="2"/>
-          <!-- Arms out -->
-          <line x1="126" y1="155" x2="95" y2="148" stroke="#ecf0f1" stroke-width="10" stroke-linecap="round"/>
-          <line x1="164" y1="155" x2="195" y2="148" stroke="#ecf0f1" stroke-width="10" stroke-linecap="round"/>
-          <!-- Pizza floating in space -->
-          <text x="195" y="148" font-size="24">🍕</text>
-          <!-- Parking ticket floating -->
-          <rect x="40" y="130" width="50" height="35" rx="3" fill="#fff9c4" stroke="#f39c12" stroke-width="2" transform="rotate(-12,65,147)"/>
-          <text x="46" y="145" font-size="8" fill="#000" font-family="Comic Neue, sans-serif" transform="rotate(-12,65,147)">PARKING</text>
-          <text x="44" y="157" font-size="8" fill="#e74c3c" font-weight="bold" font-family="Comic Neue, sans-serif" transform="rotate(-12,65,147)">VIOLATION</text>
-        </svg>`,
-        bubble: { text: "The cosmos doesn't care about parking zones.", pos: { top: '4px', right: '4px' }, tail: 'tail-down', style: '' }
-      },
-      {
-        cols: 1, bg: 'panel-bg-cosmic',
-        art: `<svg viewBox="0 0 280 180" class="panel-art">
-          <!-- More stars -->
-          <circle cx="20" cy="20" r="2" fill="#fbbf24"/><circle cx="260" cy="30" r="1.5" fill="#fff"/>
-          <circle cx="140" cy="10" r="2" fill="#a855f7"/><circle cx="90" cy="50" r="1" fill="#fff"/>
-          <!-- Big nebula -->
-          <ellipse cx="140" cy="90" rx="100" ry="70" fill="rgba(168,85,247,0.12)"/>
-          <!-- Black hole / portal -->
-          <circle cx="140" cy="90" r="45" fill="#000" stroke="#a855f7" stroke-width="3"/>
-          <circle cx="140" cy="90" r="35" fill="rgba(10,5,20,1)" stroke="rgba(168,85,247,0.5)" stroke-width="1.5"/>
-          <circle cx="140" cy="90" r="20" fill="#0d0221"/>
-          <!-- Glow rings -->
-          <ellipse cx="140" cy="90" rx="55" ry="18" fill="none" stroke="rgba(168,85,247,0.4)" stroke-width="4"/>
-          <ellipse cx="140" cy="90" rx="70" ry="22" fill="none" stroke="rgba(74,222,128,0.2)" stroke-width="2"/>
-          <!-- Barry's face peering through -->
-          <ellipse cx="140" cy="90" rx="20" ry="20" fill="#ffc87a" stroke="#000" stroke-width="2"/>
-          <text x="126" y="100" font-size="20">👁️</text>
-          <!-- Stars being sucked in -->
-          <circle cx="50" cy="60" r="3" fill="#fff" opacity="0.7"/>
-          <circle cx="240" cy="110" r="2" fill="#fbbf24" opacity="0.7"/>
-        </svg>`,
-        bubble: { text: "Oh. Oh no. I can see EVERYTHING.", pos: { top: '4px', left: '4px' }, tail: 'tail-down', style: 'shout' },
-        sfx: { text: 'WHOOOOSH', pos: { bottom: '10px', right: '5px' }, color: 'white' }
-      },
-      {
-        cols: 1, bg: 'panel-bg-sky',
-        caption: { text: 'Back on Earth. Somehow.', pos: 'top' },
-        art: `<svg viewBox="0 0 280 180" class="panel-art">
-          <!-- Ground -->
-          <rect x="0" y="145" width="280" height="35" fill="#90c947" stroke="#000" stroke-width="2"/>
-          <!-- Sidewalk -->
-          <rect x="0" y="150" width="280" height="15" fill="#bbb" stroke="#000" stroke-width="1.5"/>
-          <!-- Barry standing, dishevelled -->
-          <ellipse cx="140" cy="110" rx="28" ry="28" fill="#ffc87a" stroke="#000" stroke-width="2.5"/>
-          <text x="118" y="122" font-size="28">😵</text>
-          <!-- Hair sticking up -->
-          <line x1="128" y1="84" x2="125" y2="68" stroke="#8B4513" stroke-width="4" stroke-linecap="round"/>
-          <line x1="140" y1="82" x2="140" y2="64" stroke="#8B4513" stroke-width="4" stroke-linecap="round"/>
-          <line x1="152" y1="84" x2="156" y2="68" stroke="#8B4513" stroke-width="4" stroke-linecap="round"/>
-          <!-- Body -->
-          <rect x="118" y="135" width="44" height="42" rx="8" fill="#ecf0f1" stroke="#000" stroke-width="2"/>
-          <!-- Empty parking space sign -->
-          <rect x="210" y="60" width="50" height="90" rx="0" fill="none"/>
-          <rect x="225" y="60" width="8" height="90" rx="2" fill="#888" stroke="#000" stroke-width="1.5"/>
-          <rect x="210" y="64" width="55" height="35" rx="4" fill="#2196F3" stroke="#000" stroke-width="2"/>
-          <text x="216" y="80" font-size="9" fill="#fff" font-weight="bold" font-family="Comic Neue, sans-serif">TOWING</text>
-          <text x="216" y="92" font-size="9" fill="#fff" font-weight="bold" font-family="Comic Neue, sans-serif">ENFORCED</text>
-          <!-- Tow truck leaving -->
-          <text x="25" y="148" font-size="30">🚛</text>
-          <text x="65" y="145" font-size="18">💨</text>
-        </svg>`,
-        bubble: { text: "I understand the infinite nature of reality and I still got towed.", pos: { top: '4px', left: '4px' }, tail: 'tail-down', style: '' }
-      }
-    ]
-  },
-
-  {
-    id: 5,
-    title: "THE MUNCHIE REPORT",
-    episode: "Issue #2 · Breaking: All Snacks Eaten",
-    category: "kitchen",
-    footer: "This strip was written at 2:47am. No notes.",
-    panels: [
-      {
-        cols: 1, bg: 'panel-bg-orange',
-        caption: { text: 'LIVE FROM THE KITCHEN.', pos: 'top' },
-        art: `<svg viewBox="0 0 280 180" class="panel-art">
-          <!-- TV news set -->
-          <rect x="10" y="20" width="260" height="150" rx="8" fill="#1a1a2e" stroke="#000" stroke-width="2.5"/>
-          <rect x="20" y="30" width="240" height="100" rx="4" fill="#16213e"/>
-          <!-- BREAKING NEWS banner -->
-          <rect x="10" y="130" width="260" height="30" rx="0" fill="#e74c3c"/>
-          <text x="18" y="150" font-size="14" font-weight="bold" fill="#fff" font-family="Bangers, sans-serif">🔴 BREAKING: ALL SNACKS CONFIRMED EATEN</text>
-          <!-- Anchor desk -->
-          <rect x="70" y="90" width="140" height="40" rx="4" fill="#2c3e50" stroke="#000" stroke-width="1.5"/>
-          <!-- Anchor (a potato with a tie) -->
-          <ellipse cx="140" cy="78" rx="28" ry="28" fill="#f39c12" stroke="#000" stroke-width="2.5"/>
-          <text x="118" y="88" font-size="28">🥔</text>
-          <!-- Tie -->
-          <path d="M134 102 L140 120 L146 102" fill="#e74c3c" stroke="#000" stroke-width="1.5"/>
-          <!-- Microphone -->
-          <rect x="152" y="82" width="8" height="20" rx="4" fill="#888" stroke="#000" stroke-width="1.5"/>
-          <ellipse cx="156" cy="80" rx="8" ry="10" fill="#555" stroke="#000" stroke-width="1.5"/>
-        </svg>`,
-        bubble: { text: "Good evening. I'm Steve the Potato.", pos: { top: '8px', right: '8px' }, tail: 'tail-down', style: '' }
-      },
-      {
-        cols: 2, bg: 'panel-bg-red',
-        art: `<svg viewBox="0 0 560 180" class="panel-art">
-          <!-- Scene: empty fridge -->
-          <rect x="20" y="20" width="120" height="155" rx="4" fill="#e0e0e0" stroke="#000" stroke-width="2.5"/>
-          <rect x="25" y="25" width="110" height="75" rx="2" fill="#f5f5f5" stroke="#000" stroke-width="1.5"/>
-          <!-- Empty fridge inside - just tumbleweeds -->
-          <text x="55" y="70" font-size="32">🌵</text>
-          <text x="28" y="90" font-size="12" fill="#999" font-family="Comic Neue, sans-serif">...empty...</text>
-          <!-- Crime scene tape -->
-          <line x1="10" y1="100" x2="160" y2="100" stroke="#f39c12" stroke-width="6"/>
-          <line x1="10" y1="115" x2="160" y2="115" stroke="#f39c12" stroke-width="6"/>
-          <text x="15" y="111" font-size="9" fill="#000" font-weight="bold" font-family="Comic Neue, sans-serif">DO NOT EAT · DO NOT EAT</text>
-          <!-- Reporter on scene -->
-          <ellipse cx="340" cy="80" rx="28" ry="28" fill="#ffd29d" stroke="#000" stroke-width="2.5"/>
-          <text x="318" y="90" font-size="28">😱</text>
-          <!-- Suit body -->
-          <rect x="318" y="104" width="44" height="50" rx="6" fill="#2c3e50" stroke="#000" stroke-width="2"/>
-          <!-- Mic -->
-          <rect x="285" y="88" width="8" height="22" rx="4" fill="#888" stroke="#000" stroke-width="1.5"/>
-          <ellipse cx="289" cy="86" rx="8" ry="10" fill="#555" stroke="#000" stroke-width="1.5"/>
-          <!-- Background crowd -->
-          <text x="400" y="140" font-size="24">😦</text>
-          <text x="430" y="130" font-size="20">😰</text>
-          <text x="460" y="138" font-size="22">😳</text>
-          <text x="490" y="132" font-size="20">🫣</text>
-          <text x="520" y="140" font-size="22">😮</text>
-          <!-- Dramatic text -->
-          <text x="390" y="60" font-size="28" font-weight="bold" fill="#e74c3c" font-family="Bangers, sans-serif" transform="rotate(-5,450,60)">THE HORROR!</text>
-        </svg>`,
-        bubble: { text: "I'm on the scene. Every snack. Just... gone. Authorities baffled. One suspect: himself.", pos: { top: '4px', left: '200px' }, tail: 'tail-down', style: '' }
-      },
-      {
-        cols: 1, bg: 'panel-bg-orange',
-        caption: { text: 'Back in the studio.', pos: 'top' },
-        art: `<svg viewBox="0 0 280 180" class="panel-art">
-          <!-- Potato anchor again, eating on air -->
-          <rect x="10" y="20" width="260" height="150" rx="8" fill="#1a1a2e" stroke="#000" stroke-width="2.5"/>
-          <rect x="70" y="90" width="140" height="40" rx="4" fill="#2c3e50" stroke="#000" stroke-width="1.5"/>
-          <ellipse cx="140" cy="78" rx="28" ry="28" fill="#f39c12" stroke="#000" stroke-width="2.5"/>
-          <text x="118" y="88" font-size="28">🥔</text>
-          <!-- Eating snacks on air -->
-          <text x="160" y="72" font-size="22">🍕</text>
-          <!-- Crumbs -->
-          <text x="145" y="88" font-size="10">·</text><text x="155" y="92" font-size="10">·</text>
-          <text x="165" y="86" font-size="10">·</text>
-          <!-- Tie loosened -->
-          <path d="M134 102 L140 125 L146 102" fill="#e74c3c" stroke="#000" stroke-width="1.5" transform="rotate(10,140,110)"/>
-          <!-- Bottom banner - updated -->
-          <rect x="10" y="145" width="260" height="25" rx="0" fill="#e74c3c"/>
-          <text x="15" y="162" font-size="11" font-weight="bold" fill="#fff" font-family="Bangers, sans-serif">UPDATE: ANCHOR ALSO SUSPECTED</text>
-        </svg>`,
-        bubble: { text: "In other news... does anyone have more chips?", pos: { top: '8px', right: '8px' }, tail: 'tail-down', style: 'shout' }
-      }
-    ]
-  },
-
-  {
-    id: 6,
-    title: "SENSEI PUFF",
-    episode: "Issue #3 · The Ancient Wisdom",
-    category: "philosophy",
-    footer: "Sensei Puff has been meditating for 40 years. He knows things.",
-    panels: [
-      {
-        cols: 1, bg: 'panel-bg-green',
-        caption: { text: 'A mountain. Serene.', pos: 'top' },
-        art: `<svg viewBox="0 0 280 180" class="panel-art">
-          <!-- Mountain -->
-          <polygon points="140,10 20,170 260,170" fill="#6b8e6b" stroke="#000" stroke-width="2.5"/>
-          <polygon points="140,10 90,90 190,90" fill="#8fb8a0" stroke="#000" stroke-width="1.5"/>
-          <!-- Snow cap -->
-          <polygon points="140,10 118,55 162,55" fill="#fff" stroke="#000" stroke-width="1.5"/>
-          <!-- Cloud -->
-          <ellipse cx="50" cy="45" rx="38" ry="20" fill="#fff" stroke="#888" stroke-width="1"/>
-          <ellipse cx="72" cy="36" rx="30" ry="18" fill="#fff" stroke="#888" stroke-width="1"/>
-          <!-- Sensei at peak -->
-          <ellipse cx="140" cy="55" rx="20" ry="20" fill="#ffc87a" stroke="#000" stroke-width="2"/>
-          <!-- Straw hat -->
-          <ellipse cx="140" cy="40" rx="28" ry="10" fill="#f39c12" stroke="#000" stroke-width="2"/>
-          <ellipse cx="140" cy="37" rx="14" ry="8" fill="#e67e22" stroke="#000" stroke-width="1.5"/>
-          <!-- Lotus position suggestion -->
-          <rect x="125" y="72" width="30" height="22" rx="10" fill="#a67c52" stroke="#000" stroke-width="2"/>
-          <text x="131" y="64" font-size="12">🧘</text>
-          <!-- Zen squiggles -->
-          <text x="20" y="90" font-size="18" fill="#2ecc71">☯</text>
-          <text x="238" y="80" font-size="16" fill="#2ecc71">✨</text>
-        </svg>`,
-        bubble: { text: "A student arrives... seeking wisdom.", pos: { top: '4px', right: '4px' }, tail: 'tail-down', style: 'thought' }
-      },
-      {
-        cols: 1, bg: 'panel-bg-green',
-        art: `<svg viewBox="0 0 280 180" class="panel-art">
-          <!-- Student climbing -->
-          <polygon points="140,10 20,170 260,170" fill="#6b8e6b" stroke="#000" stroke-width="2.5"/>
-          <!-- Student, exhausted, halfway up -->
-          <ellipse cx="80" cy="130" rx="20" ry="20" fill="#ffd29d" stroke="#000" stroke-width="2"/>
-          <text x="63" y="140" font-size="18">😮‍💨</text>
-          <rect x="65" y="146" width="30" height="26" rx="6" fill="#3498db" stroke="#000" stroke-width="2"/>
-          <!-- Arms on knees -->
-          <line x1="65" y1="155" x2="48" y2="162" stroke="#ffd29d" stroke-width="8" stroke-linecap="round"/>
-          <line x1="95" y1="155" x2="108" y2="162" stroke="#ffd29d" stroke-width="8" stroke-linecap="round"/>
-          <!-- Sensei at top waving -->
-          <ellipse cx="200" cy="50" rx="20" ry="20" fill="#ffc87a" stroke="#000" stroke-width="2"/>
-          <ellipse cx="200" cy="36" rx="28" ry="10" fill="#f39c12" stroke="#000" stroke-width="2"/>
-          <text x="185" y="44" font-size="14">👋</text>
-          <!-- Sweat drops from student -->
-          <text x="100" y="118" font-size="14">💧</text>
-          <text x="114" y="110" font-size="12">💧</text>
-        </svg>`,
-        bubble: { text: "SENSEI! I have climbed 3000 steps to ask... what is the meaning of life?", pos: { top: '4px', right: '4px' }, tail: 'tail-down', style: '' }
-      },
-      {
-        cols: 1, bg: 'panel-bg-green',
-        art: `<svg viewBox="0 0 280 180" class="panel-art">
-          <!-- Sensei close-up, serene -->
-          <ellipse cx="140" cy="85" rx="50" ry="50" fill="#ffc87a" stroke="#000" stroke-width="2.5"/>
-          <!-- Big straw hat -->
-          <ellipse cx="140" cy="52" rx="68" ry="22" fill="#f39c12" stroke="#000" stroke-width="2.5"/>
-          <ellipse cx="140" cy="46" rx="38" ry="18" fill="#e67e22" stroke="#000" stroke-width="2"/>
-          <!-- Wise face -->
-          <text x="112" y="100" font-size="50">🧘</text>
-          <!-- Aura glow lines -->
-          <circle cx="140" cy="85" r="65" fill="none" stroke="rgba(46,204,113,0.3)" stroke-width="3"/>
-          <circle cx="140" cy="85" r="78" fill="none" stroke="rgba(46,204,113,0.15)" stroke-width="2"/>
-          <!-- Background sparkles -->
-          <text x="30" y="50" font-size="16">✨</text><text x="240" y="45" font-size="14">⭐</text>
-          <text x="22" y="140" font-size="12">✨</text><text x="248" y="135" font-size="16">✨</text>
-        </svg>`,
-        bubble: { text: "Snacks. Good nap. People who don't text back at 3am.", pos: { top: '4px', left: '4px' }, tail: 'tail-down', style: '' },
-        caption2: { text: '...the student wept. For he knew it to be true.', pos: 'bottom' }
-      }
-    ]
+  let tailPath = '';
+  if(tailDir === 'down') {
+    tailPath = `M${x+20},${y+bh} L${x+14},${y+bh+18} L${x+36},${y+bh}`;
+  } else if(tailDir === 'up') {
+    tailPath = `M${x+20},${y} L${x+14},${y-18} L${x+36},${y}`;
+  } else if(tailDir === 'left') {
+    tailPath = `M${x},${y+bh/2-10} L${x-18},${y+bh/2} L${x},${y+bh/2+10}`;
   }
+
+  let linesHTML = lines.map((l,i) =>
+    `<text x="${x+w/2}" y="${y+14+(i+0.8)*lineH}" text-anchor="middle" font-family=${CF} font-size="13" font-weight="bold" fill="${textColor}">${l}</text>`
+  ).join('');
+
+  return `
+    <path d="M${x+rx},${y} h${w-2*rx} a${rx},${rx} 0 0 1 ${rx},${rx} v${bh-2*rx} a${rx},${rx} 0 0 1 -${rx},${rx} h-${w-2*rx} a${rx},${rx} 0 0 1 -${rx},-${rx} v-${bh+2-2*rx} a${rx},${rx} 0 0 1 ${rx},-${rx}z" fill="${color}" stroke="#111" stroke-width="2.5"/>
+    ${tailPath ? `<path d="${tailPath}" fill="${color}" stroke="#111" stroke-width="2.5" stroke-linejoin="round"/>` : ''}
+    ${linesHTML}
+  `;
+}
+
+function shoutBubble(x, y, w, h, text, color='#fff200') {
+  // Spiky shout bubble
+  const cx = x+w/2, cy = y+h/2, rx = w/2, ry = h/2;
+  const spikes = 12;
+  let pts = '';
+  for(let i=0; i<spikes*2; i++) {
+    const a = (i/spikes/2)*Math.PI*2 - Math.PI/2;
+    const r = i%2===0 ? 1 : 0.72;
+    pts += `${cx+Math.cos(a)*rx*r},${cy+Math.sin(a)*ry*r} `;
+  }
+  const lines = wrapText(text, Math.floor(w/10));
+  const lineH = 18;
+  let linesHTML = lines.map((l,i) =>
+    `<text x="${cx}" y="${cy - (lines.length-1)*lineH/2 + i*lineH + 5}" text-anchor="middle" font-family=${CF} font-size="12" font-weight="bold" fill="#000">${l}</text>`
+  ).join('');
+  return `<polygon points="${pts}" fill="${color}" stroke="#111" stroke-width="2.5"/>
+    ${linesHTML}`;
+}
+
+function thoughtBubble(x, y, w, h, text) {
+  const lines = wrapText(text, Math.floor(w/10));
+  const lineH = 19;
+  const bh = Math.max(h, lines.length * lineH + 16);
+  let linesHTML = lines.map((l,i) =>
+    `<text x="${x+w/2}" y="${y+12+(i+0.8)*lineH}" text-anchor="middle" font-family=${CF} font-size="13" font-weight="bold" fill="#222">${l}</text>`
+  ).join('');
+  return `
+    <ellipse cx="${x+w/2}" cy="${y+bh/2}" rx="${w/2}" ry="${bh/2}" fill="#fff" stroke="#111" stroke-width="2.5" stroke-dasharray="6,3"/>
+    <circle cx="${x+14}" cy="${y+bh+10}" r="6" fill="#fff" stroke="#111" stroke-width="2"/>
+    <circle cx="${x+8}" cy="${y+bh+20}" r="4" fill="#fff" stroke="#111" stroke-width="1.5"/>
+    <circle cx="${x+4}" cy="${y+bh+28}" r="2.5" fill="#fff" stroke="#111" stroke-width="1.5"/>
+    ${linesHTML}
+  `;
+}
+
+function sfx(x, y, text, color='#4ade80', size=38, rotate=-8) {
+  return `<text x="${x}" y="${y}" font-family=${SFX_F} font-size="${size}" fill="${color}" stroke="#111" stroke-width="3" paint-order="stroke" transform="rotate(${rotate},${x},${y})" font-weight="900">${text}</text>`;
+}
+
+function caption(x, y, w, text, bg='#111', fg='#fff') {
+  return `<rect x="${x}" y="${y}" width="${w}" height="24" fill="${bg}"/>
+    <text x="${x+8}" y="${y+17}" font-family=${CF} font-size="12" fill="${fg}" font-weight="bold">${text}</text>`;
+}
+
+function wrapText(text, maxChars) {
+  const words = text.split(' ');
+  const lines = [];
+  let line = '';
+  words.forEach(w => {
+    if((line+' '+w).trim().length > maxChars) { if(line) lines.push(line.trim()); line = w; }
+    else line = (line+' '+w).trim();
+  });
+  if(line) lines.push(line.trim());
+  return lines;
+}
+
+// ── COMIC DATA ─────────────────────────────────────────────────
+// Format: array of panels, each with w (relative units), svg content string
+// Total width units per strip = 12
+
+const COMICS = [
+// ════════════════════════════════════════════════════
+{
+  id:1, category:'memory',
+  title:"THE WALK OF CONFUSION",
+  episode:"Issue #1 · Why Did I Come In Here",
+  footer:"This happens to Harold 4-6 times per evening. Scientists are baffled.",
+  panels:[
+    { w:4, bg:'#fff8e1',
+      svg: (W,H) => `
+        ${caption(0,0,W,'THE LIVING ROOM. 9:47 PM.')}
+        <text x="${W/2}" y="${H*0.42}" text-anchor="middle" font-size="70">🛋️</text>
+        <text x="${W/2-10}" y="${H*0.68}" text-anchor="middle" font-size="48">🧍</text>
+        ${bubble(W*0.5, H*0.08, W*0.86, 44, "I need something from the kitchen.", 'down')}
+      `},
+    { w:4, bg:'#e8f5e9',
+      svg: (W,H) => `
+        ${caption(0,0,W,'THE KITCHEN. CONFIDENT.')}
+        <text x="${W/2}" y="${H*0.5}" text-anchor="middle" font-size="70">🚶</text>
+        <text x="${W/2+30}" y="${H*0.3}" text-anchor="middle" font-size="32">💨</text>
+        <text x="${W/2+50}" y="${H*0.4}" text-anchor="middle" font-size="24">💨</text>
+        ${sfx(W*0.05, H*0.55, 'STRIDE!', '#4ade80', 30, 5)}
+      `},
+    { w:4, bg:'#fce4ec',
+      svg: (W,H) => `
+        ${caption(0,0,W,'THE KITCHEN. EMPTY.')}
+        <text x="${W/2}" y="${H*0.5}" text-anchor="middle" font-size="64">😶</text>
+        <text x="${W/2}" y="${H*0.72}" text-anchor="middle" font-size="28">🍽️❓</text>
+        ${thoughtBubble(W*0.08, H*0.04, W*0.84, 60, "...why am I here.")}
+        ${sfx(W*0.55, H*0.72, '...', '#999', 36, 0)}
+      `},
+  ]
+},
+// ════════════════════════════════════════════════════
+{
+  id:2, category:'food',
+  title:"UBER EATS: A TRAGEDY",
+  episode:"Issue #2 · 47 Minutes or Your Sanity Back",
+  footer:"The driver's name was Chad. Chad drove in circles for 11 minutes.",
+  panels:[
+    { w:3, bg:'#fff3e0',
+      svg: (W,H) => `
+        ${caption(0,0,W,'10:32 PM. THE ORDER IS PLACED.')}
+        <text x="${W/2}" y="${H*0.48}" text-anchor="middle" font-size="56">📱</text>
+        <text x="${W/2}" y="${H*0.72}" text-anchor="middle" font-size="36">🤩</text>
+        ${bubble(W*0.05, H*0.06, W*0.9, 52, "25 mins!! I'm basically already eating.", 'down')}
+      `},
+    { w:3, bg:'#e3f2fd',
+      svg: (W,H) => `
+        ${caption(0,0,W,'10:57 PM. THE MAP.')}
+        <text x="${W/2}" y="${H*0.44}" text-anchor="middle" font-size="52">🗺️</text>
+        <text x="${W/2+20}" y="${H*0.44}" text-anchor="middle" font-size="28">🛵</text>
+        <text x="${W/2}" y="${H*0.7}" text-anchor="middle" font-size="32">😟</text>
+        ${bubble(W*0.05, H*0.06, W*0.9, 52, "He's been on my street for 8 minutes...", 'down')}
+      `},
+    { w:3, bg:'#fce4ec',
+      svg: (W,H) => `
+        ${caption(0,0,W,'11:14 PM. THE CALL.')}
+        <text x="${W/2}" y="${H*0.44}" text-anchor="middle" font-size="52">📞</text>
+        <text x="${W/2}" y="${H*0.68}" text-anchor="middle" font-size="36">😤</text>
+        ${bubble(W*0.05, H*0.06, W*0.86, 52, '"Your order is nearby." NEARBY IS NOT HERE CHAD.', 'down', '#fff200')}
+      `},
+    { w:3, bg:'#e8f5e9',
+      svg: (W,H) => `
+        ${caption(0,0,W,'11:31 PM. ACCEPTANCE.')}
+        <text x="${W/2}" y="${H*0.44}" text-anchor="middle" font-size="62">🧘</text>
+        <text x="${W/2}" y="${H*0.7}" text-anchor="middle" font-size="28">🍕✨</text>
+        ${thoughtBubble(W*0.04, H*0.04, W*0.92, 60, "The pizza arrives when it is meant to arrive.")}
+      `},
+  ]
+},
+// ════════════════════════════════════════════════════
+{
+  id:3, category:'philosophy',
+  title:"SHOWER THOUGHTS QUARTERLY",
+  episode:"Issue #5 · The One About Dolphins",
+  footer:"Peer reviewed by three people on a couch. Published immediately.",
+  panels:[
+    { w:4, bg:'#e0f7fa',
+      svg: (W,H) => `
+        ${caption(0,0,W,'THE SHOWER. 11 PM.')}
+        <text x="${W/2}" y="${H*0.46}" text-anchor="middle" font-size="62">🚿</text>
+        <text x="${W/2+30}" y="${H*0.36}" text-anchor="middle" font-size="24">💧</text>
+        <text x="${W/2+42}" y="${H*0.5}" text-anchor="middle" font-size="20">💧</text>
+        <text x="${W/2+28}" y="${H*0.62}" text-anchor="middle" font-size="22">💧</text>
+        ${thoughtBubble(W*0.04, H*0.04, W*0.7, 58, "Dolphins chose to go back to the ocean. They saw what we were building and LEFT.")}
+      `},
+    { w:4, bg:'#e8f5e9',
+      svg: (W,H) => `
+        ${caption(0,0,W,'THE ESCALATION.')}
+        <text x="${W/2}" y="${H*0.46}" text-anchor="middle" font-size="62">🐬</text>
+        <text x="${W*0.15}" y="${H*0.46}" text-anchor="middle" font-size="32">🌊</text>
+        <text x="${W*0.78}" y="${H*0.46}" text-anchor="middle" font-size="32">🌊</text>
+        ${thoughtBubble(W*0.04, H*0.04, W*0.92, 58, "And they were RIGHT. Dolphins are smarter than us AND they live in a pool.")}
+      `},
+    { w:4, bg:'#fff8e1',
+      svg: (W,H) => `
+        ${caption(0,0,W,'20 MINUTES LATER. STILL IN SHOWER.')}
+        <text x="${W/2}" y="${H*0.42}" text-anchor="middle" font-size="52">🚿</text>
+        <text x="${W/2}" y="${H*0.68}" text-anchor="middle" font-size="42">😮</text>
+        ${shoutBubble(W*0.04, H*0.04, W*0.92, 70, "I need to CALL someone about the dolphins.")}
+        ${sfx(W*0.04, H*0.7, 'REVELATION!', '#fbbf24', 26, -5)}
+      `},
+  ]
+},
+// ════════════════════════════════════════════════════
+{
+  id:4, category:'food',
+  title:"THE SNACK NEGOTIATION",
+  episode:"Issue #8 · Man vs. The Last Chip",
+  footer:"He ate it. There was no negotiation.",
+  panels:[
+    { w:4, bg:'#fff8e1',
+      svg: (W,H) => `
+        ${caption(0,0,W,'THE BAG. NEARLY EMPTY.')}
+        <text x="${W/2}" y="${H*0.44}" text-anchor="middle" font-size="80">🫙</text>
+        <text x="${W/2-10}" y="${H*0.68}" text-anchor="middle" font-size="40">😯</text>
+        ${bubble(W*0.04, H*0.05, W*0.92, 52, "One chip left. I should save it for later.", 'down')}
+      `},
+    { w:4, bg:'#fce4ec',
+      svg: (W,H) => `
+        ${caption(0,0,W,'5 SECONDS LATER.')}
+        <text x="${W/2}" y="${H*0.44}" text-anchor="middle" font-size="80">🍿</text>
+        <text x="${W/2}" y="${H*0.7}" text-anchor="middle" font-size="40">😶</text>
+        ${sfx(W*0.04, H*0.34, 'CRUNCH', '#ef4444', 34, -6)}
+        ${bubble(W*0.04, H*0.55, W*0.92, 42, "...define 'later'.", 'up')}
+      `},
+    { w:4, bg:'#e8f5e9',
+      svg: (W,H) => `
+        ${caption(0,0,W,'THE INTERNAL DEBRIEF.')}
+        <text x="${W/2}" y="${H*0.44}" text-anchor="middle" font-size="60">🧠</text>
+        <text x="${W/2}" y="${H*0.7}" text-anchor="middle" font-size="36">✅</text>
+        ${thoughtBubble(W*0.04, H*0.04, W*0.92, 62, "Later happened. I was the agent of later. No regrets.")}
+      `},
+  ]
+},
+// ════════════════════════════════════════════════════
+{
+  id:5, category:'paranoia',
+  title:"THE DOORBELL",
+  episode:"Issue #3 · Someone Is At The Door",
+  footer:"It was Amazon. It's always Amazon. He waited 40 minutes to check.",
+  panels:[
+    { w:3, bg:'#fff8e1',
+      svg: (W,H) => `
+        ${caption(0,0,W,'9:22 PM. THE COUCH.')}
+        <text x="${W/2}" y="${H*0.44}" text-anchor="middle" font-size="56">🛋️</text>
+        <text x="${W/2}" y="${H*0.68}" text-anchor="middle" font-size="36">😌</text>
+        ${bubble(W*0.05, H*0.05, W*0.9, 42, "Life is good. Nothing is wrong.", 'down')}
+      `},
+    { w:3, bg:'#fce4ec',
+      svg: (W,H) => `
+        <text x="${W/2}" y="${H*0.44}" text-anchor="middle" font-size="72">🔔</text>
+        ${sfx(W*0.08, H*0.6, 'DING DONG', '#ef4444', 28, -4)}
+        ${shoutBubble(W*0.08, H*0.05, W*0.84, 60, "SOMEONE. IS. AT. THE. DOOR.", '#fce4ec')}
+      `},
+    { w:3, bg:'#e3f2fd',
+      svg: (W,H) => `
+        ${caption(0,0,W,'THE RISK ASSESSMENT.')}
+        <text x="${W/2}" y="${H*0.5}" text-anchor="middle" font-size="52">🤔</text>
+        ${thoughtBubble(W*0.04, H*0.04, W*0.92, 78, "Could be: police, a murderer, my landlord, a murderer who IS my landlord...")}
+      `},
+    { w:3, bg:'#e8f5e9',
+      svg: (W,H) => `
+        ${caption(0,0,W,'40 MINUTES LATER.')}
+        <text x="${W/2}" y="${H*0.35}" text-anchor="middle" font-size="48">📦</text>
+        <text x="${W/2}" y="${H*0.62}" text-anchor="middle" font-size="36">😮‍💨</text>
+        ${bubble(W*0.05, H*0.05, W*0.9, 52, "Amazon. It was Amazon. It's always Amazon.", 'down')}
+      `},
+  ]
+},
+// ════════════════════════════════════════════════════
+{
+  id:6, category:'philosophy',
+  title:"TIME IS FAKE",
+  episode:"Issue #11 · A Study in Clocks",
+  footer:"He started watching a documentary at 11pm. It was light outside when it ended.",
+  panels:[
+    { w:4, bg:'#e8f5e9',
+      svg: (W,H) => `
+        ${caption(0,0,W,'11:00 PM. BEFORE.')}
+        <text x="${W/2}" y="${H*0.44}" text-anchor="middle" font-size="62">🕐</text>
+        <text x="${W/2}" y="${H*0.7}" text-anchor="middle" font-size="36">😊</text>
+        ${bubble(W*0.04, H*0.05, W*0.92, 42, "Just one episode. I'm responsible.", 'down')}
+      `},
+    { w:4, bg:'#1a1a2e',
+      svg: (W,H) => `
+        ${caption(0,0,W,'THE VOID. SOMEWHERE IN TIME.', '#4ade80', '#000')}
+        <text x="${W/2}" y="${H*0.44}" text-anchor="middle" font-size="62">📺</text>
+        <text x="${W*0.15}" y="${H*0.44}" text-anchor="middle" font-size="28">⭐</text>
+        <text x="${W*0.8}" y="${H*0.38}" text-anchor="middle" font-size="20">🌙</text>
+        <text x="${W*0.75}" y="${H*0.58}" text-anchor="middle" font-size="16">✨</text>
+        <text x="${W/2}" y="${H*0.72}" text-anchor="middle" font-size="36">😶</text>
+        ${sfx(W*0.04, H*0.86, 'EPISODE 6...', '#a855f7', 22, 0)}
+      `},
+    { w:4, bg:'#fff8e1',
+      svg: (W,H) => `
+        ${caption(0,0,W,'4:47 AM. AFTER.')}
+        <text x="${W/2}" y="${H*0.4}" text-anchor="middle" font-size="52">🌅</text>
+        <text x="${W/2}" y="${H*0.66}" text-anchor="middle" font-size="40">😳</text>
+        ${shoutBubble(W*0.04, H*0.04, W*0.92, 66, "THE SUN. WHY IS THERE SUN.")}
+        ${sfx(W*0.04, H*0.78, 'BETRAYED', '#fbbf24', 24, -3)}
+      `},
+  ]
+},
+// ════════════════════════════════════════════════════
+{
+  id:7, category:'paranoia',
+  title:"THE TEXT",
+  episode:"Issue #6 · Read at 2:17 AM",
+  footer:"She saw the typing dots start, stop, and start again for 11 minutes. Then: 'lol'",
+  panels:[
+    { w:3, bg:'#e8f5e9',
+      svg: (W,H) => `
+        ${caption(0,0,W,'THE MESSAGE ARRIVES.')}
+        <text x="${W/2}" y="${H*0.44}" text-anchor="middle" font-size="56">📱</text>
+        <text x="${W/2}" y="${H*0.7}" text-anchor="middle" font-size="34">😐</text>
+        ${bubble(W*0.05, H*0.05, W*0.9, 52, '"Hey, can we talk?"', 'down', '#e3f2fd')}
+      `},
+    { w:3, bg:'#fce4ec',
+      svg: (W,H) => `
+        ${caption(0,0,W,'THE SPIRAL BEGINS.')}
+        <text x="${W/2}" y="${H*0.5}" text-anchor="middle" font-size="56">😰</text>
+        ${thoughtBubble(W*0.04, H*0.04, W*0.92, 78, "Talk about WHAT. What have I done. What do they KNOW.")}
+      `},
+    { w:3, bg:'#fff3e0',
+      svg: (W,H) => `
+        ${caption(0,0,W,'THE INNER COURT.')}
+        <text x="${W/2}" y="${H*0.44}" text-anchor="middle" font-size="56">⚖️</text>
+        <text x="${W/2}" y="${H*0.7}" text-anchor="middle" font-size="32">😵</text>
+        ${thoughtBubble(W*0.04, H*0.04, W*0.92, 68, "I am being judged. By whom. For what. When did I do this thing.")}
+      `},
+    { w:3, bg:'#e8f5e9',
+      svg: (W,H) => `
+        ${caption(0,0,W,'THE REPLY. 47 MINS LATER.')}
+        <text x="${W/2}" y="${H*0.44}" text-anchor="middle" font-size="56">📱</text>
+        <text x="${W/2}" y="${H*0.7}" text-anchor="middle" font-size="34">😶</text>
+        ${bubble(W*0.05, H*0.05, W*0.9, 52, '"wanna watch a movie lol"', 'down', '#e3f2fd')}
+        ${sfx(W*0.04, H*0.7, 'RELIEF', '#4ade80', 26, -3)}
+      `},
+  ]
+},
+// ════════════════════════════════════════════════════
+{
+  id:8, category:'memory',
+  title:"THE LIGHTER PROBLEM",
+  episode:"Issue #9 · Has Anyone Seen My—",
+  footer:"It was in his hand. It was in his hand the whole time.",
+  panels:[
+    { w:4, bg:'#fff8e1',
+      svg: (W,H) => `
+        ${caption(0,0,W,'THE SEARCH BEGINS.')}
+        <text x="${W/2}" y="${H*0.44}" text-anchor="middle" font-size="64">🔍</text>
+        <text x="${W/2}" y="${H*0.7}" text-anchor="middle" font-size="36">🤔</text>
+        ${bubble(W*0.04, H*0.05, W*0.92, 42, "Where's my lighter. It was literally just here.", 'down')}
+      `},
+    { w:4, bg:'#e3f2fd',
+      svg: (W,H) => `
+        ${caption(0,0,W,'THE SEARCH ESCALATES.')}
+        <text x="${W*0.2}" y="${H*0.5}" text-anchor="middle" font-size="32">🛋️</text>
+        <text x="${W*0.4}" y="${H*0.5}" text-anchor="middle" font-size="28">🪴</text>
+        <text x="${W*0.6}" y="${H*0.5}" text-anchor="middle" font-size="30">📚</text>
+        <text x="${W*0.8}" y="${H*0.5}" text-anchor="middle" font-size="28">🍕</text>
+        <text x="${W/2}" y="${H*0.75}" text-anchor="middle" font-size="38">😤</text>
+        ${sfx(W*0.05, H*0.15, 'SEARCH!', '#60a5fa', 28, -5)}
+      `},
+    { w:4, bg:'#e8f5e9',
+      svg: (W,H) => `
+        ${caption(0,0,W,'THE REVELATION.')}
+        <text x="${W/2-10}" y="${H*0.44}" text-anchor="middle" font-size="64">🔥</text>
+        <text x="${W/2}" y="${H*0.7}" text-anchor="middle" font-size="38">😐</text>
+        ${shoutBubble(W*0.04, H*0.04, W*0.92, 60, "It was in my hand.")}
+        ${sfx(W*0.04, H*0.72, 'always.', '#4ade80', 28, 2)}
+      `},
+  ]
+},
 ];
 
+// ── RENDERER ──────────────────────────────────────────────────
 let activeCategory = 'all';
+const CATEGORIES = ['all','memory','food','philosophy','paranoia'];
+const CAT_LABELS = {all:'ALL ISSUES',memory:'MEMORY LOSS',food:'FOOD DRAMA',philosophy:'DEEP THOUGHTS',paranoia:'MILD PARANOIA'};
 
 function filterComics(cat, btn) {
   activeCategory = cat;
@@ -3591,113 +3455,120 @@ function filterComics(cat, btn) {
 }
 window.filterComics = filterComics;
 
+// Rebuild filter buttons with correct labels
+function rebuildFilters() {
+  const nav = document.querySelector('.comics-nav');
+  if(!nav) return;
+  nav.innerHTML = CATEGORIES.map(cat =>
+    `<button class="comic-filter-btn${cat==='all'?' active':''}" onclick="filterComics('${cat}',this)">${CAT_LABELS[cat]}</button>`
+  ).join('');
+}
+
 function renderComics() {
   const container = document.getElementById('comicsScroll');
   if(!container) return;
   container.innerHTML = '';
   const filtered = activeCategory === 'all' ? COMICS : COMICS.filter(c => c.category === activeCategory);
 
+  if(!filtered.length) {
+    container.innerHTML = `<div style="text-align:center;padding:60px;color:var(--muted);font-style:italic">No strips in this category. The artist is horizontal.</div>`;
+    return;
+  }
+
   filtered.forEach((comic, idx) => {
-    const strip = document.createElement('div');
-    strip.className = 'comic-strip';
-    strip.style.animationDelay = (idx * 0.08) + 's';
+    const totalW = comic.panels.reduce((s,p) => s+(p.w||4), 0);
+    const PANEL_H = 220;
 
-    // Count total columns
-    const totalCols = comic.panels.reduce((s,p) => s + (p.cols||1), 0);
-
-    let panelsHTML = `<div class="comic-panels" style="grid-template-columns: repeat(${totalCols}, 1fr)">`;
-
-    comic.panels.forEach(panel => {
-      const colSpan = panel.cols > 1 ? `grid-column: span ${panel.cols};` : '';
-      panelsHTML += `<div class="comic-panel ${panel.bg}" style="${colSpan}">`;
-
-      // Caption top
-      if(panel.caption) panelsHTML += `<div class="panel-caption ${panel.caption.pos}">${panel.caption.text}</div>`;
-
-      // Art
-      if(panel.art) panelsHTML += panel.art;
-
-      // Speech bubble
-      if(panel.bubble) {
-        const pos = Object.entries(panel.bubble.pos).map(([k,v])=>`${k}:${v}`).join(';');
-        panelsHTML += `<div class="speech-bubble ${panel.bubble.tail} ${panel.bubble.style}" style="${pos}">${panel.bubble.text}</div>`;
-      }
-
-      // SFX
-      if(panel.sfx) {
-        const pos = Object.entries(panel.sfx.pos).map(([k,v])=>`${k}:${v}`).join(';');
-        panelsHTML += `<div class="sfx ${panel.sfx.color}" style="${pos}">${panel.sfx.text}</div>`;
-      }
-
-      // Caption2 bottom
-      if(panel.caption2) panelsHTML += `<div class="panel-caption ${panel.caption2.pos}">${panel.caption2.text}</div>`;
-
-      panelsHTML += `</div>`;
+    // Build SVG for entire strip
+    let svgPanels = '';
+    let xOff = 0;
+    comic.panels.forEach((panel,pi) => {
+      const pw = Math.round((panel.w / totalW) * 100);
+      const content = panel.svg ? panel.svg(panel.w*80, PANEL_H) : '';
+      const bgCol = panel.bg || '#fff';
+      svgPanels += `
+        <g transform="translate(${xOff},0)">
+          <rect width="${panel.w*80}" height="${PANEL_H}" fill="${bgCol}"/>
+          ${content}
+          <rect width="${panel.w*80}" height="${PANEL_H}" fill="none" stroke="#111" stroke-width="3"/>
+        </g>
+      `;
+      xOff += panel.w * 80;
     });
 
-    panelsHTML += `</div>`;
+    const totalSVGW = totalW * 80;
 
+    const strip = document.createElement('div');
+    strip.className = 'comic-strip';
     strip.innerHTML = `
       <div class="comic-title-bar">
         <span class="ct-name">${comic.title}</span>
         <span class="ct-episode">${comic.episode}</span>
       </div>
-      ${panelsHTML}
+      <div style="width:100%;overflow:hidden;background:#fff">
+        <svg viewBox="0 0 ${totalSVGW} ${PANEL_H}" width="100%" xmlns="http://www.w3.org/2000/svg"
+          style="display:block;font-family:'Permanent Marker',cursive">
+          <!-- Halftone -->
+          <defs>
+            <pattern id="ht${idx}" width="8" height="8" patternUnits="userSpaceOnUse">
+              <circle cx="4" cy="4" r="1" fill="rgba(0,0,0,0.045)"/>
+            </pattern>
+          </defs>
+          ${svgPanels}
+          <rect width="${totalSVGW}" height="${PANEL_H}" fill="url(#ht${idx})" pointer-events="none"/>
+          <rect width="${totalSVGW}" height="${PANEL_H}" fill="none" stroke="#111" stroke-width="4"/>
+        </svg>
+      </div>
       <div class="comic-footer-bar">${comic.footer}</div>
     `;
 
     strip.addEventListener('click', e => spawnKapow(e));
     container.appendChild(strip);
-
-    // Staggered pop-in
-    setTimeout(() => strip.classList.add('pop-in'), idx * 80);
+    setTimeout(() => strip.classList.add('pop-in'), idx * 70);
   });
-
-  if(filtered.length === 0) {
-    container.innerHTML = `<div style="text-align:center;padding:60px;color:var(--muted);font-style:italic;font-size:0.85rem;">No issues in this category yet. The artist is napping.</div>`;
-  }
 }
 
 function spawnKapow(e) {
-  const words = ['KAPOW!','ZAP!','BOOF!','WHOOSH!','SNACK!','VIBES!','OOF!','BLAZE!','CHILL!','POW!'];
-  const colors = ['#4ade80','#fbbf24','#f472b6','#a855f7','#60a5fa','#ef4444','#fff'];
+  const words = ['KAPOW!','ZAP!','BOOF!','MUNCH!','VIBES!','OOF!','CHILL!','POW!','SNACK!','WOW!','DUDE.','...wait'];
+  const colors = ['#4ade80','#fbbf24','#f472b6','#a855f7','#60a5fa','#ef4444'];
   const el = document.createElement('div');
   el.className = 'kapow-float';
   el.textContent = words[Math.floor(Math.random()*words.length)];
   el.style.color = colors[Math.floor(Math.random()*colors.length)];
-  el.style.left = (e.clientX - 40) + 'px';
-  el.style.top = (e.clientY - 40) + 'px';
+  el.style.left = (e.clientX - 50) + 'px';
+  el.style.top = (e.clientY - 50) + 'px';
   document.body.appendChild(el);
   setTimeout(() => el.remove(), 1200);
 }
 
-// Render when game tab is clicked
-const origShowGame = window.showGame || (()=>{});
-const _oldShow = window.showGame;
+// Hook into showGame
+const _prevShowGame = window.showGame;
 window.showGame = function(name) {
-  _oldShow(name);
-  if(name === 'comics') setTimeout(renderComics, 50);
+  _prevShowGame(name);
+  if(name === 'comics') {
+    setTimeout(() => { rebuildFilters(); renderComics(); }, 60);
+  }
 };
 
-// Also add to home card grid
+// Home card
 setTimeout(() => {
   const grid = document.querySelector('.games-grid');
-  if(grid) {
+  if(grid && !document.querySelector('[data-comics-card]')) {
     const card = document.createElement('div');
     card.className = 'game-card';
+    card.setAttribute('data-comics-card','1');
     card.onclick = () => window.showGame('comics');
     card.innerHTML = `
       <span class="game-card-icon">📖</span>
       <div class="game-card-title">High Times Comics</div>
-      <div class="game-card-desc">Six original hand-drawn comic strips. Harold, Gary, Sensei Puff, Cosmic Barry & more. Click panels for dramatic sound effects.</div>
+      <div class="game-card-desc">8 original strips: the walk of confusion, Uber Eats tragedy, dolphin theories, lighter problems & more. Click panels for KAPOW.</div>
       <span class="game-card-tag">● Original Comics</span>
     `;
     grid.appendChild(card);
   }
-}, 300);
+}, 400);
 
 })();
-
 </script>
 </body>
 </html>
