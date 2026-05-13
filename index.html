@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>The High Score Arcade 🌿</title>
+<title>Born High Arcade 🌿 | Born High Cannabis Social Club</title>
 <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;700;900&family=DM+Mono:wght@300;400;500&family=Unbounded:wght@300;700;900&family=Permanent+Marker&display=swap" rel="stylesheet">
 <style>
   :root {
@@ -1516,6 +1516,386 @@
     background: rgba(74,222,128,0.08);
   }
 
+
+  /* ========== BORN HIGH GATE + SESSION ========== */
+  #bh-gate {
+    position: fixed;
+    inset: 0;
+    background: var(--bg);
+    z-index: 99999;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-direction: column;
+    gap: 0;
+  }
+
+  .gate-wrap {
+    width: 100%;
+    max-width: 440px;
+    padding: 20px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 28px;
+  }
+
+  .gate-logo {
+    text-align: center;
+  }
+
+  .gate-leaf {
+    font-size: 4rem;
+    display: block;
+    animation: sway 3s ease-in-out infinite;
+    filter: drop-shadow(0 0 24px rgba(74,222,128,0.4));
+  }
+
+  .gate-brand {
+    font-family: 'Unbounded', sans-serif;
+    font-weight: 900;
+    font-size: 1.6rem;
+    letter-spacing: -0.02em;
+    background: linear-gradient(135deg, var(--green), var(--gold));
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    margin-top: 10px;
+  }
+
+  .gate-sub {
+    font-size: 0.7rem;
+    color: var(--muted);
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    margin-top: 4px;
+  }
+
+  .gate-card {
+    width: 100%;
+    background: var(--panel);
+    border: 1px solid var(--border);
+    border-radius: 16px;
+    padding: 32px;
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+  }
+
+  .gate-card h3 {
+    font-family: 'Playfair Display', serif;
+    font-size: 1.3rem;
+    text-align: center;
+    color: var(--text);
+    line-height: 1.4;
+  }
+
+  .gate-card p {
+    font-size: 0.75rem;
+    color: var(--muted);
+    text-align: center;
+    line-height: 1.7;
+  }
+
+  .gate-card p strong {
+    color: var(--green);
+  }
+
+  .gate-input {
+    width: 100%;
+    background: var(--bg2);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 14px 16px;
+    color: var(--text);
+    font-family: 'Unbounded', sans-serif;
+    font-size: 1rem;
+    letter-spacing: 0.2em;
+    text-align: center;
+    outline: none;
+    transition: border-color 0.2s;
+  }
+
+  .gate-input:focus { border-color: var(--green); }
+  .gate-input::placeholder { color: var(--muted); letter-spacing: 0.1em; font-size: 0.8rem; }
+
+  .gate-input.error {
+    border-color: #ef4444;
+    animation: shake-input 0.4s ease;
+  }
+
+  @keyframes shake-input {
+    0%,100% { transform: translateX(0); }
+    20% { transform: translateX(-8px); }
+    40% { transform: translateX(8px); }
+    60% { transform: translateX(-6px); }
+    80% { transform: translateX(6px); }
+  }
+
+  .gate-err {
+    font-size: 0.7rem;
+    color: #ef4444;
+    text-align: center;
+    min-height: 18px;
+    letter-spacing: 0.05em;
+  }
+
+  .gate-submit {
+    width: 100%;
+    padding: 16px;
+    background: linear-gradient(135deg, rgba(74,222,128,0.2), rgba(74,222,128,0.08));
+    border: 1px solid var(--green);
+    border-radius: 10px;
+    color: var(--green);
+    font-family: 'Unbounded', sans-serif;
+    font-size: 0.85rem;
+    letter-spacing: 0.05em;
+    cursor: pointer;
+    transition: all 0.2s;
+  }
+
+  .gate-submit:hover {
+    background: rgba(74,222,128,0.28);
+    box-shadow: 0 0 24px rgba(74,222,128,0.2);
+  }
+
+  .gate-divider {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    color: var(--muted);
+    font-size: 0.65rem;
+    letter-spacing: 0.1em;
+  }
+
+  .gate-divider::before, .gate-divider::after {
+    content: '';
+    flex: 1;
+    height: 1px;
+    background: var(--border);
+  }
+
+  .gate-tip {
+    text-align: center;
+    font-size: 0.68rem;
+    color: var(--muted);
+    line-height: 1.6;
+  }
+
+  .gate-tip .tip-highlight {
+    display: inline-block;
+    margin-top: 8px;
+    background: rgba(251,191,36,0.08);
+    border: 1px solid rgba(251,191,36,0.25);
+    border-radius: 8px;
+    padding: 8px 14px;
+    color: var(--gold);
+    font-size: 0.72rem;
+  }
+
+  /* Step 2: name entry */
+  .gate-step { display: none; }
+  .gate-step.active { display: flex; flex-direction: column; gap: 16px; }
+
+  /* Leaderboard overlay */
+  #lb-overlay {
+    position: fixed;
+    inset: 0;
+    background: rgba(0,0,0,0.85);
+    z-index: 88888;
+    display: none;
+    align-items: center;
+    justify-content: center;
+    backdrop-filter: blur(8px);
+    padding: 20px;
+  }
+
+  #lb-overlay.open { display: flex; }
+
+  .lb-modal {
+    background: var(--panel);
+    border: 1px solid var(--border);
+    border-radius: 18px;
+    width: 100%;
+    max-width: 560px;
+    max-height: 90vh;
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+    box-shadow: 0 24px 80px rgba(0,0,0,0.6);
+  }
+
+  .lb-modal-header {
+    padding: 24px 28px 16px;
+    border-bottom: 1px solid var(--border);
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+  }
+
+  .lb-modal-header h2 {
+    font-family: 'Playfair Display', serif;
+    font-size: 1.4rem;
+    color: var(--gold);
+  }
+
+  .lb-modal-header .lb-close {
+    width: 32px; height: 32px;
+    border-radius: 50%;
+    border: 1px solid var(--border);
+    background: var(--bg2);
+    color: var(--muted);
+    font-size: 1rem;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.2s;
+  }
+
+  .lb-modal-header .lb-close:hover { border-color: var(--green); color: var(--green); }
+
+  .lb-game-tabs {
+    display: flex;
+    gap: 0;
+    border-bottom: 1px solid var(--border);
+    overflow-x: auto;
+    padding: 0 28px;
+  }
+
+  .lb-game-tab {
+    padding: 10px 16px;
+    font-size: 0.68rem;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--muted);
+    cursor: pointer;
+    border-bottom: 2px solid transparent;
+    white-space: nowrap;
+    transition: all 0.2s;
+    background: none;
+    border-top: none;
+    border-left: none;
+    border-right: none;
+    font-family: 'DM Mono', monospace;
+  }
+
+  .lb-game-tab.active { color: var(--green); border-bottom-color: var(--green); }
+  .lb-game-tab:hover { color: var(--text); }
+
+  .lb-body { flex: 1; overflow-y: auto; padding: 20px 28px 24px; }
+
+  .lb-entry {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    padding: 12px 0;
+    border-bottom: 1px solid var(--border);
+    transition: background 0.15s;
+  }
+
+  .lb-entry:last-child { border-bottom: none; }
+
+  .lb-entry.me { background: rgba(74,222,128,0.05); border-radius: 8px; padding: 12px 10px; margin: 0 -10px; }
+
+  .lb-rank-num {
+    font-family: 'Unbounded', sans-serif;
+    font-size: 0.75rem;
+    font-weight: 700;
+    width: 28px;
+    text-align: center;
+    color: var(--muted);
+  }
+
+  .lb-rank-num.gold { color: #fbbf24; }
+  .lb-rank-num.silver { color: #94a3b8; }
+  .lb-rank-num.bronze { color: #c2773a; }
+
+  .lb-avatar {
+    width: 36px; height: 36px;
+    border-radius: 50%;
+    background: var(--dim);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.1rem;
+    border: 1px solid var(--border);
+    flex-shrink: 0;
+  }
+
+  .lb-entry.me .lb-avatar { border-color: var(--green); background: rgba(74,222,128,0.1); }
+
+  .lb-info { flex: 1; }
+  .lb-player-name { font-size: 0.82rem; color: var(--text); font-weight: 500; }
+  .lb-player-name .me-tag { color: var(--green); font-size: 0.62rem; margin-left: 6px; }
+  .lb-time { font-size: 0.62rem; color: var(--muted); margin-top: 2px; }
+
+  .lb-score-val {
+    font-family: 'Unbounded', sans-serif;
+    font-size: 0.9rem;
+    font-weight: 700;
+    color: var(--green);
+    text-align: right;
+  }
+
+  .lb-score-label {
+    font-size: 0.55rem;
+    color: var(--muted);
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    text-align: right;
+  }
+
+  .lb-empty {
+    text-align: center;
+    padding: 40px;
+    color: var(--muted);
+    font-style: italic;
+    font-size: 0.78rem;
+  }
+
+  /* Leaderboard button in header */
+  .lb-btn {
+    padding: 8px 16px;
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    background: var(--panel);
+    color: var(--muted);
+    font-family: 'DM Mono', monospace;
+    font-size: 0.68rem;
+    cursor: pointer;
+    transition: all 0.2s;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+  }
+
+  .lb-btn:hover { border-color: var(--gold); color: var(--gold); }
+
+  /* PIN digits display */
+  .pin-display {
+    display: flex;
+    gap: 10px;
+    justify-content: center;
+  }
+
+  .pin-digit {
+    width: 52px; height: 64px;
+    background: var(--bg2);
+    border: 2px solid var(--border);
+    border-radius: 10px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-family: 'Unbounded', sans-serif;
+    font-size: 1.6rem;
+    font-weight: 700;
+    color: var(--green);
+    transition: all 0.2s;
+  }
+
+  .pin-digit.filled { border-color: var(--green); background: rgba(74,222,128,0.08); }
+
   /* Scrollbar */
   ::-webkit-scrollbar { width: 6px; }
   ::-webkit-scrollbar-track { background: var(--bg); }
@@ -1525,6 +1905,64 @@
 </head>
 <body>
 
+
+<!-- ===== BORN HIGH GATE ===== -->
+<div id="bh-gate">
+  <div class="gate-wrap">
+    <div class="gate-logo">
+      <span class="gate-leaf">🌿</span>
+      <div class="gate-brand">Born High Arcade</div>
+      <div class="gate-sub">Cannabis Social Club · Members Only</div>
+    </div>
+
+    <div class="gate-card">
+      <!-- STEP 1: PIN -->
+      <div class="gate-step active" id="gate-step-1">
+        <h3>Enter today's<br>access code</h3>
+        <p>Ask the <strong>budtender at the till</strong> for today's 4-digit code to unlock the arcade.</p>
+        <div class="pin-display">
+          <div class="pin-digit" id="pd0">–</div>
+          <div class="pin-digit" id="pd1">–</div>
+          <div class="pin-digit" id="pd2">–</div>
+          <div class="pin-digit" id="pd3">–</div>
+        </div>
+        <input class="gate-input" id="pin-input" type="number" maxlength="4" placeholder="4-digit code"
+          oninput="onPinInput(this)" onkeydown="if(event.key==='Enter')submitPin()" autocomplete="off" inputmode="numeric"/>
+        <div class="gate-err" id="pin-err"></div>
+        <button class="gate-submit" onclick="submitPin()">Unlock Arcade 🌿</button>
+        <div class="gate-divider">or</div>
+        <div class="gate-tip">
+          No code yet? Head to the till, grab something, and the budtender will sort you out.
+          <div class="tip-highlight">🏆 Top scorer gets bragging rights on the leaderboard</div>
+        </div>
+      </div>
+
+      <!-- STEP 2: NAME -->
+      <div class="gate-step" id="gate-step-2">
+        <h3>You're in. 🌿<br>What do we call you?</h3>
+        <p>Your name goes on the leaderboard. Make it count.</p>
+        <input class="gate-input" id="name-input" type="text" maxlength="18" placeholder="Your handle"
+          style="letter-spacing:0.05em;font-size:1rem"
+          onkeydown="if(event.key==='Enter')submitName()" autocomplete="off"/>
+        <div class="gate-err" id="name-err"></div>
+        <button class="gate-submit" onclick="submitName()">Let's Play 🎮</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ===== LEADERBOARD OVERLAY ===== -->
+<div id="lb-overlay">
+  <div class="lb-modal">
+    <div class="lb-modal-header">
+      <h2>🏆 Leaderboard</h2>
+      <button class="lb-close" onclick="closeLB()">✕</button>
+    </div>
+    <div class="lb-game-tabs" id="lb-game-tabs"></div>
+    <div class="lb-body" id="lb-body"></div>
+  </div>
+</div>
+
 <div class="ambient ambient-1"></div>
 <div class="ambient ambient-2"></div>
 <div class="ambient ambient-3"></div>
@@ -1533,20 +1971,24 @@
   <div>
     <div class="logo">
       <span class="leaf">🌿</span>
-      <span>High Score Arcade</span>
+      <span>Born High Arcade</span>
     </div>
-    <div class="tagline">Games for the elevated mind</div>
+    <div class="tagline" id="player-tagline">Ask the budtender for today's code</div>
   </div>
-  <div class="session-info">
+  <div style="display:flex;align-items:center;gap:12px;">
+  <button class="lb-btn" id="lb-header-btn" onclick="openLB()" style="display:none">🏆 Leaderboard</button>
+  <div class="session-info" id="session-info-block" style="display:none">
+    <div style="color:var(--muted);font-size:0.6rem;letter-spacing:0.1em;text-transform:uppercase;margin-bottom:2px;" id="player-name-display">—</div>
     <div class="vibe-score" id="total-vibe">0</div>
-    <div style="color:var(--muted);font-size:0.62rem;letter-spacing:0.1em;text-transform:uppercase;">Total Vibe Points</div>
+    <div style="color:var(--muted);font-size:0.62rem;letter-spacing:0.1em;text-transform:uppercase;">Vibe Points</div>
+  </div>
   </div>
 </header>
 
 <div class="scrolling-ticker">
   <span class="ticker-inner">
-    🌿 &nbsp;BREAKING: Local man reports snacks have never tasted this good &nbsp;·&nbsp; 🏆 High score in Munchie Madness: 420pts &nbsp;·&nbsp; 🌱 Your Blue Dream seedling is vibing nicely &nbsp;·&nbsp; 🍕 Scientists confirm: pizza is better at 2am &nbsp;·&nbsp; ✨ New upgrade unlocked: Himalayan Salts &nbsp;·&nbsp; 🌀 The cosmos called, it said "chill out" &nbsp;·&nbsp; 💨 Sessions completed today: many &nbsp;·&nbsp; 🎮 High Score Arcade — games for the elevated mind &nbsp;·&nbsp;
-    🌿 &nbsp;BREAKING: Local man reports snacks have never tasted this good &nbsp;·&nbsp; 🏆 High score in Munchie Madness: 420pts &nbsp;·&nbsp; 🌱 Your Blue Dream seedling is vibing nicely &nbsp;·&nbsp; 🍕 Scientists confirm: pizza is better at 2am &nbsp;·&nbsp; ✨ New upgrade unlocked: Himalayan Salts &nbsp;·&nbsp; 🌀 The cosmos called, it said "chill out" &nbsp;·&nbsp; 💨 Sessions completed today: many &nbsp;·&nbsp; 🎮 High Score Arcade — games for the elevated mind &nbsp;·&nbsp;
+    🌿 &nbsp;BREAKING: Local man reports snacks have never tasted this good &nbsp;·&nbsp; 🏆 High score in Munchie Madness: 420pts &nbsp;·&nbsp; 🌱 Your Blue Dream seedling is vibing nicely &nbsp;·&nbsp; 🍕 Scientists confirm: pizza is better at 2am &nbsp;·&nbsp; ✨ New upgrade unlocked: Himalayan Salts &nbsp;·&nbsp; 🌀 The cosmos called, it said "chill out" &nbsp;·&nbsp; 💨 Sessions completed today: many &nbsp;·&nbsp; 🎮 Born High Arcade — exclusively at Born High Cannabis Social Club &nbsp;·&nbsp;
+    🌿 &nbsp;BREAKING: Local man reports snacks have never tasted this good &nbsp;·&nbsp; 🏆 High score in Munchie Madness: 420pts &nbsp;·&nbsp; 🌱 Your Blue Dream seedling is vibing nicely &nbsp;·&nbsp; 🍕 Scientists confirm: pizza is better at 2am &nbsp;·&nbsp; ✨ New upgrade unlocked: Himalayan Salts &nbsp;·&nbsp; 🌀 The cosmos called, it said "chill out" &nbsp;·&nbsp; 💨 Sessions completed today: many &nbsp;·&nbsp; 🎮 Born High Arcade — exclusively at Born High Cannabis Social Club &nbsp;·&nbsp;
   </span>
 </div>
 
@@ -1588,9 +2030,9 @@
   <div id="game-home" class="game-screen active">
     <div class="dashboard-hero">
       <div class="hero-headline">
-        Welcome to the<br><em>most distinguished</em><br>digital arcade
+        Welcome to<br><em>Born High</em><br>Arcade
       </div>
-      <div class="hero-sub">Four games. Zero judgment. 100% vibes. Whether you're 18 or 80, couch-locked or hyper-focused — we've got your digits.</div>
+      <div class="hero-sub">The official members arcade of Born High Cannabis Social Club. Play, score, climb the leaderboard. Ask the budtender for today's access code.</div>
       <div style="display:flex;gap:12px;justify-content:center;flex-wrap:wrap;">
         <button onclick="showGame('blunt')" class="munchie-start">Start Rolling 🚬</button>
         <button onclick="showGame('trip')" style="padding:14px 32px;background:rgba(168,85,247,0.1);border:1px solid var(--purple);color:var(--purple);font-family:'Unbounded',sans-serif;font-size:0.8rem;border-radius:8px;cursor:pointer;transition:all 0.2s;">Enter The Trip 🌀</button>
@@ -1918,7 +2360,7 @@
   <div id="game-comics" class="game-screen">
     <div class="comics-header">
       <div class="comics-halftone-bg"></div>
-      <h2>HIGH TIMES COMICS</h2>
+      <h2>BORN HIGH COMICS</h2>
       <div class="subtitle">Original strips for the chronically enlightened · New issues drop whenever we feel like it</div>
     </div>
 
@@ -1936,9 +2378,9 @@
 </main>
 
 <footer>
-  <div>Built with <span class="footer-heart">♥</span> by <a href="https://businesshustle.co.za" target="_blank">Business Hustle</a></div>
+  <div>🌿 <strong style="color:var(--green)">Born High Cannabis Social Club</strong> · Members Arcade</div>
   <div style="color:var(--border)">·</div>
-  <div>Powered by good energy & <a href="https://kloofstreet.online" target="_blank">Kloof Street</a></div>
+  <div>Built with <span class="footer-heart">♥</span> by <a href="https://businesshustle.co.za" target="_blank">Business Hustle</a></div>
 </footer>
 
 <!-- Bulletin Ad -->
@@ -1976,6 +2418,287 @@ function formatNum(n) {
   if (n >= 1e3) return (n/1e3).toFixed(1) + 'K';
   return Math.floor(n).toString();
 }
+
+
+// ===================================================
+// BORN HIGH — AUTH + LEADERBOARD ENGINE
+// ===================================================
+
+const BH = {
+  // PIN management — staff set via admin.html, stored in localStorage
+  // Default daily PIN if none set: 4200
+  getPin() {
+    const stored = localStorage.getItem('bh_pin');
+    if (!stored) return '4200';
+    const { pin, date } = JSON.parse(stored);
+    const today = new Date().toDateString();
+    return date === today ? pin : '4200'; // expires daily
+  },
+
+  // Session
+  session: null,
+  avatars: ['🌿','🔥','💎','🌀','🍕','🛹','⭐','🌙','🦋','🐉','🎯','🧿'],
+
+  startSession(name) {
+    this.session = {
+      name: name.trim(),
+      id: Date.now().toString(36),
+      avatar: this.avatars[Math.floor(Math.random() * this.avatars.length)],
+      scores: {},
+      vibePoints: 0,
+      startedAt: Date.now(),
+    };
+    sessionStorage.setItem('bh_session', JSON.stringify(this.session));
+  },
+
+  loadSession() {
+    const s = sessionStorage.getItem('bh_session');
+    if (s) { this.session = JSON.parse(s); return true; }
+    return false;
+  },
+
+  // Leaderboard — keyed per game, stored in localStorage
+  LB_GAMES: [
+    { key: 'vibe_total', label: '🌿 Vibe Points', unit: 'VP', desc: 'Total session vibe points' },
+    { key: 'blunt', label: '🚬 Blunt Roller', unit: 'blunts', desc: 'Total blunts rolled' },
+    { key: 'munchie', label: '🍕 Munchie Madness', unit: 'pts', desc: 'Single game score' },
+    { key: 'skate', label: '🛹 Skate or Bake', unit: 'pts', desc: 'Best run score' },
+    { key: 'asteroid', label: '🌌 Asteroid Munchies', unit: 'pts', desc: 'Best game score' },
+    { key: 'vibe_seq', label: '🎵 Vibe Sequencer', unit: 'lvl', desc: 'Highest level reached' },
+    { key: 'higher', label: '🃏 Higher or Lower', unit: 'streak', desc: 'Best win streak' },
+  ],
+
+  submitScore(gameKey, score, displayScore) {
+    if (!this.session) return;
+    const key = 'bh_lb_' + gameKey;
+    let board = JSON.parse(localStorage.getItem(key) || '[]');
+
+    // Check if this player already has an entry
+    const existingIdx = board.findIndex(e => e.id === this.session.id);
+    const entry = {
+      id: this.session.id,
+      name: this.session.name,
+      avatar: this.session.avatar,
+      score: score,
+      display: displayScore || score,
+      ts: Date.now(),
+    };
+
+    if (existingIdx >= 0) {
+      if (score > board[existingIdx].score) {
+        board[existingIdx] = entry; // only update if better
+      }
+    } else {
+      board.push(entry);
+    }
+
+    board.sort((a,b) => b.score - a.score);
+    board = board.slice(0, 50); // keep top 50
+    localStorage.setItem(key, JSON.stringify(board));
+
+    // Update session vibe total
+    this.session.vibePoints = (this.session.vibePoints || 0) + score;
+    sessionStorage.setItem('bh_session', JSON.stringify(this.session));
+    this.submitScore('vibe_total', this.session.vibePoints, formatNum(this.session.vibePoints) + ' VP');
+  },
+
+  getBoard(gameKey) {
+    return JSON.parse(localStorage.getItem('bh_lb_' + gameKey) || '[]');
+  },
+
+  getPlayerRank(gameKey) {
+    if (!this.session) return null;
+    const board = this.getBoard(gameKey);
+    const idx = board.findIndex(e => e.id === this.session.id);
+    return idx >= 0 ? idx + 1 : null;
+  }
+};
+
+// ── Gate UI ──────────────────────────────────────────────────
+let pinBuffer = '';
+
+function onPinInput(el) {
+  const val = el.value.replace(/\D/g,'').slice(0,4);
+  el.value = val;
+  pinBuffer = val;
+  // Update digit display
+  for(let i=0;i<4;i++){
+    const d = document.getElementById('pd'+i);
+    d.textContent = val[i] || '–';
+    d.classList.toggle('filled', !!val[i]);
+  }
+  document.getElementById('pin-err').textContent = '';
+  if(val.length === 4) setTimeout(submitPin, 200);
+}
+
+function submitPin() {
+  const val = document.getElementById('pin-input').value.replace(/\D/g,'');
+  const correct = BH.getPin();
+  if(val === correct) {
+    document.getElementById('gate-step-1').classList.remove('active');
+    document.getElementById('gate-step-2').classList.add('active');
+    setTimeout(() => document.getElementById('name-input').focus(), 100);
+  } else {
+    const inp = document.getElementById('pin-input');
+    inp.classList.add('error');
+    document.getElementById('pin-err').textContent = val.length < 4 ? 'Enter all 4 digits.' : 'Wrong code. Ask the budtender. 🌿';
+    setTimeout(() => inp.classList.remove('error'), 500);
+  }
+}
+
+function submitName() {
+  const name = document.getElementById('name-input').value.trim();
+  if(!name || name.length < 2) {
+    document.getElementById('name-err').textContent = 'Give us at least 2 characters.';
+    return;
+  }
+  BH.startSession(name);
+  unlockArcade();
+}
+
+function unlockArcade() {
+  // Hide gate
+  const gate = document.getElementById('bh-gate');
+  gate.style.transition = 'opacity 0.5s';
+  gate.style.opacity = '0';
+  setTimeout(() => gate.style.display = 'none', 500);
+
+  // Show session UI
+  document.getElementById('session-info-block').style.display = 'block';
+  document.getElementById('lb-header-btn').style.display = 'flex';
+  document.getElementById('player-name-display').textContent = BH.session.avatar + ' ' + BH.session.name;
+  document.getElementById('player-tagline').textContent = 'Born High Cannabis Social Club';
+
+  showToast('🌿', 'Welcome, ' + BH.session.name + '!', 'You're on the board. Go score something.');
+}
+
+// Check for existing session (page refresh)
+if(BH.loadSession()) {
+  document.addEventListener('DOMContentLoaded', () => {
+    document.getElementById('bh-gate').style.display = 'none';
+    document.getElementById('session-info-block').style.display = 'block';
+    document.getElementById('lb-header-btn').style.display = 'flex';
+    document.getElementById('player-name-display').textContent = BH.session.avatar + ' ' + BH.session.name;
+    document.getElementById('player-tagline').textContent = 'Born High Cannabis Social Club';
+  });
+} else {
+  document.addEventListener('DOMContentLoaded', () => {
+    setTimeout(() => document.getElementById('pin-input').focus(), 400);
+  });
+}
+
+// ── Leaderboard UI ───────────────────────────────────────────
+let activeLBGame = 'vibe_total';
+
+function openLB() {
+  buildLBTabs();
+  renderLB(activeLBGame);
+  document.getElementById('lb-overlay').classList.add('open');
+}
+window.openLB = openLB;
+
+function closeLB() { document.getElementById('lb-overlay').classList.remove('open'); }
+window.closeLB = closeLB;
+
+function buildLBTabs() {
+  const tabs = document.getElementById('lb-game-tabs');
+  tabs.innerHTML = BH.LB_GAMES.map(g =>
+    `<button class="lb-game-tab${g.key===activeLBGame?' active':''}"
+      onclick="renderLB('${g.key}',this)">${g.label}</button>`
+  ).join('');
+}
+
+function renderLB(key, btn) {
+  activeLBGame = key;
+  if(btn) {
+    document.querySelectorAll('.lb-game-tab').forEach(t => t.classList.remove('active'));
+    btn.classList.add('active');
+  }
+  const game = BH.LB_GAMES.find(g => g.key === key);
+  const board = BH.getBoard(key);
+  const body = document.getElementById('lb-body');
+  const myId = BH.session?.id;
+
+  if(!board.length) {
+    body.innerHTML = `<div class="lb-empty">No scores yet for ${game.label}.<br>Be the first. 🌿</div>`;
+    return;
+  }
+
+  const rankColors = ['gold','silver','bronze'];
+  const medals = ['🥇','🥈','🥉'];
+
+  body.innerHTML = `
+    <div style="font-size:0.65rem;color:var(--muted);margin-bottom:16px;font-style:italic">${game.desc}</div>
+    ${board.slice(0,20).map((e,i) => {
+      const isMe = e.id === myId;
+      const rankClass = rankColors[i] || '';
+      const timeAgo = formatTimeAgo(e.ts);
+      return `
+        <div class="lb-entry${isMe?' me':''}">
+          <div class="lb-rank-num ${rankClass}">${i<3?medals[i]:'#'+(i+1)}</div>
+          <div class="lb-avatar">${e.avatar||'🌿'}</div>
+          <div class="lb-info">
+            <div class="lb-player-name">${escapeHtml(e.name)}${isMe?'<span class="me-tag">← you</span>':''}</div>
+            <div class="lb-time">${timeAgo}</div>
+          </div>
+          <div>
+            <div class="lb-score-val">${e.display||e.score}</div>
+            <div class="lb-score-label">${game.unit}</div>
+          </div>
+        </div>
+      `;
+    }).join('')}
+  `;
+}
+window.renderLB = renderLB;
+
+function formatTimeAgo(ts) {
+  const diff = Date.now() - ts;
+  const m = Math.floor(diff/60000);
+  if(m < 1) return 'just now';
+  if(m < 60) return m + 'm ago';
+  const h = Math.floor(m/60);
+  if(h < 24) return h + 'h ago';
+  return Math.floor(h/24) + 'd ago';
+}
+
+function escapeHtml(str) {
+  return str.replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+}
+
+// ── Score submission hooks — patch game end functions ────────
+// These wrap the existing score tallies and post to BH leaderboard
+
+// Blunt Roller: post every 30s if session active
+setInterval(() => {
+  if(BH.session && bluntState.total > 0) {
+    BH.submitScore('blunt', Math.floor(bluntState.total), formatNum(Math.floor(bluntState.total)) + ' blunts');
+    document.getElementById('total-vibe').textContent = formatNum(BH.session?.vibePoints || vibePoints);
+  }
+}, 30000);
+
+// Patch endMunchie
+const _origEndMunchie = window.endMunchie || null;
+window.__bhPatchMunchie = function(score) {
+  if(BH.session && score > 0) BH.submitScore('munchie', score, score + ' pts');
+};
+
+// Patch endSkate — done inside skate IIFE, we post via updateVibe hook
+const _origUpdateVibe = window.updateVibe;
+window.updateVibe = function(n) {
+  _origUpdateVibe(n);
+  if(BH.session) {
+    document.getElementById('total-vibe').textContent = formatNum(BH.session.vibePoints || vibePoints);
+  }
+};
+
+// Post-game score bridges (called from game end functions)
+window.bhPostScore = function(key, score, display) {
+  if(BH.session && score > 0) {
+    BH.submitScore(key, score, display);
+    document.getElementById('total-vibe').textContent = formatNum(BH.session.vibePoints || 0);
+  }
+};
 
 // ===== NAVIGATION =====
 function showGame(name) {
@@ -2717,6 +3440,7 @@ setTimeout(() => showToast('🌿', 'Welcome to the Arcade', 'Pick a game. Embrac
     document.getElementById('skate-start-btn').textContent = 'Drop In Again 🛹';
     document.getElementById('skate-start-btn').disabled = false;
     updateVibe(score);
+    window.bhPostScore && bhPostScore('skate', score, score + ' pts');
     showToast('🛹','Bailed!','You scored ' + score + ' pts. ' + (score>50?'Respect.':'Shake it off.'));
 
     // Draw game over
@@ -2802,6 +3526,7 @@ setTimeout(() => showToast('🌿', 'Welcome to the Arcade', 'Pick a game. Embrac
       document.getElementById('vibe-status').textContent='😵 Wrong vibe. Starting over.';
       if(level>bestLevel){ bestLevel=level; document.getElementById('vibe-best-level').textContent=bestLevel; }
       updateVibe(streak*5);
+      window.bhPostScore && bhPostScore('vibe_seq', level, 'Level ' + level);
       playTone(100, 0.4);
       setTimeout(()=>{ sequence=[]; level=1; streak=0; document.getElementById('vibe-level').textContent=1; document.getElementById('vibe-streak').textContent=0; document.getElementById('vibe-start-btn').disabled=false; document.getElementById('vibe-status').textContent='Press Start to begin the sequence'; }, 1800);
       return;
@@ -2960,6 +3685,7 @@ setTimeout(() => showToast('🌿', 'Welcome to the Arcade', 'Pick a game. Embrac
     document.getElementById('ast-best').textContent=best;
     document.getElementById('ast-start-btn').textContent='Launch Again 🚀';
     document.getElementById('ast-start-btn').disabled=false;
+    window.bhPostScore && bhPostScore('asteroid', score, score + ' pts');
     ctx.fillStyle='rgba(5,8,10,0.8)';
     ctx.fillRect(0,0,GW,GH);
     ctx.fillStyle='#4ade80'; ctx.font='bold 26px Unbounded,sans-serif'; ctx.textAlign='center';
@@ -3053,6 +3779,7 @@ setTimeout(() => showToast('🌿', 'Welcome to the Arcade', 'Pick a game. Embrac
     document.getElementById('hl-streak').textContent=streak;
     document.getElementById('hl-best').textContent=bestStreak;
     document.getElementById('hl-score').textContent=totalScore;
+    if(won) window.bhPostScore && bhPostScore('higher', bestStreak, bestStreak + ' streak');
     currentCard=next;
 
     setTimeout(initHL, 1600);
