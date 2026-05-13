@@ -1,0 +1,345 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Born High — Staff Admin</title>
+<link href="https://fonts.googleapis.com/css2?family=DM+Mono:wght@300;400;500&family=Unbounded:wght@300;700;900&family=Playfair+Display:wght@400;700&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #0a0d08; --panel: #111a0e; --panel2: #162012;
+    --green: #4ade80; --green2: #22c55e; --gold: #fbbf24;
+    --text: #e8f5e2; --muted: #6b7c64; --border: #1e2d18;
+    --red: #ef4444;
+  }
+  * { margin:0; padding:0; box-sizing:border-box; }
+  body { background:var(--bg); color:var(--text); font-family:'DM Mono',monospace; min-height:100vh; display:flex; flex-direction:column; align-items:center; padding:40px 20px; }
+
+  .logo {
+    font-family:'Unbounded',sans-serif; font-weight:900; font-size:1.3rem;
+    background:linear-gradient(135deg,var(--green),var(--gold));
+    -webkit-background-clip:text; -webkit-text-fill-color:transparent; background-clip:text;
+    margin-bottom:4px;
+  }
+  .sub { font-size:0.65rem; color:var(--muted); letter-spacing:0.15em; text-transform:uppercase; margin-bottom:40px; }
+
+  /* Admin login */
+  #admin-gate { width:100%; max-width:400px; }
+  #admin-panel { width:100%; max-width:720px; display:none; }
+
+  .card {
+    background:var(--panel); border:1px solid var(--border);
+    border-radius:14px; padding:28px; margin-bottom:20px;
+  }
+
+  .card h2 {
+    font-family:'Playfair Display',serif; font-size:1.1rem;
+    color:var(--gold); margin-bottom:16px; padding-bottom:12px;
+    border-bottom:1px solid var(--border);
+  }
+
+  label { font-size:0.68rem; color:var(--muted); letter-spacing:0.1em; text-transform:uppercase; display:block; margin-bottom:6px; }
+
+  input[type="text"], input[type="password"], input[type="number"] {
+    width:100%; background:var(--bg); border:1px solid var(--border);
+    border-radius:8px; padding:12px 16px; color:var(--text);
+    font-family:'Unbounded',sans-serif; font-size:1.2rem;
+    letter-spacing:0.2em; text-align:center; outline:none;
+    transition:border-color 0.2s; margin-bottom:12px;
+  }
+  input:focus { border-color:var(--green); }
+
+  .btn {
+    width:100%; padding:14px; border-radius:8px;
+    border:1px solid var(--green); background:rgba(74,222,128,0.1);
+    color:var(--green); font-family:'Unbounded',sans-serif;
+    font-size:0.8rem; cursor:pointer; transition:all 0.2s; letter-spacing:0.05em;
+  }
+  .btn:hover { background:rgba(74,222,128,0.22); }
+  .btn.danger { border-color:var(--red); background:rgba(239,68,68,0.08); color:var(--red); }
+  .btn.danger:hover { background:rgba(239,68,68,0.18); }
+  .btn.sm { padding:8px 18px; width:auto; font-size:0.68rem; }
+
+  .err { color:var(--red); font-size:0.7rem; margin-bottom:10px; min-height:18px; }
+  .ok { color:var(--green); font-size:0.7rem; margin-bottom:10px; min-height:18px; }
+
+  /* PIN display */
+  .pin-big {
+    font-family:'Unbounded',sans-serif; font-size:4rem; font-weight:900;
+    color:var(--green); text-align:center; letter-spacing:0.3em;
+    background:rgba(74,222,128,0.06); border:1px solid rgba(74,222,128,0.2);
+    border-radius:12px; padding:24px; margin:16px 0;
+    text-shadow:0 0 30px rgba(74,222,128,0.3);
+  }
+
+  .pin-date { text-align:center; font-size:0.68rem; color:var(--muted); margin-bottom:16px; }
+  .pin-expired { color:var(--red); }
+
+  /* Stats grid */
+  .stats-grid { display:grid; grid-template-columns:repeat(3,1fr); gap:12px; margin-bottom:20px; }
+  .stat-box { background:var(--bg); border:1px solid var(--border); border-radius:10px; padding:16px; text-align:center; }
+  .stat-box .sv { font-family:'Unbounded',sans-serif; font-size:1.5rem; font-weight:700; color:var(--green); }
+  .stat-box .sl { font-size:0.6rem; color:var(--muted); text-transform:uppercase; letter-spacing:0.1em; margin-top:4px; }
+
+  /* Leaderboard table */
+  table { width:100%; border-collapse:collapse; font-size:0.75rem; }
+  th { text-align:left; padding:8px 10px; color:var(--muted); font-size:0.6rem; letter-spacing:0.1em; text-transform:uppercase; border-bottom:1px solid var(--border); }
+  td { padding:10px; border-bottom:1px solid var(--border); }
+  tr:last-child td { border-bottom:none; }
+  .rank-medal { font-size:1rem; }
+  .score-val { color:var(--green); font-family:'Unbounded',sans-serif; font-size:0.75rem; }
+
+  /* Game selector */
+  .game-sel { display:flex; gap:8px; flex-wrap:wrap; margin-bottom:16px; }
+  .gsel-btn {
+    padding:6px 14px; border:1px solid var(--border); background:var(--bg);
+    color:var(--muted); font-family:'DM Mono',monospace; font-size:0.65rem;
+    border-radius:6px; cursor:pointer; transition:all 0.2s;
+  }
+  .gsel-btn.active { border-color:var(--green); color:var(--green); background:rgba(74,222,128,0.08); }
+
+  .notice {
+    background:rgba(251,191,36,0.06); border:1px solid rgba(251,191,36,0.2);
+    border-radius:8px; padding:14px 16px; font-size:0.7rem;
+    color:var(--gold); line-height:1.6; margin-bottom:16px;
+  }
+
+  nav { display:flex; gap:8px; margin-bottom:24px; }
+</style>
+</head>
+<body>
+
+<div class="logo">🌿 Born High</div>
+<div class="sub">Staff Admin Panel</div>
+
+<!-- ADMIN LOGIN -->
+<div id="admin-gate">
+  <div class="card">
+    <h2>Staff Access</h2>
+    <p style="font-size:0.72rem;color:var(--muted);margin-bottom:20px;line-height:1.6">This panel is for Born High staff only. Enter the staff password to continue.</p>
+    <label>Staff Password</label>
+    <input type="password" id="admin-pw" placeholder="••••••••" onkeydown="if(event.key==='Enter')adminLogin()" />
+    <div class="err" id="admin-err"></div>
+    <button class="btn" onclick="adminLogin()">Sign In →</button>
+  </div>
+</div>
+
+<!-- ADMIN PANEL -->
+<div id="admin-panel">
+  <nav>
+    <button class="btn sm" onclick="showAdminTab('pin')" id="atab-pin">📍 Daily PIN</button>
+    <button class="btn sm" onclick="showAdminTab('stats')" id="atab-stats">📊 Stats</button>
+    <button class="btn sm" onclick="showAdminTab('lb')" id="atab-lb">🏆 Leaderboard</button>
+    <button class="btn sm" onclick="showAdminTab('reset')" id="atab-reset">⚙️ Settings</button>
+  </nav>
+
+  <!-- PIN TAB -->
+  <div id="tab-pin" class="card">
+    <h2>📍 Today's Access PIN</h2>
+    <div class="notice">This is the 4-digit code you read out to customers at the till. It changes daily — set a new one each morning.</div>
+    <div class="pin-big" id="current-pin-display">—</div>
+    <div class="pin-date" id="pin-validity"></div>
+    <label>Set New PIN for Today</label>
+    <input type="number" id="new-pin" placeholder="4 digits" maxlength="4" oninput="this.value=this.value.slice(0,4)" />
+    <div class="err" id="pin-set-err"></div>
+    <div class="ok" id="pin-set-ok"></div>
+    <button class="btn" onclick="setPin()">Set Today's PIN 🔐</button>
+    <div style="margin-top:14px">
+      <button class="btn sm" onclick="genRandPin()">🎲 Generate Random PIN</button>
+    </div>
+  </div>
+
+  <!-- STATS TAB -->
+  <div id="tab-stats" class="card" style="display:none">
+    <h2>📊 Session Stats</h2>
+    <div class="stats-grid" id="stats-grid"></div>
+    <div style="font-size:0.68rem;color:var(--muted);font-style:italic">Stats are device-local. Each device/browser stores its own leaderboard. A Supabase backend can be added for cross-device sync.</div>
+  </div>
+
+  <!-- LEADERBOARD TAB -->
+  <div id="tab-lb" class="card" style="display:none">
+    <h2>🏆 Full Leaderboard</h2>
+    <div class="game-sel" id="admin-game-sel"></div>
+    <div id="admin-lb-table"></div>
+  </div>
+
+  <!-- SETTINGS TAB -->
+  <div id="tab-reset" class="card" style="display:none">
+    <h2>⚙️ Settings & Reset</h2>
+    <div class="notice">⚠️ Clearing leaderboard data is permanent and cannot be undone.</div>
+    <div style="display:flex;flex-direction:column;gap:10px">
+      <button class="btn danger sm" onclick="clearGame(activeLBKey)">Clear Current Game Leaderboard</button>
+      <button class="btn danger" onclick="clearAll()">🗑️ Clear ALL Leaderboard Data</button>
+      <button class="btn sm" onclick="adminLogout()" style="margin-top:8px">Sign Out</button>
+    </div>
+  </div>
+</div>
+
+<script>
+// ── Admin auth (simple local password) ──────────────────────
+const ADMIN_PW = 'bornhigh2025'; // Change this to your actual password
+
+function adminLogin() {
+  const pw = document.getElementById('admin-pw').value;
+  if(pw === ADMIN_PW) {
+    sessionStorage.setItem('bh_admin', '1');
+    document.getElementById('admin-gate').style.display = 'none';
+    document.getElementById('admin-panel').style.display = 'block';
+    showAdminTab('pin');
+    renderPinDisplay();
+  } else {
+    document.getElementById('admin-err').textContent = 'Wrong password.';
+  }
+}
+
+function adminLogout() {
+  sessionStorage.removeItem('bh_admin');
+  location.reload();
+}
+
+// Check existing session
+if(sessionStorage.getItem('bh_admin')) {
+  document.getElementById('admin-gate').style.display = 'none';
+  document.getElementById('admin-panel').style.display = 'block';
+  setTimeout(() => { showAdminTab('pin'); renderPinDisplay(); }, 0);
+}
+
+// ── Tabs ─────────────────────────────────────────────────────
+const TABS = ['pin','stats','lb','reset'];
+function showAdminTab(name) {
+  TABS.forEach(t => {
+    document.getElementById('tab-'+t).style.display = t===name ? 'block' : 'none';
+    document.getElementById('atab-'+t).style.borderColor = t===name ? 'var(--green)' : 'var(--border)';
+    document.getElementById('atab-'+t).style.color = t===name ? 'var(--green)' : 'var(--muted)';
+  });
+  if(name==='stats') renderStats();
+  if(name==='lb') { buildAdminGameSel(); renderAdminLB(LB_GAMES[0].key); }
+}
+
+// ── PIN management ───────────────────────────────────────────
+function getStoredPin() {
+  const s = localStorage.getItem('bh_pin');
+  if(!s) return null;
+  return JSON.parse(s);
+}
+
+function renderPinDisplay() {
+  const stored = getStoredPin();
+  const today = new Date().toDateString();
+  const disp = document.getElementById('current-pin-display');
+  const validity = document.getElementById('pin-validity');
+  if(!stored) {
+    disp.textContent = '4200';
+    validity.innerHTML = '<span class="pin-expired">No PIN set today — using default: 4200</span>';
+  } else if(stored.date === today) {
+    disp.textContent = stored.pin;
+    validity.textContent = '✅ Valid today · Set at ' + new Date(stored.setAt).toLocaleTimeString();
+  } else {
+    disp.textContent = stored.pin;
+    validity.innerHTML = '<span class="pin-expired">⚠️ This was yesterday\'s PIN. Set a new one.</span>';
+  }
+}
+
+function setPin() {
+  const val = document.getElementById('new-pin').value.replace(/\D/g,'');
+  if(val.length !== 4) { document.getElementById('pin-set-err').textContent = 'Must be exactly 4 digits.'; return; }
+  localStorage.setItem('bh_pin', JSON.stringify({ pin: val, date: new Date().toDateString(), setAt: Date.now() }));
+  document.getElementById('pin-set-err').textContent = '';
+  document.getElementById('pin-set-ok').textContent = '✅ PIN set to ' + val + ' for today!';
+  document.getElementById('new-pin').value = '';
+  renderPinDisplay();
+  setTimeout(() => document.getElementById('pin-set-ok').textContent = '', 3000);
+}
+
+function genRandPin() {
+  const pin = String(Math.floor(1000 + Math.random()*9000));
+  document.getElementById('new-pin').value = pin;
+}
+
+// ── Stats ────────────────────────────────────────────────────
+const LB_GAMES = [
+  { key:'vibe_total', label:'🌿 Vibe Points', unit:'VP' },
+  { key:'blunt', label:'🚬 Blunt Roller', unit:'blunts' },
+  { key:'munchie', label:'🍕 Munchie Madness', unit:'pts' },
+  { key:'skate', label:'🛹 Skate or Bake', unit:'pts' },
+  { key:'asteroid', label:'🌌 Asteroid Munchies', unit:'pts' },
+  { key:'vibe_seq', label:'🎵 Vibe Sequencer', unit:'lvl' },
+  { key:'higher', label:'🃏 Higher or Lower', unit:'streak' },
+];
+
+function getBoard(key) { return JSON.parse(localStorage.getItem('bh_lb_'+key)||'[]'); }
+
+function renderStats() {
+  // Count unique players across all boards
+  const allIds = new Set();
+  LB_GAMES.forEach(g => getBoard(g.key).forEach(e => allIds.add(e.id)));
+  const totalEntries = LB_GAMES.reduce((s,g) => s + getBoard(g.key).length, 0);
+  const topViber = getBoard('vibe_total')[0];
+
+  document.getElementById('stats-grid').innerHTML = `
+    <div class="stat-box"><div class="sv">${allIds.size}</div><div class="sl">Players Today</div></div>
+    <div class="stat-box"><div class="sv">${totalEntries}</div><div class="sl">Total Scores</div></div>
+    <div class="stat-box"><div class="sv">${topViber ? topViber.name.slice(0,8) : '—'}</div><div class="sl">Top Player</div></div>
+    ${LB_GAMES.map(g => {
+      const b = getBoard(g.key);
+      return `<div class="stat-box"><div class="sv">${b[0]?.display||b[0]?.score||'—'}</div><div class="sl">${g.label} Best</div></div>`;
+    }).join('')}
+  `;
+}
+
+// ── Admin Leaderboard ────────────────────────────────────────
+let activeLBKey = LB_GAMES[0].key;
+
+function buildAdminGameSel() {
+  document.getElementById('admin-game-sel').innerHTML = LB_GAMES.map(g =>
+    `<button class="gsel-btn${g.key===activeLBKey?' active':''}" onclick="renderAdminLB('${g.key}',this)">${g.label}</button>`
+  ).join('');
+}
+
+function renderAdminLB(key, btn) {
+  activeLBKey = key;
+  if(btn) {
+    document.querySelectorAll('.gsel-btn').forEach(b => b.classList.remove('active'));
+    btn.classList.add('active');
+  }
+  const game = LB_GAMES.find(g=>g.key===key);
+  const board = getBoard(key);
+  const medals = ['🥇','🥈','🥉'];
+  const container = document.getElementById('admin-lb-table');
+  if(!board.length) {
+    container.innerHTML = '<div style="color:var(--muted);font-style:italic;padding:20px 0;font-size:0.78rem">No scores yet.</div>';
+    return;
+  }
+  container.innerHTML = `
+    <table>
+      <thead><tr><th>#</th><th>Player</th><th>Score</th><th>When</th></tr></thead>
+      <tbody>
+        ${board.slice(0,30).map((e,i) => `
+          <tr>
+            <td><span class="rank-medal">${i<3?medals[i]:'#'+(i+1)}</span></td>
+            <td>${e.avatar||'🌿'} ${e.name}</td>
+            <td class="score-val">${e.display||e.score} ${game.unit}</td>
+            <td style="color:var(--muted);font-size:0.65rem">${new Date(e.ts).toLocaleTimeString()}</td>
+          </tr>
+        `).join('')}
+      </tbody>
+    </table>
+  `;
+}
+
+// ── Reset ────────────────────────────────────────────────────
+function clearGame(key) {
+  if(!confirm('Clear leaderboard for ' + key + '? Cannot be undone.')) return;
+  localStorage.removeItem('bh_lb_'+key);
+  renderAdminLB(key);
+  alert('Done.');
+}
+
+function clearAll() {
+  if(!confirm('Clear ALL leaderboard data for all games? This cannot be undone.')) return;
+  LB_GAMES.forEach(g => localStorage.removeItem('bh_lb_'+g.key));
+  alert('All leaderboard data cleared.');
+}
+</script>
+</body>
+</html>
