@@ -3,343 +3,4472 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Born High — Staff Admin</title>
-<link href="https://fonts.googleapis.com/css2?family=DM+Mono:wght@300;400;500&family=Unbounded:wght@300;700;900&family=Playfair+Display:wght@400;700&display=swap" rel="stylesheet">
+<title>Born High Arcade 🌿 | Born High Cannabis Social Club</title>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;700;900&family=DM+Mono:wght@300;400;500&family=Unbounded:wght@300;700;900&family=Permanent+Marker&display=swap" rel="stylesheet">
 <style>
   :root {
-    --bg: #0a0d08; --panel: #111a0e; --panel2: #162012;
-    --green: #4ade80; --green2: #22c55e; --gold: #fbbf24;
-    --text: #e8f5e2; --muted: #6b7c64; --border: #1e2d18;
-    --red: #ef4444;
+    --bg: #0a0d08;
+    --bg2: #0e1409;
+    --panel: #111a0e;
+    --panel2: #162012;
+    --green: #4ade80;
+    --green2: #22c55e;
+    --gold: #fbbf24;
+    --purple: #a855f7;
+    --pink: #f472b6;
+    --dim: #2d3a28;
+    --text: #e8f5e2;
+    --muted: #6b7c64;
+    --border: #1e2d18;
   }
-  * { margin:0; padding:0; box-sizing:border-box; }
-  body { background:var(--bg); color:var(--text); font-family:'DM Mono',monospace; min-height:100vh; display:flex; flex-direction:column; align-items:center; padding:40px 20px; }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: 'DM Mono', monospace;
+    min-height: 100vh;
+    overflow-x: hidden;
+    cursor: default;
+  }
+
+  /* Grain overlay */
+  body::before {
+    content: '';
+    position: fixed;
+    inset: 0;
+    background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='0.04'/%3E%3C/svg%3E");
+    pointer-events: none;
+    z-index: 9999;
+    opacity: 0.4;
+  }
+
+  /* Ambient glow */
+  .ambient {
+    position: fixed;
+    width: 600px; height: 600px;
+    border-radius: 50%;
+    filter: blur(120px);
+    pointer-events: none;
+    z-index: 0;
+    opacity: 0.06;
+  }
+  .ambient-1 { background: var(--green); top: -200px; left: -200px; }
+  .ambient-2 { background: var(--purple); bottom: -200px; right: -200px; }
+  .ambient-3 { background: var(--gold); top: 50%; left: 50%; transform: translate(-50%,-50%); opacity: 0.03; }
+
+  /* Header */
+  header {
+    position: relative;
+    z-index: 10;
+    padding: 28px 40px 20px;
+    border-bottom: 1px solid var(--border);
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    background: rgba(10,13,8,0.8);
+    backdrop-filter: blur(12px);
+  }
 
   .logo {
-    font-family:'Unbounded',sans-serif; font-weight:900; font-size:1.3rem;
-    background:linear-gradient(135deg,var(--green),var(--gold));
-    -webkit-background-clip:text; -webkit-text-fill-color:transparent; background-clip:text;
-    margin-bottom:4px;
-  }
-  .sub { font-size:0.65rem; color:var(--muted); letter-spacing:0.15em; text-transform:uppercase; margin-bottom:40px; }
-
-  /* Admin login */
-  #admin-gate { width:100%; max-width:400px; }
-  #admin-panel { width:100%; max-width:720px; display:none; }
-
-  .card {
-    background:var(--panel); border:1px solid var(--border);
-    border-radius:14px; padding:28px; margin-bottom:20px;
+    font-family: 'Unbounded', sans-serif;
+    font-weight: 900;
+    font-size: 1.4rem;
+    letter-spacing: -0.02em;
+    display: flex;
+    align-items: center;
+    gap: 10px;
   }
 
-  .card h2 {
-    font-family:'Playfair Display',serif; font-size:1.1rem;
-    color:var(--gold); margin-bottom:16px; padding-bottom:12px;
-    border-bottom:1px solid var(--border);
+  .logo span {
+    background: linear-gradient(135deg, var(--green), var(--gold));
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
   }
 
-  label { font-size:0.68rem; color:var(--muted); letter-spacing:0.1em; text-transform:uppercase; display:block; margin-bottom:6px; }
+  .logo .leaf { font-size: 1.6rem; animation: sway 3s ease-in-out infinite; }
 
-  input[type="text"], input[type="password"], input[type="number"] {
-    width:100%; background:var(--bg); border:1px solid var(--border);
-    border-radius:8px; padding:12px 16px; color:var(--text);
-    font-family:'Unbounded',sans-serif; font-size:1.2rem;
-    letter-spacing:0.2em; text-align:center; outline:none;
-    transition:border-color 0.2s; margin-bottom:12px;
-  }
-  input:focus { border-color:var(--green); }
-
-  .btn {
-    width:100%; padding:14px; border-radius:8px;
-    border:1px solid var(--green); background:rgba(74,222,128,0.1);
-    color:var(--green); font-family:'Unbounded',sans-serif;
-    font-size:0.8rem; cursor:pointer; transition:all 0.2s; letter-spacing:0.05em;
-  }
-  .btn:hover { background:rgba(74,222,128,0.22); }
-  .btn.danger { border-color:var(--red); background:rgba(239,68,68,0.08); color:var(--red); }
-  .btn.danger:hover { background:rgba(239,68,68,0.18); }
-  .btn.sm { padding:8px 18px; width:auto; font-size:0.68rem; }
-
-  .err { color:var(--red); font-size:0.7rem; margin-bottom:10px; min-height:18px; }
-  .ok { color:var(--green); font-size:0.7rem; margin-bottom:10px; min-height:18px; }
-
-  /* PIN display */
-  .pin-big {
-    font-family:'Unbounded',sans-serif; font-size:4rem; font-weight:900;
-    color:var(--green); text-align:center; letter-spacing:0.3em;
-    background:rgba(74,222,128,0.06); border:1px solid rgba(74,222,128,0.2);
-    border-radius:12px; padding:24px; margin:16px 0;
-    text-shadow:0 0 30px rgba(74,222,128,0.3);
+  @keyframes sway {
+    0%,100% { transform: rotate(-5deg); }
+    50% { transform: rotate(5deg); }
   }
 
-  .pin-date { text-align:center; font-size:0.68rem; color:var(--muted); margin-bottom:16px; }
-  .pin-expired { color:var(--red); }
-
-  /* Stats grid */
-  .stats-grid { display:grid; grid-template-columns:repeat(3,1fr); gap:12px; margin-bottom:20px; }
-  .stat-box { background:var(--bg); border:1px solid var(--border); border-radius:10px; padding:16px; text-align:center; }
-  .stat-box .sv { font-family:'Unbounded',sans-serif; font-size:1.5rem; font-weight:700; color:var(--green); }
-  .stat-box .sl { font-size:0.6rem; color:var(--muted); text-transform:uppercase; letter-spacing:0.1em; margin-top:4px; }
-
-  /* Leaderboard table */
-  table { width:100%; border-collapse:collapse; font-size:0.75rem; }
-  th { text-align:left; padding:8px 10px; color:var(--muted); font-size:0.6rem; letter-spacing:0.1em; text-transform:uppercase; border-bottom:1px solid var(--border); }
-  td { padding:10px; border-bottom:1px solid var(--border); }
-  tr:last-child td { border-bottom:none; }
-  .rank-medal { font-size:1rem; }
-  .score-val { color:var(--green); font-family:'Unbounded',sans-serif; font-size:0.75rem; }
-
-  /* Game selector */
-  .game-sel { display:flex; gap:8px; flex-wrap:wrap; margin-bottom:16px; }
-  .gsel-btn {
-    padding:6px 14px; border:1px solid var(--border); background:var(--bg);
-    color:var(--muted); font-family:'DM Mono',monospace; font-size:0.65rem;
-    border-radius:6px; cursor:pointer; transition:all 0.2s;
-  }
-  .gsel-btn.active { border-color:var(--green); color:var(--green); background:rgba(74,222,128,0.08); }
-
-  .notice {
-    background:rgba(251,191,36,0.06); border:1px solid rgba(251,191,36,0.2);
-    border-radius:8px; padding:14px 16px; font-size:0.7rem;
-    color:var(--gold); line-height:1.6; margin-bottom:16px;
+  .tagline {
+    color: var(--muted);
+    font-size: 0.7rem;
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
   }
 
-  nav { display:flex; gap:8px; margin-bottom:24px; }
+  .session-info {
+    text-align: right;
+    font-size: 0.7rem;
+    color: var(--muted);
+  }
+
+  .session-info .vibe-score {
+    font-family: 'Unbounded', sans-serif;
+    font-size: 1.1rem;
+    color: var(--gold);
+    font-weight: 700;
+  }
+
+  /* Main layout */
+  main {
+    position: relative;
+    z-index: 2;
+    padding: 32px 40px;
+    max-width: 1400px;
+    margin: 0 auto;
+  }
+
+  /* Arcade nav */
+  .arcade-nav {
+    display: flex;
+    gap: 8px;
+    margin-bottom: 32px;
+    flex-wrap: wrap;
+  }
+
+  .game-tab {
+    padding: 10px 20px;
+    border: 1px solid var(--border);
+    background: var(--panel);
+    color: var(--muted);
+    font-family: 'DM Mono', monospace;
+    font-size: 0.75rem;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    cursor: pointer;
+    border-radius: 6px;
+    transition: all 0.2s;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+
+  .game-tab:hover {
+    border-color: var(--green);
+    color: var(--text);
+    background: var(--panel2);
+  }
+
+  .game-tab.active {
+    border-color: var(--green);
+    color: var(--green);
+    background: rgba(74,222,128,0.08);
+  }
+
+  .game-tab .tab-dot {
+    width: 6px; height: 6px;
+    border-radius: 50%;
+    background: currentColor;
+    animation: pulse-dot 2s ease-in-out infinite;
+  }
+
+  @keyframes pulse-dot {
+    0%,100% { opacity: 1; }
+    50% { opacity: 0.3; }
+  }
+
+  /* Game screens */
+  .game-screen { display: none; }
+  .game-screen.active { display: block; }
+
+  /* ========== GAME 1: BLUNT ROLLER ========== */
+  #game-blunt {
+    display: none;
+  }
+  #game-blunt.active {
+    display: grid;
+    grid-template-columns: 1fr 320px;
+    gap: 24px;
+    align-items: start;
+  }
+
+  .blunt-main {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 24px;
+  }
+
+  .blunt-stats {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 12px;
+    width: 100%;
+  }
+
+  .stat-card {
+    background: var(--panel);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 16px;
+    text-align: center;
+  }
+
+  .stat-card .stat-val {
+    font-family: 'Unbounded', sans-serif;
+    font-size: 1.4rem;
+    font-weight: 700;
+    color: var(--green);
+  }
+
+  .stat-card .stat-label {
+    font-size: 0.65rem;
+    color: var(--muted);
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    margin-top: 4px;
+  }
+
+  .blunt-clickzone {
+    position: relative;
+    width: 240px;
+    height: 240px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .blunt-ring {
+    position: absolute;
+    border-radius: 50%;
+    border: 1px solid rgba(74,222,128,0.2);
+    animation: expand-ring 3s ease-out infinite;
+  }
+
+  .blunt-ring:nth-child(1) { width: 240px; height: 240px; animation-delay: 0s; }
+  .blunt-ring:nth-child(2) { width: 200px; height: 200px; animation-delay: 0.8s; }
+  .blunt-ring:nth-child(3) { width: 160px; height: 160px; animation-delay: 1.6s; }
+
+  @keyframes expand-ring {
+    0% { transform: scale(0.8); opacity: 0.6; }
+    100% { transform: scale(1.2); opacity: 0; }
+  }
+
+  .blunt-btn {
+    position: relative;
+    z-index: 2;
+    width: 130px; height: 130px;
+    border-radius: 50%;
+    border: 2px solid var(--green);
+    background: radial-gradient(circle at 40% 35%, #1a2e14, #0a1508);
+    cursor: pointer;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 4px;
+    box-shadow: 0 0 40px rgba(74,222,128,0.15), inset 0 0 20px rgba(0,0,0,0.5);
+    transition: all 0.1s;
+    user-select: none;
+  }
+
+  .blunt-btn:hover {
+    box-shadow: 0 0 60px rgba(74,222,128,0.25), inset 0 0 20px rgba(0,0,0,0.5);
+    border-color: var(--green2);
+  }
+
+  .blunt-btn:active {
+    transform: scale(0.94);
+    box-shadow: 0 0 80px rgba(74,222,128,0.4), inset 0 0 20px rgba(0,0,0,0.5);
+  }
+
+  .blunt-btn .btn-icon { font-size: 2.4rem; }
+  .blunt-btn .btn-label {
+    font-size: 0.6rem;
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    color: var(--green);
+  }
+
+  .click-floater {
+    position: absolute;
+    font-family: 'Unbounded', sans-serif;
+    font-size: 0.85rem;
+    color: var(--green);
+    pointer-events: none;
+    animation: float-up 1s ease-out forwards;
+    z-index: 100;
+  }
+
+  @keyframes float-up {
+    0% { opacity: 1; transform: translateY(0) scale(1); }
+    100% { opacity: 0; transform: translateY(-60px) scale(1.3); }
+  }
+
+  .smoke-particle {
+    position: absolute;
+    width: 8px; height: 8px;
+    border-radius: 50%;
+    background: rgba(74,222,128,0.4);
+    pointer-events: none;
+    animation: smoke 1.5s ease-out forwards;
+  }
+
+  @keyframes smoke {
+    0% { opacity: 0.8; transform: scale(1) translate(0,0); }
+    100% { opacity: 0; transform: scale(3) translate(var(--dx), var(--dy)); }
+  }
+
+  .upgrade-panel {
+    background: var(--panel);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 20px;
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+  }
+
+  .upgrade-panel h3 {
+    font-family: 'Playfair Display', serif;
+    font-size: 1rem;
+    color: var(--gold);
+    margin-bottom: 12px;
+    padding-bottom: 12px;
+    border-bottom: 1px solid var(--border);
+  }
+
+  .upgrade-item {
+    padding: 12px;
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    background: var(--bg2);
+    cursor: pointer;
+    transition: all 0.2s;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+  }
+
+  .upgrade-item:hover:not(.locked) {
+    border-color: var(--green);
+    background: rgba(74,222,128,0.05);
+  }
+
+  .upgrade-item.locked { opacity: 0.4; cursor: not-allowed; }
+  .upgrade-item.locked:hover { border-color: var(--border); background: var(--bg2); }
+
+  .upgrade-item .upg-icon { font-size: 1.4rem; }
+
+  .upgrade-item .upg-info { flex: 1; }
+  .upgrade-item .upg-name {
+    font-size: 0.75rem;
+    color: var(--text);
+    font-weight: 500;
+  }
+  .upgrade-item .upg-desc {
+    font-size: 0.62rem;
+    color: var(--muted);
+    margin-top: 2px;
+  }
+
+  .upgrade-item .upg-cost {
+    font-family: 'Unbounded', sans-serif;
+    font-size: 0.7rem;
+    color: var(--gold);
+    white-space: nowrap;
+  }
+
+  .quip-box {
+    background: var(--panel);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 14px 18px;
+    font-size: 0.75rem;
+    color: var(--muted);
+    font-style: italic;
+    text-align: center;
+    min-height: 48px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  /* ========== GAME 2: GROW ROOM ========== */
+  #game-grow {
+    display: none;
+  }
+  #game-grow.active {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 20px;
+  }
+
+  .plant-card {
+    background: var(--panel);
+    border: 1px solid var(--border);
+    border-radius: 14px;
+    padding: 24px;
+    text-align: center;
+    position: relative;
+    overflow: hidden;
+    transition: all 0.3s;
+  }
+
+  .plant-card:hover { border-color: var(--green); }
+
+  .plant-card .plant-glow {
+    position: absolute;
+    inset: 0;
+    background: radial-gradient(circle at 50% 80%, rgba(74,222,128,0.06), transparent 70%);
+    pointer-events: none;
+  }
+
+  .plant-emoji {
+    font-size: 4rem;
+    display: block;
+    margin: 0 auto 12px;
+    animation: breathe 4s ease-in-out infinite;
+    filter: drop-shadow(0 0 12px rgba(74,222,128,0.3));
+  }
+
+  @keyframes breathe {
+    0%,100% { transform: scale(1); }
+    50% { transform: scale(1.06); }
+  }
+
+  .plant-name {
+    font-family: 'Playfair Display', serif;
+    font-size: 1.1rem;
+    color: var(--text);
+    margin-bottom: 4px;
+  }
+
+  .plant-strain {
+    font-size: 0.65rem;
+    color: var(--muted);
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    margin-bottom: 16px;
+  }
+
+  .grow-bar-wrap {
+    background: var(--dim);
+    border-radius: 4px;
+    height: 8px;
+    overflow: hidden;
+    margin-bottom: 8px;
+  }
+
+  .grow-bar {
+    height: 100%;
+    background: linear-gradient(90deg, var(--green2), var(--green));
+    border-radius: 4px;
+    transition: width 0.5s ease;
+    box-shadow: 0 0 8px rgba(74,222,128,0.5);
+  }
+
+  .grow-stage {
+    font-size: 0.65rem;
+    color: var(--muted);
+    margin-bottom: 16px;
+  }
+
+  .plant-actions {
+    display: flex;
+    gap: 8px;
+    justify-content: center;
+  }
+
+  .plant-btn {
+    padding: 8px 16px;
+    border-radius: 6px;
+    border: 1px solid var(--border);
+    background: var(--bg2);
+    color: var(--text);
+    font-family: 'DM Mono', monospace;
+    font-size: 0.68rem;
+    cursor: pointer;
+    transition: all 0.2s;
+  }
+
+  .plant-btn:hover {
+    border-color: var(--green);
+    color: var(--green);
+  }
+
+  .plant-btn.primary {
+    background: rgba(74,222,128,0.12);
+    border-color: var(--green);
+    color: var(--green);
+  }
+
+  .plant-reward {
+    position: absolute;
+    top: 12px; right: 12px;
+    background: rgba(251,191,36,0.1);
+    border: 1px solid rgba(251,191,36,0.3);
+    border-radius: 20px;
+    padding: 3px 10px;
+    font-size: 0.62rem;
+    color: var(--gold);
+  }
+
+  /* Grow room bottom row */
+  .grow-bottom {
+    grid-column: 1 / -1;
+    background: var(--panel);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 20px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 20px;
+  }
+
+  .grow-stat {
+    text-align: center;
+  }
+
+  .grow-stat .gs-val {
+    font-family: 'Unbounded', sans-serif;
+    font-size: 1.3rem;
+    font-weight: 700;
+    color: var(--green);
+  }
+
+  .grow-stat .gs-label {
+    font-size: 0.6rem;
+    color: var(--muted);
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+  }
+
+  /* ========== GAME 3: MUNCHIE MADNESS ========== */
+  #game-munchie {
+    display: none;
+  }
+  #game-munchie.active {
+    display: grid;
+    grid-template-columns: 1fr 280px;
+    gap: 24px;
+    align-items: start;
+  }
+
+  .munchie-arena {
+    background: var(--panel);
+    border: 1px solid var(--border);
+    border-radius: 14px;
+    padding: 20px;
+    position: relative;
+  }
+
+  .munchie-arena h3 {
+    font-family: 'Playfair Display', serif;
+    font-size: 1.1rem;
+    color: var(--text);
+    margin-bottom: 4px;
+  }
+  .munchie-arena p {
+    font-size: 0.68rem;
+    color: var(--muted);
+    margin-bottom: 20px;
+  }
+
+  .munchie-grid {
+    display: grid;
+    grid-template-columns: repeat(5, 1fr);
+    gap: 10px;
+    margin-bottom: 20px;
+  }
+
+  .munchie-hole {
+    aspect-ratio: 1;
+    background: var(--bg2);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 2rem;
+    cursor: pointer;
+    transition: all 0.1s;
+    position: relative;
+    overflow: hidden;
+    user-select: none;
+  }
+
+  .munchie-hole .food-item {
+    transition: all 0.15s;
+    transform: scale(0);
+  }
+
+  .munchie-hole.active .food-item {
+    transform: scale(1);
+    animation: pop-in 0.15s ease-out;
+  }
+
+  @keyframes pop-in {
+    0% { transform: scale(0); }
+    60% { transform: scale(1.2); }
+    100% { transform: scale(1); }
+  }
+
+  .munchie-hole.hit {
+    background: rgba(74,222,128,0.15);
+    border-color: var(--green);
+  }
+
+  .munchie-hole.missed {
+    background: rgba(239,68,68,0.1);
+    border-color: rgba(239,68,68,0.3);
+    animation: shake 0.3s ease;
+  }
+
+  @keyframes shake {
+    0%,100% { transform: translateX(0); }
+    25% { transform: translateX(-4px); }
+    75% { transform: translateX(4px); }
+  }
+
+  .munchie-hud {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+  }
+
+  .munchie-score-big {
+    font-family: 'Unbounded', sans-serif;
+    font-size: 2rem;
+    font-weight: 900;
+    color: var(--green);
+  }
+
+  .munchie-timer {
+    font-family: 'Unbounded', sans-serif;
+    font-size: 1.2rem;
+    color: var(--gold);
+  }
+
+  .munchie-start {
+    padding: 14px 32px;
+    background: linear-gradient(135deg, rgba(74,222,128,0.2), rgba(74,222,128,0.08));
+    border: 1px solid var(--green);
+    color: var(--green);
+    font-family: 'Unbounded', sans-serif;
+    font-size: 0.8rem;
+    letter-spacing: 0.05em;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: all 0.2s;
+  }
+
+  .munchie-start:hover {
+    background: rgba(74,222,128,0.3);
+    box-shadow: 0 0 20px rgba(74,222,128,0.2);
+  }
+
+  .munchie-side {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+  }
+
+  .munchie-leaderboard {
+    background: var(--panel);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 20px;
+  }
+
+  .munchie-leaderboard h3 {
+    font-family: 'Playfair Display', serif;
+    font-size: 0.95rem;
+    color: var(--gold);
+    margin-bottom: 14px;
+  }
+
+  .lb-row {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 8px 0;
+    border-bottom: 1px solid var(--border);
+    font-size: 0.72rem;
+  }
+
+  .lb-row:last-child { border-bottom: none; }
+
+  .lb-row .lb-rank { color: var(--muted); width: 20px; }
+  .lb-row .lb-name { flex: 1; color: var(--text); }
+  .lb-row .lb-pts { color: var(--green); font-family: 'Unbounded', sans-serif; font-size: 0.65rem; }
+
+  /* ========== GAME 4: THE TRIP ========== */
+  #game-trip {
+    display: none;
+  }
+  #game-trip.active {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 28px;
+  }
+
+  .trip-canvas-wrap {
+    width: 100%;
+    max-width: 700px;
+    position: relative;
+  }
+
+  #tripCanvas {
+    width: 100%;
+    border-radius: 16px;
+    border: 1px solid var(--border);
+    cursor: crosshair;
+    display: block;
+  }
+
+  .trip-controls {
+    display: flex;
+    gap: 12px;
+    align-items: center;
+    flex-wrap: wrap;
+    justify-content: center;
+  }
+
+  .trip-btn {
+    padding: 10px 22px;
+    border-radius: 8px;
+    border: 1px solid var(--border);
+    background: var(--panel);
+    color: var(--muted);
+    font-family: 'DM Mono', monospace;
+    font-size: 0.72rem;
+    cursor: pointer;
+    transition: all 0.2s;
+    letter-spacing: 0.05em;
+  }
+
+  .trip-btn:hover, .trip-btn.active-mode {
+    border-color: var(--purple);
+    color: var(--purple);
+    background: rgba(168,85,247,0.08);
+  }
+
+  .trip-stats {
+    display: flex;
+    gap: 32px;
+    text-align: center;
+  }
+
+  .trip-stat .ts-val {
+    font-family: 'Unbounded', sans-serif;
+    font-size: 1.5rem;
+    font-weight: 700;
+    background: linear-gradient(135deg, var(--purple), var(--pink));
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+  }
+
+  .trip-stat .ts-label {
+    font-size: 0.62rem;
+    color: var(--muted);
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+  }
+
+  /* ========== DASHBOARD HOME ========== */
+  #game-home {
+    display: none;
+  }
+  #game-home.active {
+    display: block;
+  }
+
+  .dashboard-hero {
+    background: var(--panel);
+    border: 1px solid var(--border);
+    border-radius: 16px;
+    padding: 40px;
+    margin-bottom: 24px;
+    position: relative;
+    overflow: hidden;
+    text-align: center;
+  }
+
+  .dashboard-hero::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: radial-gradient(ellipse at 50% 100%, rgba(74,222,128,0.08), transparent 60%);
+    pointer-events: none;
+  }
+
+  .hero-headline {
+    font-family: 'Playfair Display', serif;
+    font-size: clamp(2rem, 4vw, 3.2rem);
+    font-weight: 900;
+    line-height: 1.1;
+    margin-bottom: 14px;
+  }
+
+  .hero-headline em {
+    font-style: italic;
+    color: var(--green);
+  }
+
+  .hero-sub {
+    color: var(--muted);
+    font-size: 0.85rem;
+    max-width: 480px;
+    margin: 0 auto 28px;
+    line-height: 1.7;
+  }
+
+  .games-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 16px;
+  }
+
+  .game-card {
+    background: var(--panel);
+    border: 1px solid var(--border);
+    border-radius: 14px;
+    padding: 28px;
+    cursor: pointer;
+    transition: all 0.25s;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .game-card::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: radial-gradient(circle at var(--mx,50%) var(--my,50%), rgba(74,222,128,0.06), transparent 60%);
+    opacity: 0;
+    transition: opacity 0.3s;
+    pointer-events: none;
+  }
+
+  .game-card:hover::after { opacity: 1; }
+  .game-card:hover { border-color: var(--green); transform: translateY(-2px); }
+
+  .game-card-icon { font-size: 2.8rem; margin-bottom: 12px; display: block; }
+
+  .game-card-title {
+    font-family: 'Playfair Display', serif;
+    font-size: 1.2rem;
+    margin-bottom: 6px;
+  }
+
+  .game-card-desc {
+    font-size: 0.72rem;
+    color: var(--muted);
+    line-height: 1.6;
+    margin-bottom: 14px;
+  }
+
+  .game-card-tag {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 0.62rem;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--green);
+    border: 1px solid rgba(74,222,128,0.3);
+    border-radius: 20px;
+    padding: 3px 10px;
+  }
+
+  .scrolling-ticker {
+    overflow: hidden;
+    white-space: nowrap;
+    border-top: 1px solid var(--border);
+    border-bottom: 1px solid var(--border);
+    padding: 10px 0;
+    margin: 24px 0;
+    background: var(--panel);
+  }
+
+  .ticker-inner {
+    display: inline-block;
+    animation: ticker 30s linear infinite;
+    font-size: 0.68rem;
+    color: var(--muted);
+    letter-spacing: 0.08em;
+  }
+
+  @keyframes ticker {
+    0% { transform: translateX(0); }
+    100% { transform: translateX(-50%); }
+  }
+
+  /* Notification toast */
+  .toast {
+    position: fixed;
+    bottom: 24px;
+    right: 24px;
+    background: var(--panel2);
+    border: 1px solid var(--green);
+    border-radius: 10px;
+    padding: 14px 20px;
+    font-size: 0.75rem;
+    color: var(--text);
+    z-index: 10000;
+    transform: translateX(120%);
+    transition: transform 0.3s ease;
+    max-width: 280px;
+    box-shadow: 0 4px 24px rgba(0,0,0,0.4);
+  }
+
+  .toast.show { transform: translateX(0); }
+  .toast .toast-icon { font-size: 1.2rem; margin-bottom: 4px; display: block; }
+  .toast .toast-msg { color: var(--muted); font-size: 0.68rem; margin-top: 2px; }
+
+  /* Footer */
+  footer {
+    position: relative;
+    z-index: 10;
+    border-top: 1px solid var(--border);
+    padding: 18px 40px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    font-size: 0.68rem;
+    color: var(--muted);
+  }
+
+  footer a {
+    color: var(--green);
+    text-decoration: none;
+    transition: color 0.2s;
+  }
+
+  footer a:hover { color: var(--text); }
+
+  .footer-heart { color: #f472b6; }
+
+  /* Bulletin Ad Popup */
+  .bulletin-ad {
+    position: fixed;
+    bottom: 80px;
+    left: 24px;
+    background: var(--panel2);
+    border: 1px solid var(--gold);
+    border-radius: 12px;
+    padding: 16px 20px;
+    font-size: 0.72rem;
+    color: var(--text);
+    z-index: 10000;
+    max-width: 260px;
+    box-shadow: 0 4px 24px rgba(0,0,0,0.5), 0 0 20px rgba(251,191,36,0.08);
+    transform: translateX(-120%);
+    transition: transform 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
+  }
+
+  .bulletin-ad.show { transform: translateX(0); }
+
+  .bulletin-ad .ad-label {
+    font-size: 0.55rem;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    color: var(--gold);
+    margin-bottom: 6px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+  }
+
+  .bulletin-ad .ad-close {
+    cursor: pointer;
+    color: var(--muted);
+    font-size: 0.9rem;
+    line-height: 1;
+    padding: 0 2px;
+  }
+
+  .bulletin-ad .ad-close:hover { color: var(--text); }
+
+  .bulletin-ad .ad-icon { font-size: 1.8rem; margin-bottom: 8px; display: block; }
+
+  .bulletin-ad .ad-headline {
+    font-family: 'Playfair Display', serif;
+    font-size: 0.88rem;
+    color: var(--text);
+    margin-bottom: 4px;
+    line-height: 1.3;
+  }
+
+  .bulletin-ad .ad-body {
+    color: var(--muted);
+    font-size: 0.65rem;
+    line-height: 1.5;
+    margin-bottom: 10px;
+  }
+
+  .bulletin-ad .ad-cta {
+    display: inline-block;
+    padding: 6px 14px;
+    background: rgba(251,191,36,0.12);
+    border: 1px solid rgba(251,191,36,0.4);
+    border-radius: 6px;
+    color: var(--gold);
+    font-size: 0.62rem;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    text-decoration: none;
+    transition: all 0.2s;
+  }
+
+  .bulletin-ad .ad-cta:hover {
+    background: rgba(251,191,36,0.22);
+    color: var(--text);
+  }
+
+
+  /* ========== SHARED NEW GAME STYLES ========== */
+  .game-canvas-wrap {
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 16px;
+  }
+  .game-canvas {
+    border-radius: 14px;
+    border: 1px solid var(--border);
+    display: block;
+    max-width: 100%;
+    background: #050804;
+  }
+  .game-hud {
+    display: flex;
+    gap: 24px;
+    align-items: center;
+    justify-content: center;
+    flex-wrap: wrap;
+  }
+  .hud-block { text-align: center; }
+  .hud-val {
+    font-family: 'Unbounded', sans-serif;
+    font-size: 1.4rem;
+    font-weight: 700;
+    color: var(--green);
+  }
+  .hud-val.gold { color: var(--gold); }
+  .hud-val.purple { color: var(--purple); }
+  .hud-label {
+    font-size: 0.6rem;
+    color: var(--muted);
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+  }
+  .game-action-btn {
+    padding: 12px 28px;
+    background: linear-gradient(135deg, rgba(74,222,128,0.15), rgba(74,222,128,0.05));
+    border: 1px solid var(--green);
+    color: var(--green);
+    font-family: 'Unbounded', sans-serif;
+    font-size: 0.78rem;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: all 0.2s;
+    letter-spacing: 0.04em;
+  }
+  .game-action-btn:hover { background: rgba(74,222,128,0.25); box-shadow: 0 0 20px rgba(74,222,128,0.2); }
+  .game-tip {
+    font-size: 0.68rem;
+    color: var(--muted);
+    font-style: italic;
+    text-align: center;
+  }
+
+  /* ========== VIBE SEQUENCER ========== */
+  #game-vibe.active { display: flex; flex-direction: column; align-items: center; gap: 24px; }
+  .vibe-pads {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 14px;
+    max-width: 500px;
+    width: 100%;
+  }
+  .vibe-pad {
+    aspect-ratio: 1;
+    border-radius: 14px;
+    border: 2px solid transparent;
+    cursor: pointer;
+    transition: all 0.1s;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 2rem;
+    user-select: none;
+    position: relative;
+    overflow: hidden;
+  }
+  .vibe-pad::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: white;
+    opacity: 0;
+    border-radius: inherit;
+    transition: opacity 0.08s;
+  }
+  .vibe-pad.flash::after { opacity: 0.35; }
+  .vibe-pad[data-pad="0"] { background: rgba(74,222,128,0.12); border-color: rgba(74,222,128,0.3); }
+  .vibe-pad[data-pad="1"] { background: rgba(168,85,247,0.12); border-color: rgba(168,85,247,0.3); }
+  .vibe-pad[data-pad="2"] { background: rgba(251,191,36,0.12); border-color: rgba(251,191,36,0.3); }
+  .vibe-pad[data-pad="3"] { background: rgba(244,114,182,0.12); border-color: rgba(244,114,182,0.3); }
+  .vibe-pad.active-pad[data-pad="0"] { background: rgba(74,222,128,0.45); border-color: var(--green); box-shadow: 0 0 24px rgba(74,222,128,0.5); }
+  .vibe-pad.active-pad[data-pad="1"] { background: rgba(168,85,247,0.45); border-color: var(--purple); box-shadow: 0 0 24px rgba(168,85,247,0.5); }
+  .vibe-pad.active-pad[data-pad="2"] { background: rgba(251,191,36,0.45); border-color: var(--gold); box-shadow: 0 0 24px rgba(251,191,36,0.5); }
+  .vibe-pad.active-pad[data-pad="3"] { background: rgba(244,114,182,0.45); border-color: var(--pink); box-shadow: 0 0 24px rgba(244,114,182,0.5); }
+  .vibe-status {
+    font-family: 'Playfair Display', serif;
+    font-size: 1.1rem;
+    color: var(--text);
+    text-align: center;
+    min-height: 32px;
+  }
+
+  /* ========== HIGHER OR LOWER ========== */
+  #game-higher.active { display: flex; flex-direction: column; align-items: center; gap: 28px; }
+  .card-arena {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 40px;
+    flex-wrap: wrap;
+  }
+  .playing-card {
+    width: 130px; height: 180px;
+    border-radius: 14px;
+    border: 1px solid var(--border);
+    background: linear-gradient(145deg, #1a2e14, #0e1a0a);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    font-family: 'Playfair Display', serif;
+    position: relative;
+    box-shadow: 0 8px 32px rgba(0,0,0,0.5);
+    transition: all 0.3s;
+  }
+  .playing-card.revealed { border-color: var(--green); box-shadow: 0 8px 32px rgba(74,222,128,0.15); }
+  .playing-card.facedown { background: repeating-linear-gradient(45deg, #0e1a0a 0px, #0e1a0a 8px, #111a0e 8px, #111a0e 16px); }
+  .card-rank { font-size: 2.4rem; font-weight: 900; }
+  .card-suit { font-size: 1.8rem; margin-top: -4px; }
+  .card-corner {
+    position: absolute;
+    top: 10px; left: 12px;
+    font-size: 0.9rem;
+    font-weight: 700;
+    line-height: 1;
+  }
+  .card-corner.br { top: auto; left: auto; bottom: 10px; right: 12px; transform: rotate(180deg); }
+  .card-vs {
+    font-family: 'Unbounded', sans-serif;
+    font-size: 0.7rem;
+    color: var(--muted);
+    letter-spacing: 0.1em;
+  }
+  .hl-btns { display: flex; gap: 14px; }
+  .hl-btn {
+    padding: 14px 32px;
+    border-radius: 10px;
+    font-family: 'Unbounded', sans-serif;
+    font-size: 0.85rem;
+    cursor: pointer;
+    transition: all 0.2s;
+    border: 1px solid;
+    letter-spacing: 0.04em;
+  }
+  .hl-btn.high { background: rgba(74,222,128,0.12); border-color: var(--green); color: var(--green); }
+  .hl-btn.low { background: rgba(244,114,182,0.12); border-color: var(--pink); color: var(--pink); }
+  .hl-btn:hover { filter: brightness(1.3); transform: translateY(-2px); }
+  .hl-result {
+    font-family: 'Playfair Display', serif;
+    font-size: 1.3rem;
+    text-align: center;
+    min-height: 36px;
+    font-style: italic;
+  }
+  .hl-result.win { color: var(--green); }
+  .hl-result.lose { color: var(--pink); }
+
+
+  /* ========== COMIC BOOK SECTION ========== */
+
+
+  #game-comics.active {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 0;
+  }
+
+  .comics-header {
+    width: 100%;
+    text-align: center;
+    padding: 32px 20px 24px;
+    position: relative;
+  }
+
+  .comics-header h2 {
+    font-family: 'Bangers', 'Unbounded', cursive;
+    font-size: clamp(2.8rem, 6vw, 5rem);
+    letter-spacing: 0.08em;
+    color: #fff;
+    text-shadow:
+      4px 4px 0 #000,
+      -2px -2px 0 #000,
+      2px -2px 0 #000,
+      -2px 2px 0 #000,
+      6px 6px 0 rgba(74,222,128,0.4);
+    line-height: 1;
+  }
+
+  .comics-header .subtitle {
+    font-family: 'Permanent Marker', 'Bangers', cursive;
+    font-size: 0.9rem;
+    color: var(--muted);
+    margin-top: 8px;
+    font-style: italic;
+  }
+
+  .comics-halftone-bg {
+    position: absolute;
+    inset: 0;
+    background-image: radial-gradient(circle, rgba(74,222,128,0.08) 1px, transparent 1px);
+    background-size: 16px 16px;
+    pointer-events: none;
+    border-radius: 12px;
+  }
+
+  /* Comic strip scroll container */
+  .comics-scroll {
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    gap: 48px;
+    padding: 8px 0 48px;
+  }
+
+  /* Individual comic strip */
+  .comic-strip {
+    width: 100%;
+    background: #fff;
+    border: 4px solid #000;
+    border-radius: 4px;
+    box-shadow: 8px 8px 0 #000, 0 0 0 2px #000;
+    overflow: hidden;
+    position: relative;
+    cursor: pointer;
+    transition: transform 0.15s ease, box-shadow 0.15s ease;
+  }
+
+  .comic-strip:hover {
+    transform: translate(-3px, -3px);
+    box-shadow: 11px 11px 0 #000;
+  }
+
+  /* Comic title bar */
+  .comic-title-bar {
+    background: #000;
+    color: #fff;
+    padding: 8px 16px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+  }
+
+  .comic-title-bar .ct-name {
+    font-family: 'Bangers', cursive;
+    font-size: 1.3rem;
+    letter-spacing: 0.1em;
+    color: #4ade80;
+  }
+
+  .comic-title-bar .ct-episode {
+    font-family: 'Permanent Marker', cursive;
+    font-size: 0.7rem;
+    color: rgba(255,255,255,0.5);
+    font-style: italic;
+  }
+
+  /* Panels container */
+  .comic-panels {
+    display: grid;
+    min-height: 200px;
+    background: #fff;
+  }
+
+  /* Individual panel */
+  .comic-panel {
+    border: 3px solid #000;
+    position: relative;
+    overflow: hidden;
+    min-height: 180px;
+    display: flex;
+    flex-direction: column;
+  }
+
+  /* Panel backgrounds */
+  .panel-bg-sky { background: linear-gradient(180deg, #c8e6ff 0%, #e8f4ff 100%); }
+  .panel-bg-indoor { background: linear-gradient(180deg, #f5e6d3 0%, #ffe8cc 100%); }
+  .panel-bg-night { background: linear-gradient(180deg, #1a1a3e 0%, #2d1b4e 100%); }
+  .panel-bg-green { background: linear-gradient(180deg, #d4edda 0%, #c3e6cb 100%); }
+  .panel-bg-yellow { background: linear-gradient(180deg, #fff9c4 0%, #fff176 100%); }
+  .panel-bg-cosmic { background: linear-gradient(135deg, #0d0221 0%, #1a0533 50%, #0d1b2a 100%); }
+  .panel-bg-orange { background: linear-gradient(180deg, #ffe0b2 0%, #ffcc80 100%); }
+  .panel-bg-red { background: linear-gradient(180deg, #ffcdd2 0%, #ef9a9a 100%); }
+
+  /* Halftone dots overlay for panels */
+  .comic-panel::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background-image: radial-gradient(circle, rgba(0,0,0,0.06) 1px, transparent 1px);
+    background-size: 8px 8px;
+    pointer-events: none;
+    z-index: 1;
+  }
+
+  /* Speed lines */
+  .speed-lines {
+    position: absolute;
+    inset: 0;
+    pointer-events: none;
+    z-index: 1;
+  }
+
+  /* Panel SVG art */
+  .panel-art {
+    position: absolute;
+    inset: 0;
+    z-index: 2;
+  }
+
+  /* Speech bubble */
+  .speech-bubble {
+    position: absolute;
+    background: #fff;
+    border: 2.5px solid #000;
+    border-radius: 18px;
+    padding: 6px 12px;
+    font-family: 'Permanent Marker', cursive;
+    font-weight: 700;
+    font-size: 0.78rem;
+    line-height: 1.3;
+    color: #000;
+    z-index: 10;
+    max-width: 160px;
+    text-align: center;
+    box-shadow: 2px 2px 0 #000;
+  }
+
+  .speech-bubble::after {
+    content: '';
+    position: absolute;
+    width: 0; height: 0;
+    border-left: 10px solid transparent;
+    border-right: 10px solid transparent;
+  }
+
+  .speech-bubble.tail-down::after {
+    border-top: 14px solid #000;
+    bottom: -16px; left: 20px;
+  }
+  .speech-bubble.tail-down::before {
+    content: '';
+    position: absolute;
+    width: 0; height: 0;
+    border-left: 8px solid transparent;
+    border-right: 8px solid transparent;
+    border-top: 12px solid #fff;
+    bottom: -13px; left: 22px;
+    z-index: 1;
+  }
+
+  .speech-bubble.tail-up::after {
+    border-bottom: 14px solid #000;
+    top: -16px; left: 20px;
+  }
+  .speech-bubble.tail-up::before {
+    content: '';
+    position: absolute;
+    width: 0; height: 0;
+    border-left: 8px solid transparent;
+    border-right: 8px solid transparent;
+    border-bottom: 12px solid #fff;
+    top: -13px; left: 22px;
+    z-index: 1;
+  }
+
+  .speech-bubble.thought {
+    border-radius: 50%;
+    padding: 8px 14px;
+  }
+  .speech-bubble.thought::after { display: none; }
+
+  .speech-bubble.shout {
+    background: #fff200;
+    border-color: #000;
+    border-radius: 4px;
+    transform: rotate(-2deg);
+    font-size: 0.85rem;
+  }
+
+  /* Panel caption box */
+  .panel-caption {
+    background: #000;
+    color: #fff;
+    font-family: 'Permanent Marker', cursive;
+    font-size: 0.68rem;
+    font-weight: 700;
+    padding: 4px 10px;
+    position: absolute;
+    z-index: 10;
+    max-width: 90%;
+  }
+  .panel-caption.top { top: 0; left: 0; }
+  .panel-caption.bottom { bottom: 0; left: 0; }
+
+  /* Sound FX */
+  .sfx {
+    position: absolute;
+    font-family: 'Bangers', cursive;
+    font-size: 2.4rem;
+    letter-spacing: 0.05em;
+    z-index: 10;
+    text-shadow: 3px 3px 0 #000, -1px -1px 0 #000;
+    transform: rotate(-8deg);
+    pointer-events: none;
+  }
+  .sfx.green { color: #4ade80; }
+  .sfx.yellow { color: #fbbf24; }
+  .sfx.pink { color: #f472b6; }
+  .sfx.white { color: #fff; }
+  .sfx.red { color: #ef4444; }
+
+  /* Comic footer */
+  .comic-footer-bar {
+    background: #000;
+    color: rgba(255,255,255,0.4);
+    font-family: 'Permanent Marker', cursive;
+    font-size: 0.62rem;
+    padding: 4px 14px;
+    text-align: right;
+    font-style: italic;
+  }
+
+  /* Pop animation for panels on scroll */
+  .comic-strip.pop-in {
+    animation: comicPop 0.4s cubic-bezier(0.34,1.56,0.64,1) both;
+  }
+  @keyframes comicPop {
+    0% { transform: scale(0.9) translateY(20px); opacity: 0; }
+    100% { transform: scale(1) translateY(0); opacity: 1; }
+  }
+
+  /* KAPOW floating animations on clicks */
+  .kapow-float {
+    position: fixed;
+    font-family: 'Bangers', cursive;
+    font-size: 3rem;
+    pointer-events: none;
+    z-index: 99999;
+    text-shadow: 4px 4px 0 #000;
+    animation: kapowAnim 1.2s ease-out forwards;
+  }
+  @keyframes kapowAnim {
+    0% { transform: scale(0) rotate(-15deg); opacity: 1; }
+    30% { transform: scale(1.3) rotate(5deg); opacity: 1; }
+    100% { transform: scale(0.8) rotate(-5deg) translateY(-80px); opacity: 0; }
+  }
+
+  /* Comics nav */
+  .comics-nav {
+    display: flex;
+    gap: 10px;
+    justify-content: center;
+    flex-wrap: wrap;
+    margin-bottom: 28px;
+    padding: 0 8px;
+  }
+  .comic-filter-btn {
+    padding: 6px 16px;
+    border: 1.5px solid var(--border);
+    background: var(--panel);
+    color: var(--muted);
+    font-family: 'Bangers', cursive;
+    font-size: 0.9rem;
+    letter-spacing: 0.08em;
+    border-radius: 4px;
+    cursor: pointer;
+    transition: all 0.2s;
+  }
+  .comic-filter-btn:hover, .comic-filter-btn.active {
+    border-color: var(--green);
+    color: var(--green);
+    background: rgba(74,222,128,0.08);
+  }
+
+
+  /* ========== BORN HIGH GATE + SESSION ========== */
+  #bh-gate {
+    position: fixed;
+    inset: 0;
+    background: var(--bg);
+    z-index: 99999;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-direction: column;
+    gap: 0;
+  }
+
+  .gate-wrap {
+    width: 100%;
+    max-width: 440px;
+    padding: 20px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 28px;
+  }
+
+  .gate-logo {
+    text-align: center;
+  }
+
+  .gate-leaf {
+    font-size: 4rem;
+    display: block;
+    animation: sway 3s ease-in-out infinite;
+    filter: drop-shadow(0 0 24px rgba(74,222,128,0.4));
+  }
+
+  .gate-brand {
+    font-family: 'Unbounded', sans-serif;
+    font-weight: 900;
+    font-size: 1.6rem;
+    letter-spacing: -0.02em;
+    background: linear-gradient(135deg, var(--green), var(--gold));
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    margin-top: 10px;
+  }
+
+  .gate-sub {
+    font-size: 0.7rem;
+    color: var(--muted);
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    margin-top: 4px;
+  }
+
+  .gate-card {
+    width: 100%;
+    background: var(--panel);
+    border: 1px solid var(--border);
+    border-radius: 16px;
+    padding: 32px;
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+  }
+
+  .gate-card h3 {
+    font-family: 'Playfair Display', serif;
+    font-size: 1.3rem;
+    text-align: center;
+    color: var(--text);
+    line-height: 1.4;
+  }
+
+  .gate-card p {
+    font-size: 0.75rem;
+    color: var(--muted);
+    text-align: center;
+    line-height: 1.7;
+  }
+
+  .gate-card p strong {
+    color: var(--green);
+  }
+
+  .gate-input {
+    width: 100%;
+    background: var(--bg2);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 14px 16px;
+    color: var(--text);
+    font-family: 'Unbounded', sans-serif;
+    font-size: 1rem;
+    letter-spacing: 0.2em;
+    text-align: center;
+    outline: none;
+    transition: border-color 0.2s;
+  }
+
+  .gate-input:focus { border-color: var(--green); }
+  .gate-input::placeholder { color: var(--muted); letter-spacing: 0.1em; font-size: 0.8rem; }
+
+  .gate-input.error {
+    border-color: #ef4444;
+    animation: shake-input 0.4s ease;
+  }
+
+  @keyframes shake-input {
+    0%,100% { transform: translateX(0); }
+    20% { transform: translateX(-8px); }
+    40% { transform: translateX(8px); }
+    60% { transform: translateX(-6px); }
+    80% { transform: translateX(6px); }
+  }
+
+  .gate-err {
+    font-size: 0.7rem;
+    color: #ef4444;
+    text-align: center;
+    min-height: 18px;
+    letter-spacing: 0.05em;
+  }
+
+  .gate-submit {
+    width: 100%;
+    padding: 16px;
+    background: linear-gradient(135deg, rgba(74,222,128,0.2), rgba(74,222,128,0.08));
+    border: 1px solid var(--green);
+    border-radius: 10px;
+    color: var(--green);
+    font-family: 'Unbounded', sans-serif;
+    font-size: 0.85rem;
+    letter-spacing: 0.05em;
+    cursor: pointer;
+    transition: all 0.2s;
+  }
+
+  .gate-submit:hover {
+    background: rgba(74,222,128,0.28);
+    box-shadow: 0 0 24px rgba(74,222,128,0.2);
+  }
+
+  .gate-divider {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    color: var(--muted);
+    font-size: 0.65rem;
+    letter-spacing: 0.1em;
+  }
+
+  .gate-divider::before, .gate-divider::after {
+    content: '';
+    flex: 1;
+    height: 1px;
+    background: var(--border);
+  }
+
+  .gate-tip {
+    text-align: center;
+    font-size: 0.68rem;
+    color: var(--muted);
+    line-height: 1.6;
+  }
+
+  .gate-tip .tip-highlight {
+    display: inline-block;
+    margin-top: 8px;
+    background: rgba(251,191,36,0.08);
+    border: 1px solid rgba(251,191,36,0.25);
+    border-radius: 8px;
+    padding: 8px 14px;
+    color: var(--gold);
+    font-size: 0.72rem;
+  }
+
+  /* Step 2: name entry */
+  .gate-step { display: none; }
+  .gate-step.active { display: flex; flex-direction: column; gap: 16px; }
+
+  /* Leaderboard overlay */
+  #lb-overlay {
+    position: fixed;
+    inset: 0;
+    background: rgba(0,0,0,0.85);
+    z-index: 88888;
+    display: none;
+    align-items: center;
+    justify-content: center;
+    backdrop-filter: blur(8px);
+    padding: 20px;
+  }
+
+  #lb-overlay.open { display: flex; }
+
+  .lb-modal {
+    background: var(--panel);
+    border: 1px solid var(--border);
+    border-radius: 18px;
+    width: 100%;
+    max-width: 560px;
+    max-height: 90vh;
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+    box-shadow: 0 24px 80px rgba(0,0,0,0.6);
+  }
+
+  .lb-modal-header {
+    padding: 24px 28px 16px;
+    border-bottom: 1px solid var(--border);
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+  }
+
+  .lb-modal-header h2 {
+    font-family: 'Playfair Display', serif;
+    font-size: 1.4rem;
+    color: var(--gold);
+  }
+
+  .lb-modal-header .lb-close {
+    width: 32px; height: 32px;
+    border-radius: 50%;
+    border: 1px solid var(--border);
+    background: var(--bg2);
+    color: var(--muted);
+    font-size: 1rem;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.2s;
+  }
+
+  .lb-modal-header .lb-close:hover { border-color: var(--green); color: var(--green); }
+
+  .lb-game-tabs {
+    display: flex;
+    gap: 0;
+    border-bottom: 1px solid var(--border);
+    overflow-x: auto;
+    padding: 0 28px;
+  }
+
+  .lb-game-tab {
+    padding: 10px 16px;
+    font-size: 0.68rem;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--muted);
+    cursor: pointer;
+    border-bottom: 2px solid transparent;
+    white-space: nowrap;
+    transition: all 0.2s;
+    background: none;
+    border-top: none;
+    border-left: none;
+    border-right: none;
+    font-family: 'DM Mono', monospace;
+  }
+
+  .lb-game-tab.active { color: var(--green); border-bottom-color: var(--green); }
+  .lb-game-tab:hover { color: var(--text); }
+
+  .lb-body { flex: 1; overflow-y: auto; padding: 20px 28px 24px; }
+
+  .lb-entry {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    padding: 12px 0;
+    border-bottom: 1px solid var(--border);
+    transition: background 0.15s;
+  }
+
+  .lb-entry:last-child { border-bottom: none; }
+
+  .lb-entry.me { background: rgba(74,222,128,0.05); border-radius: 8px; padding: 12px 10px; margin: 0 -10px; }
+
+  .lb-rank-num {
+    font-family: 'Unbounded', sans-serif;
+    font-size: 0.75rem;
+    font-weight: 700;
+    width: 28px;
+    text-align: center;
+    color: var(--muted);
+  }
+
+  .lb-rank-num.gold { color: #fbbf24; }
+  .lb-rank-num.silver { color: #94a3b8; }
+  .lb-rank-num.bronze { color: #c2773a; }
+
+  .lb-avatar {
+    width: 36px; height: 36px;
+    border-radius: 50%;
+    background: var(--dim);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.1rem;
+    border: 1px solid var(--border);
+    flex-shrink: 0;
+  }
+
+  .lb-entry.me .lb-avatar { border-color: var(--green); background: rgba(74,222,128,0.1); }
+
+  .lb-info { flex: 1; }
+  .lb-player-name { font-size: 0.82rem; color: var(--text); font-weight: 500; }
+  .lb-player-name .me-tag { color: var(--green); font-size: 0.62rem; margin-left: 6px; }
+  .lb-time { font-size: 0.62rem; color: var(--muted); margin-top: 2px; }
+
+  .lb-score-val {
+    font-family: 'Unbounded', sans-serif;
+    font-size: 0.9rem;
+    font-weight: 700;
+    color: var(--green);
+    text-align: right;
+  }
+
+  .lb-score-label {
+    font-size: 0.55rem;
+    color: var(--muted);
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    text-align: right;
+  }
+
+  .lb-empty {
+    text-align: center;
+    padding: 40px;
+    color: var(--muted);
+    font-style: italic;
+    font-size: 0.78rem;
+  }
+
+  /* Leaderboard button in header */
+  .lb-btn {
+    padding: 8px 16px;
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    background: var(--panel);
+    color: var(--muted);
+    font-family: 'DM Mono', monospace;
+    font-size: 0.68rem;
+    cursor: pointer;
+    transition: all 0.2s;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+  }
+
+  .lb-btn:hover { border-color: var(--gold); color: var(--gold); }
+
+  /* PIN digits display */
+  .pin-display {
+    display: flex;
+    gap: 10px;
+    justify-content: center;
+  }
+
+  .pin-digit {
+    width: 52px; height: 64px;
+    background: var(--bg2);
+    border: 2px solid var(--border);
+    border-radius: 10px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-family: 'Unbounded', sans-serif;
+    font-size: 1.6rem;
+    font-weight: 700;
+    color: var(--green);
+    transition: all 0.2s;
+  }
+
+  .pin-digit.filled { border-color: var(--green); background: rgba(74,222,128,0.08); }
+
+
+  /* ========== RESPONSIVE ========== */
+  @media (max-width: 900px) {
+    main { padding: 20px 16px; }
+    header { padding: 16px 20px; }
+
+    /* Nav tabs scroll horizontally */
+    .arcade-nav {
+      overflow-x: auto;
+      flex-wrap: nowrap;
+      padding-bottom: 4px;
+      gap: 6px;
+    }
+    .arcade-nav::-webkit-scrollbar { height: 3px; }
+    .game-tab { white-space: nowrap; flex-shrink: 0; padding: 8px 14px; font-size: 0.68rem; }
+
+    /* Dashboard home */
+    .games-grid { grid-template-columns: 1fr 1fr; gap: 12px; }
+    .dashboard-hero { padding: 24px 18px; }
+    .hero-headline { font-size: 1.8rem; }
+    .hero-sub { font-size: 0.78rem; }
+
+    /* Blunt roller */
+    #game-blunt.active { grid-template-columns: 1fr; }
+    .upgrade-panel { max-height: 320px; overflow-y: auto; }
+    .blunt-stats { grid-template-columns: repeat(3,1fr); gap: 8px; }
+    .stat-card .stat-val { font-size: 1.1rem; }
+
+    /* Grow room */
+    #game-grow.active { grid-template-columns: 1fr; }
+    .grow-bottom { flex-wrap: wrap; gap: 14px; }
+
+    /* Munchie */
+    #game-munchie.active { grid-template-columns: 1fr; }
+    .munchie-grid { grid-template-columns: repeat(5,1fr); gap: 6px; }
+    .munchie-hole { border-radius: 8px; }
+
+    /* Trip */
+    .trip-controls { gap: 8px; }
+    .trip-btn { padding: 8px 14px; font-size: 0.68rem; }
+
+    /* Skate */
+    #skateCanvas { border-radius: 10px; }
+
+    /* Higher Lower */
+    .playing-card { width: 110px; height: 155px; }
+    .card-rank { font-size: 2rem; }
+    .card-suite { font-size: 1.5rem; }
+
+    /* Leaderboard modal */
+    .lb-modal { max-height: 95vh; border-radius: 14px 14px 0 0; }
+    #lb-overlay { align-items: flex-end; padding: 0; }
+    .lb-game-tabs { gap: 0; }
+    .lb-game-tab { padding: 10px 10px; font-size: 0.6rem; }
+
+    /* Comics */
+    .comics-header h2 { font-size: 2.2rem; }
+    .comics-nav { gap: 6px; }
+    .comic-filter-btn { padding: 5px 12px; font-size: 0.78rem; }
+
+    /* Gate */
+    .gate-brand { font-size: 1.3rem; }
+    .pin-digit { width: 44px; height: 56px; font-size: 1.4rem; }
+  }
+
+  @media (max-width: 600px) {
+    header { padding: 12px 16px; }
+    .logo span { font-size: 1rem; }
+    .logo .leaf { font-size: 1.3rem; }
+    .tagline { display: none; }
+
+    main { padding: 14px 12px; }
+
+    /* Single column home grid on small screens */
+    .games-grid { grid-template-columns: 1fr; gap: 10px; }
+    .game-card { padding: 20px; }
+    .game-card-icon { font-size: 2.2rem; }
+
+    /* Blunt */
+    .blunt-stats { grid-template-columns: repeat(3,1fr); gap: 6px; }
+    .stat-card { padding: 10px 8px; }
+    .stat-card .stat-val { font-size: 0.95rem; }
+    .stat-card .stat-label { font-size: 0.55rem; }
+    .blunt-btn { width: 110px; height: 110px; }
+    .blunt-btn .btn-icon { font-size: 2rem; }
+    .blunt-clickzone { width: 200px; height: 200px; }
+
+    /* Grow room */
+    #game-grow.active { grid-template-columns: 1fr; gap: 12px; }
+    .plant-emoji { font-size: 3rem; }
+    .grow-bottom { flex-direction: column; text-align: center; }
+
+    /* Munchie */
+    .munchie-grid { gap: 4px; }
+    .munchie-hole { font-size: 1.6rem; border-radius: 6px; }
+    .munchie-score-big { font-size: 1.6rem; }
+
+    /* Skate & Asteroid — keep canvas scrollable */
+    .game-canvas-wrap { overflow-x: hidden; }
+    #skateCanvas, #asteroidCanvas { max-width: 100%; height: auto; }
+
+    /* Vibe sequencer */
+    .vibe-pads { max-width: 320px; gap: 10px; }
+    .vibe-pad { border-radius: 10px; font-size: 1.6rem; }
+
+    /* Higher Lower */
+    .card-arena { gap: 20px; }
+    .playing-card { width: 95px; height: 135px; border-radius: 10px; }
+    .card-rank { font-size: 1.6rem; }
+    .hl-btn { padding: 12px 22px; font-size: 0.75rem; }
+
+    /* Trip */
+    .trip-stats { gap: 18px; }
+    .trip-stat .ts-val { font-size: 1.2rem; }
+    .trip-controls { gap: 6px; }
+    .trip-btn { padding: 8px 10px; font-size: 0.62rem; }
+
+    /* Comics */
+    .comics-header { padding: 20px 12px 16px; }
+    .comics-header h2 { font-size: 1.8rem; }
+    .comics-header .subtitle { font-size: 0.72rem; }
+    .comics-nav { gap: 5px; }
+    .comic-filter-btn { padding: 4px 10px; font-size: 0.72rem; }
+    .comic-strip { box-shadow: 4px 4px 0 #000; }
+    .comic-title-bar .ct-name { font-size: 1rem; }
+    .comic-title-bar .ct-episode { display: none; }
+
+    /* Gate */
+    .gate-leaf { font-size: 3rem; }
+    .gate-brand { font-size: 1.1rem; }
+    .gate-wrap { gap: 20px; }
+    .gate-card { padding: 22px 18px; }
+    .pin-display { gap: 8px; }
+    .pin-digit { width: 40px; height: 52px; font-size: 1.3rem; border-radius: 8px; }
+    .gate-input { font-size: 0.95rem; padding: 12px; }
+    .gate-submit { padding: 14px; font-size: 0.78rem; }
+
+    /* Leaderboard */
+    .lb-modal-header { padding: 18px 20px 12px; }
+    .lb-modal-header h2 { font-size: 1.1rem; }
+    .lb-body { padding: 14px 16px 20px; }
+    .lb-game-tab { padding: 8px 8px; font-size: 0.58rem; }
+
+    /* Scrolling ticker */
+    .scrolling-ticker { padding: 8px 0; }
+    .ticker-inner { font-size: 0.62rem; }
+
+    /* Footer */
+    footer { flex-direction: column; gap: 4px; padding: 12px 16px; text-align: center; font-size: 0.65rem; }
+
+    /* Toast */
+    .toast { right: 12px; bottom: 12px; max-width: calc(100vw - 24px); }
+
+    /* Bulletin ad */
+    .bulletin-ad { left: 12px; bottom: 70px; max-width: calc(100vw - 24px); }
+
+    /* Skate tip / game tip */
+    .game-tip { font-size: 0.62rem; padding: 0 8px; }
+  }
+
+  /* Touch targets — minimum 44px for all interactive elements */
+  @media (hover: none) {
+    .game-tab { min-height: 44px; }
+    .plant-btn { min-height: 44px; }
+    .trip-btn { min-height: 44px; }
+    .upgrade-item { min-height: 52px; }
+    .hl-btn { min-height: 52px; }
+    .munchie-hole { min-height: 56px; }
+    .comic-filter-btn { min-height: 40px; }
+  }
+
+  /* Scrollbar */
+  ::-webkit-scrollbar { width: 6px; }
+  ::-webkit-scrollbar-track { background: var(--bg); }
+  ::-webkit-scrollbar-thumb { background: var(--dim); border-radius: 3px; }
+  ::-webkit-scrollbar-thumb:hover { background: var(--muted); }
 </style>
 </head>
 <body>
 
-<div class="logo">🌿 Born High</div>
-<div class="sub">Staff Admin Panel</div>
 
-<!-- ADMIN LOGIN -->
-<div id="admin-gate">
-  <div class="card">
-    <h2>Staff Access</h2>
-    <p style="font-size:0.72rem;color:var(--muted);margin-bottom:20px;line-height:1.6">This panel is for Born High staff only. Enter the staff password to continue.</p>
-    <label>Staff Password</label>
-    <input type="password" id="admin-pw" placeholder="••••••••" onkeydown="if(event.key==='Enter')adminLogin()" />
-    <div class="err" id="admin-err"></div>
-    <button class="btn" onclick="adminLogin()">Sign In →</button>
+<!-- ===== BORN HIGH GATE ===== -->
+<div id="bh-gate">
+  <div class="gate-wrap">
+    <div class="gate-logo">
+      <span class="gate-leaf">🌿</span>
+      <div class="gate-brand">Born High Arcade</div>
+      <div class="gate-sub">Cannabis Social Club · Members Only</div>
+    </div>
+
+    <div class="gate-card">
+      <!-- STEP 1: PIN -->
+      <div class="gate-step active" id="gate-step-1">
+        <h3>Enter today's<br>access code</h3>
+        <p>Ask the <strong>budtender at the till</strong> for today's 4-digit code to unlock the arcade.</p>
+        <div class="pin-display">
+          <div class="pin-digit" id="pd0">–</div>
+          <div class="pin-digit" id="pd1">–</div>
+          <div class="pin-digit" id="pd2">–</div>
+          <div class="pin-digit" id="pd3">–</div>
+        </div>
+        <input class="gate-input" id="pin-input" type="tel" maxlength="4" placeholder="4-digit code"
+          oninput="onPinInput(this)" onkeydown="if(event.key==='Enter')submitPin()" autocomplete="off" inputmode="numeric"/>
+        <div class="gate-err" id="pin-err"></div>
+        <button class="gate-submit" onclick="submitPin()">Unlock Arcade 🌿</button>
+        <div class="gate-divider">or</div>
+        <div class="gate-tip">
+          No code yet? Head to the till, grab something, and the budtender will sort you out.
+          <div class="tip-highlight">🏆 Top scorer gets bragging rights on the leaderboard</div>
+        </div>
+      </div>
+
+      <!-- STEP 2: NAME -->
+      <div class="gate-step" id="gate-step-2">
+        <h3>You're in. 🌿<br>What do we call you?</h3>
+        <p>Your name goes on the leaderboard. Make it count.</p>
+        <input class="gate-input" id="name-input" type="text" maxlength="18" placeholder="Your handle"
+          style="letter-spacing:0.05em;font-size:1rem"
+          onkeydown="if(event.key==='Enter')submitName()" autocomplete="off"/>
+        <div class="gate-err" id="name-err"></div>
+        <button class="gate-submit" onclick="submitName()">Let's Play 🎮</button>
+      </div>
+    </div>
   </div>
 </div>
 
-<!-- ADMIN PANEL -->
-<div id="admin-panel">
-  <nav>
-    <button class="btn sm" onclick="showAdminTab('pin')" id="atab-pin">📍 Daily PIN</button>
-    <button class="btn sm" onclick="showAdminTab('stats')" id="atab-stats">📊 Stats</button>
-    <button class="btn sm" onclick="showAdminTab('lb')" id="atab-lb">🏆 Leaderboard</button>
-    <button class="btn sm" onclick="showAdminTab('reset')" id="atab-reset">⚙️ Settings</button>
+<!-- ===== LEADERBOARD OVERLAY ===== -->
+<div id="lb-overlay">
+  <div class="lb-modal">
+    <div class="lb-modal-header">
+      <h2>🏆 Leaderboard</h2>
+      <button class="lb-close" onclick="closeLB()">✕</button>
+    </div>
+    <div class="lb-game-tabs" id="lb-game-tabs"></div>
+    <div class="lb-body" id="lb-body"></div>
+  </div>
+</div>
+
+<div class="ambient ambient-1"></div>
+<div class="ambient ambient-2"></div>
+<div class="ambient ambient-3"></div>
+
+<header>
+  <div>
+    <div class="logo">
+      <span class="leaf">🌿</span>
+      <span>Born High Arcade</span>
+    </div>
+    <div class="tagline" id="player-tagline">Ask the budtender for today's code</div>
+  </div>
+  <div style="display:flex;align-items:center;gap:12px;">
+  <button class="lb-btn" id="lb-header-btn" onclick="openLB()" style="display:none">🏆 Leaderboard</button>
+  <div class="session-info" id="session-info-block" style="display:none">
+    <div style="color:var(--muted);font-size:0.6rem;letter-spacing:0.1em;text-transform:uppercase;margin-bottom:2px;" id="player-name-display">—</div>
+    <div class="vibe-score" id="total-vibe">0</div>
+    <div style="color:var(--muted);font-size:0.62rem;letter-spacing:0.1em;text-transform:uppercase;">Vibe Points</div>
+  </div>
+  </div>
+</header>
+
+<div class="scrolling-ticker">
+  <span class="ticker-inner">
+    🌿 &nbsp;BREAKING: Local man reports snacks have never tasted this good &nbsp;·&nbsp; 🏆 High score in Munchie Madness: 420pts &nbsp;·&nbsp; 🌱 Your Blue Dream seedling is vibing nicely &nbsp;·&nbsp; 🍕 Scientists confirm: pizza is better at 2am &nbsp;·&nbsp; ✨ New upgrade unlocked: Himalayan Salts &nbsp;·&nbsp; 🌀 The cosmos called, it said "chill out" &nbsp;·&nbsp; 💨 Sessions completed today: many &nbsp;·&nbsp; 🎮 Born High Arcade — exclusively at Born High Cannabis Social Club &nbsp;·&nbsp;
+    🌿 &nbsp;BREAKING: Local man reports snacks have never tasted this good &nbsp;·&nbsp; 🏆 High score in Munchie Madness: 420pts &nbsp;·&nbsp; 🌱 Your Blue Dream seedling is vibing nicely &nbsp;·&nbsp; 🍕 Scientists confirm: pizza is better at 2am &nbsp;·&nbsp; ✨ New upgrade unlocked: Himalayan Salts &nbsp;·&nbsp; 🌀 The cosmos called, it said "chill out" &nbsp;·&nbsp; 💨 Sessions completed today: many &nbsp;·&nbsp; 🎮 Born High Arcade — exclusively at Born High Cannabis Social Club &nbsp;·&nbsp;
+  </span>
+</div>
+
+<main>
+  <nav class="arcade-nav">
+    <button class="game-tab active" onclick="showGame('home')">
+      <span class="tab-dot"></span> Arcade
+    </button>
+    <button class="game-tab" onclick="showGame('blunt')">
+      🚬 Blunt Roller
+    </button>
+    <button class="game-tab" onclick="showGame('grow')">
+      🌱 Grow Room
+    </button>
+    <button class="game-tab" onclick="showGame('munchie')">
+      🍕 Munchie Madness
+    </button>
+    <button class="game-tab" onclick="showGame('trip')">
+      🌀 The Trip
+    </button>
+    <button class="game-tab" onclick="showGame('skate')">
+      🛹 Skate or Bake
+    </button>
+    <button class="game-tab" onclick="showGame('vibe')">
+      🎵 Vibe Sequencer
+    </button>
+    <button class="game-tab" onclick="showGame('asteroid')">
+      🌌 Asteroid Munchies
+    </button>
+    <button class="game-tab" onclick="showGame('higher')">
+      🃏 Higher or Lower
+    </button>
+    <button class="game-tab" onclick="showGame('comics')">
+      📖 The Comics
+    </button>
   </nav>
 
-  <!-- PIN TAB -->
-  <div id="tab-pin" class="card">
-    <h2>📍 Today's Access PIN</h2>
-    <div class="notice">This is the 4-digit code you read out to customers at the till. It changes daily — set a new one each morning.</div>
-    <div class="pin-big" id="current-pin-display">—</div>
-    <div class="pin-date" id="pin-validity"></div>
-    <label>Set New PIN for Today</label>
-    <input type="number" id="new-pin" placeholder="4 digits" maxlength="4" oninput="this.value=this.value.slice(0,4)" />
-    <div class="err" id="pin-set-err"></div>
-    <div class="ok" id="pin-set-ok"></div>
-    <button class="btn" onclick="setPin()">Set Today's PIN 🔐</button>
-    <div style="margin-top:14px">
-      <button class="btn sm" onclick="genRandPin()">🎲 Generate Random PIN</button>
+  <!-- HOME DASHBOARD -->
+  <div id="game-home" class="game-screen active">
+    <div class="dashboard-hero">
+      <div class="hero-headline">
+        Welcome to<br><em>Born High</em><br>Arcade
+      </div>
+      <div class="hero-sub">The official members arcade of Born High Cannabis Social Club. Play, score, climb the leaderboard. Ask the budtender for today's access code.</div>
+      <div style="display:flex;gap:12px;justify-content:center;flex-wrap:wrap;">
+        <button onclick="showGame('blunt')" class="munchie-start">Start Rolling 🚬</button>
+        <button onclick="showGame('trip')" style="padding:14px 32px;background:rgba(168,85,247,0.1);border:1px solid var(--purple);color:var(--purple);font-family:'Unbounded',sans-serif;font-size:0.8rem;border-radius:8px;cursor:pointer;transition:all 0.2s;">Enter The Trip 🌀</button>
+      </div>
+    </div>
+
+    <div class="games-grid">
+      <div class="game-card" onclick="showGame('blunt')">
+        <span class="game-card-icon">🚬</span>
+        <div class="game-card-title">Blunt Roller</div>
+        <div class="game-card-desc">The classic idle clicker, elevated. Roll blunts, buy upgrades, hire apprentices, corner the cosmic market. Cookie Clicker's chiller cousin.</div>
+        <span class="game-card-tag">● Idle Clicker</span>
+      </div>
+      <div class="game-card" onclick="showGame('grow')">
+        <span class="game-card-icon">🌱</span>
+        <div class="game-card-title">The Grow Room</div>
+        <div class="game-card-desc">Cultivate three legendary strains. Water, feed, wait — and harvest when the time is right. Patience is a virtue. So is good genetics.</div>
+        <span class="game-card-tag">● Idle Sim</span>
+      </div>
+      <div class="game-card" onclick="showGame('munchie')">
+        <span class="game-card-icon">🍕</span>
+        <div class="game-card-title">Munchie Madness</div>
+        <div class="game-card-desc">Snacks are appearing. TAP THEM. Don't let the broccoli slip through — even the healthy stuff counts when you're this hungry.</div>
+        <span class="game-card-tag">● Reflex Game</span>
+      </div>
+      <div class="game-card" onclick="showGame('trip')">
+        <span class="game-card-icon">🌀</span>
+        <div class="game-card-title">The Trip</div>
+        <div class="game-card-desc">A generative psychedelic canvas. Click to spawn cosmic geometry. Change modes. Watch the universe breathe. It's art, baby.</div>
+        <span class="game-card-tag">● Ambient Art</span>
+      </div>
+      <div class="game-card" onclick="showGame('skate')">
+        <span class="game-card-icon">🛹</span>
+        <div class="game-card-title">Skate or Bake</div>
+        <div class="game-card-desc">Ollie over traffic cones, dodge cops, collect snacks. A side-scrolling skater for the chronically chill. No helmet required.</div>
+        <span class="game-card-tag">● Side Scroller</span>
+      </div>
+      <div class="game-card" onclick="showGame('vibe')">
+        <span class="game-card-icon">🎵</span>
+        <div class="game-card-title">Vibe Sequencer</div>
+        <div class="game-card-desc">Simon Says meets a drum machine. Watch the pattern, repeat it, don't overthink it. The beat will find you if you let it.</div>
+        <span class="game-card-tag">● Memory / Rhythm</span>
+      </div>
+      <div class="game-card" onclick="showGame('asteroid')">
+        <span class="game-card-icon">🌌</span>
+        <div class="game-card-title">Asteroid Munchies</div>
+        <div class="game-card-desc">Space is full of snacks disguised as asteroids. Shoot them. Collect the points. Don't get hit. Classic, but make it elevated.</div>
+        <span class="game-card-tag">● Space Shooter</span>
+      </div>
+      <div class="game-card" onclick="showGame('higher')">
+        <span class="game-card-icon">🃏</span>
+        <div class="game-card-title">Higher or Lower</div>
+        <div class="game-card-desc">Is the next card higher or lower? Easy question, cosmic consequences. Build your streak and face the philosophical implications.</div>
+        <span class="game-card-tag">● Card Game</span>
+      </div>
     </div>
   </div>
 
-  <!-- STATS TAB -->
-  <div id="tab-stats" class="card" style="display:none">
-    <h2>📊 Session Stats</h2>
-    <div class="stats-grid" id="stats-grid"></div>
-    <div style="font-size:0.68rem;color:var(--muted);font-style:italic">Stats are device-local. Each device/browser stores its own leaderboard. A Supabase backend can be added for cross-device sync.</div>
-  </div>
+  <!-- GAME 1: BLUNT ROLLER -->
+  <div id="game-blunt" class="game-screen">
+    <div class="blunt-main">
+      <div class="blunt-stats">
+        <div class="stat-card">
+          <div class="stat-val" id="blunt-count">0</div>
+          <div class="stat-label">Blunts Rolled</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-val" id="blunt-per-sec">0</div>
+          <div class="stat-label">Per Second</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-val" id="blunt-total">0</div>
+          <div class="stat-label">All Time</div>
+        </div>
+      </div>
 
-  <!-- LEADERBOARD TAB -->
-  <div id="tab-lb" class="card" style="display:none">
-    <h2>🏆 Full Leaderboard</h2>
-    <div class="game-sel" id="admin-game-sel"></div>
-    <div id="admin-lb-table"></div>
-  </div>
+      <div class="blunt-clickzone" id="bluntZone">
+        <div class="blunt-ring"></div>
+        <div class="blunt-ring"></div>
+        <div class="blunt-ring"></div>
+        <button class="blunt-btn" id="bluntBtn" onclick="rollBlunt(event)">
+          <span class="btn-icon">🚬</span>
+          <span class="btn-label">Roll It</span>
+        </button>
+      </div>
 
-  <!-- SETTINGS TAB -->
-  <div id="tab-reset" class="card" style="display:none">
-    <h2>⚙️ Settings & Reset</h2>
-    <div class="notice">⚠️ Clearing leaderboard data is permanent and cannot be undone.</div>
-    <div style="display:flex;flex-direction:column;gap:10px">
-      <button class="btn danger sm" onclick="clearGame(activeLBKey)">Clear Current Game Leaderboard</button>
-      <button class="btn danger" onclick="clearAll()">🗑️ Clear ALL Leaderboard Data</button>
-      <button class="btn sm" onclick="adminLogout()" style="margin-top:8px">Sign Out</button>
+      <div class="quip-box" id="quipBox">Waiting for the vibe to settle...</div>
+    </div>
+
+    <div class="upgrade-panel">
+      <h3>✨ Upgrades</h3>
+      <div id="upgrade-list"></div>
     </div>
   </div>
+
+  <!-- GAME 2: GROW ROOM -->
+  <div id="game-grow" class="game-screen">
+    <div class="plant-card" id="plant-0">
+      <div class="plant-glow"></div>
+      <div class="plant-reward">+50 VP harvest</div>
+      <span class="plant-emoji" id="plant-emoji-0">🌱</span>
+      <div class="plant-name">Blue Dream</div>
+      <div class="plant-strain">Sativa Dominant · Euphoric</div>
+      <div class="grow-bar-wrap"><div class="grow-bar" id="grow-bar-0" style="width:0%"></div></div>
+      <div class="grow-stage" id="grow-stage-0">Stage: Germination</div>
+      <div class="plant-actions">
+        <button class="plant-btn" onclick="waterPlant(0)">💧 Water</button>
+        <button class="plant-btn" onclick="feedPlant(0)">🌿 Feed</button>
+        <button class="plant-btn primary" onclick="harvestPlant(0)" id="harvest-0" disabled>🌾 Harvest</button>
+      </div>
+    </div>
+
+    <div class="plant-card" id="plant-1">
+      <div class="plant-glow"></div>
+      <div class="plant-reward">+80 VP harvest</div>
+      <span class="plant-emoji" id="plant-emoji-1">🌱</span>
+      <div class="plant-name">OG Kush</div>
+      <div class="plant-strain">Indica Dominant · Relaxing</div>
+      <div class="grow-bar-wrap"><div class="grow-bar" id="grow-bar-1" style="width:0%"></div></div>
+      <div class="grow-stage" id="grow-stage-1">Stage: Germination</div>
+      <div class="plant-actions">
+        <button class="plant-btn" onclick="waterPlant(1)">💧 Water</button>
+        <button class="plant-btn" onclick="feedPlant(1)">🌿 Feed</button>
+        <button class="plant-btn primary" onclick="harvestPlant(1)" id="harvest-1" disabled>🌾 Harvest</button>
+      </div>
+    </div>
+
+    <div class="plant-card" id="plant-2">
+      <div class="plant-glow"></div>
+      <div class="plant-reward">+120 VP harvest</div>
+      <span class="plant-emoji" id="plant-emoji-2">🌱</span>
+      <div class="plant-name">Purple Haze</div>
+      <div class="plant-strain">Hybrid · Creative</div>
+      <div class="grow-bar-wrap"><div class="grow-bar" id="grow-bar-2" style="width:0%"></div></div>
+      <div class="grow-stage" id="grow-stage-2">Stage: Germination</div>
+      <div class="plant-actions">
+        <button class="plant-btn" onclick="waterPlant(2)">💧 Water</button>
+        <button class="plant-btn" onclick="feedPlant(2)">🌿 Feed</button>
+        <button class="plant-btn primary" onclick="harvestPlant(2)" id="harvest-2" disabled>🌾 Harvest</button>
+      </div>
+    </div>
+
+    <div class="grow-bottom">
+      <div class="grow-stat">
+        <div class="gs-val" id="grow-harvests">0</div>
+        <div class="gs-label">Harvests</div>
+      </div>
+      <div class="grow-stat">
+        <div class="gs-val" id="grow-vp">0</div>
+        <div class="gs-label">VP Earned</div>
+      </div>
+      <div class="grow-stat">
+        <div class="gs-val" id="grow-streak">0</div>
+        <div class="gs-label">Streak</div>
+      </div>
+      <div style="color:var(--muted);font-size:0.72rem;max-width:260px;line-height:1.6;font-style:italic;">
+        Water and feed your plants regularly. Harvest at 100% for maximum Vibe Points. Miss the window and they'll go to seed.
+      </div>
+    </div>
+  </div>
+
+  <!-- GAME 3: MUNCHIE MADNESS -->
+  <div id="game-munchie" class="game-screen">
+    <div class="munchie-arena">
+      <h3>Munchie Madness 🍕</h3>
+      <p>Tap the snacks before they disappear. Don't tap the 🥦 — unless you're that person.</p>
+
+      <div class="munchie-grid" id="munchieGrid">
+        <!-- holes generated by JS -->
+      </div>
+
+      <div class="munchie-hud">
+        <div>
+          <div style="font-size:0.62rem;color:var(--muted);letter-spacing:0.1em;text-transform:uppercase;margin-bottom:2px;">Score</div>
+          <div class="munchie-score-big" id="munchie-score">0</div>
+        </div>
+        <div id="munchie-ctrl">
+          <button class="munchie-start" id="munchie-start-btn" onclick="startMunchie()">Play 🍕</button>
+        </div>
+        <div style="text-align:right">
+          <div style="font-size:0.62rem;color:var(--muted);letter-spacing:0.1em;text-transform:uppercase;margin-bottom:2px;">Time</div>
+          <div class="munchie-timer" id="munchie-timer">30</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="munchie-side">
+      <div class="munchie-leaderboard">
+        <h3>🏆 High Scores</h3>
+        <div id="lb-rows">
+          <div class="lb-row"><span class="lb-rank">#1</span><span class="lb-name">GrannyTokes420</span><span class="lb-pts">420</span></div>
+          <div class="lb-row"><span class="lb-rank">#2</span><span class="lb-name">CouchLockKing</span><span class="lb-pts">390</span></div>
+          <div class="lb-row"><span class="lb-rank">#3</span><span class="lb-name">MunchieMonster</span><span class="lb-pts">315</span></div>
+          <div class="lb-row"><span class="lb-rank">#4</span><span class="lb-name">VibeCheckVera</span><span class="lb-pts">280</span></div>
+          <div class="lb-row"><span class="lb-rank">#5</span><span class="lb-name">You</span><span class="lb-pts" id="lb-you">—</span></div>
+        </div>
+      </div>
+
+      <div class="munchie-leaderboard">
+        <h3>📖 Score Guide</h3>
+        <div class="lb-row"><span>🍕 Pizza</span><span class="lb-pts">+10</span></div>
+        <div class="lb-row"><span>🍔 Burger</span><span class="lb-pts">+8</span></div>
+        <div class="lb-row"><span>🍩 Donut</span><span class="lb-pts">+6</span></div>
+        <div class="lb-row"><span>🍫 Choc</span><span class="lb-pts">+12</span></div>
+        <div class="lb-row"><span>🍟 Fries</span><span class="lb-pts">+7</span></div>
+        <div class="lb-row"><span>🥦 Broccoli</span><span class="lb-pts" style="color:#ef4444">-5</span></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- GAME 4: THE TRIP -->
+  <div id="game-trip" class="game-screen">
+    <div class="trip-canvas-wrap">
+      <canvas id="tripCanvas" width="700" height="420"></canvas>
+    </div>
+
+    <div class="trip-stats">
+      <div class="trip-stat">
+        <div class="ts-val" id="trip-clicks">0</div>
+        <div class="ts-label">Portals Opened</div>
+      </div>
+      <div class="trip-stat">
+        <div class="ts-val" id="trip-shapes">0</div>
+        <div class="ts-label">Shapes Born</div>
+      </div>
+      <div class="trip-stat">
+        <div class="ts-val" id="trip-depth">1</div>
+        <div class="ts-label">Trip Depth</div>
+      </div>
+    </div>
+
+    <div class="trip-controls">
+      <button class="trip-btn active-mode" id="mode-cosmic" onclick="setTripMode('cosmic')">🌌 Cosmic</button>
+      <button class="trip-btn" id="mode-mandala" onclick="setTripMode('mandala')">🌸 Mandala</button>
+      <button class="trip-btn" id="mode-lava" onclick="setTripMode('lava')">🔥 Lava Lamp</button>
+      <button class="trip-btn" id="mode-crystal" onclick="setTripMode('crystal')">💎 Crystal</button>
+      <button class="trip-btn" onclick="clearTrip()" style="border-color:rgba(239,68,68,0.3);color:rgba(239,68,68,0.6)">✕ Reset</button>
+    </div>
+
+    <div style="color:var(--muted);font-size:0.72rem;text-align:center;font-style:italic;">
+      Click anywhere on the canvas to create cosmic formations. Each mode generates different geometries.
+    </div>
+  </div>
+
+  <!-- GAME 5: SKATE OR BAKE -->
+  <div id="game-skate" class="game-screen">
+    <div class="game-canvas-wrap">
+      <div class="game-hud">
+        <div class="hud-block"><div class="hud-val" id="skate-score">0</div><div class="hud-label">Score</div></div>
+        <div class="hud-block"><div class="hud-val gold" id="skate-dist">0m</div><div class="hud-label">Distance</div></div>
+        <div class="hud-block"><div class="hud-val purple" id="skate-best">0</div><div class="hud-label">Best</div></div>
+      </div>
+      <canvas id="skateCanvas" class="game-canvas" width="720" height="280"></canvas>
+      <div class="game-hud">
+        <button class="game-action-btn" id="skate-start-btn" onclick="startSkate()">Drop In 🛹</button>
+      </div>
+      <div class="game-tip">SPACE or TAP to ollie. Double-tap for a kickflip. Don't slam into the cones.</div>
+    </div>
+  </div>
+
+  <!-- GAME 6: VIBE SEQUENCER -->
+  <div id="game-vibe" class="game-screen">
+    <div class="vibe-status" id="vibe-status">Press Start to begin the sequence</div>
+    <div class="game-hud">
+      <div class="hud-block"><div class="hud-val" id="vibe-level">1</div><div class="hud-label">Level</div></div>
+      <div class="hud-block"><div class="hud-val gold" id="vibe-streak">0</div><div class="hud-label">Streak</div></div>
+      <div class="hud-block"><div class="hud-val purple" id="vibe-best-level">1</div><div class="hud-label">Best Level</div></div>
+    </div>
+    <div class="vibe-pads">
+      <div class="vibe-pad" data-pad="0" onclick="vibePress(0)">🌿</div>
+      <div class="vibe-pad" data-pad="1" onclick="vibePress(1)">🌀</div>
+      <div class="vibe-pad" data-pad="2" onclick="vibePress(2)">🔥</div>
+      <div class="vibe-pad" data-pad="3" onclick="vibePress(3)">💎</div>
+    </div>
+    <button class="game-action-btn" id="vibe-start-btn" onclick="startVibe()">Start Sequence 🎵</button>
+    <div class="game-tip">Watch the sequence light up, then repeat it in order. Each level adds one more step.</div>
+  </div>
+
+  <!-- GAME 7: ASTEROID MUNCHIES -->
+  <div id="game-asteroid" class="game-screen">
+    <div class="game-canvas-wrap">
+      <div class="game-hud">
+        <div class="hud-block"><div class="hud-val" id="ast-score">0</div><div class="hud-label">Score</div></div>
+        <div class="hud-block"><div class="hud-val gold" id="ast-level">1</div><div class="hud-label">Wave</div></div>
+        <div class="hud-block"><div class="hud-val purple" id="ast-lives">♥♥♥</div><div class="hud-label">Lives</div></div>
+        <div class="hud-block"><div class="hud-val" id="ast-best">0</div><div class="hud-label">Best</div></div>
+      </div>
+      <canvas id="asteroidCanvas" class="game-canvas" width="720" height="380"></canvas>
+      <div class="game-hud">
+        <button class="game-action-btn" id="ast-start-btn" onclick="startAsteroid()">Launch 🚀</button>
+      </div>
+      <div class="game-tip">Arrow keys / WASD to move · SPACE to shoot · Destroy all snack-roids to advance</div>
+    </div>
+  </div>
+
+  <!-- GAME 8: HIGHER OR LOWER -->
+  <div id="game-higher" class="game-screen">
+    <div class="game-hud">
+      <div class="hud-block"><div class="hud-val" id="hl-streak">0</div><div class="hud-label">Streak</div></div>
+      <div class="hud-block"><div class="hud-val gold" id="hl-best">0</div><div class="hud-label">Best Streak</div></div>
+      <div class="hud-block"><div class="hud-val purple" id="hl-score">0</div><div class="hud-label">Total Score</div></div>
+    </div>
+    <div class="card-arena">
+      <div class="playing-card revealed" id="hl-current">
+        <div class="card-corner" id="hl-corner-tl"></div>
+        <div class="card-rank" id="hl-rank">?</div>
+        <div class="card-suit" id="hl-suit">🃏</div>
+        <div class="card-corner br" id="hl-corner-br"></div>
+      </div>
+      <div class="card-vs">vs</div>
+      <div class="playing-card facedown" id="hl-next">
+        <div class="card-rank" style="font-size:2rem;color:var(--muted)">?</div>
+      </div>
+    </div>
+    <div class="hl-result" id="hl-result"></div>
+    <div class="hl-btns" id="hl-btns">
+      <button class="hl-btn high" onclick="hlGuess('high')">⬆ Higher</button>
+      <button class="hl-btn low" onclick="hlGuess('low')">⬇ Lower</button>
+    </div>
+    <div class="game-tip">Guess whether the next card will be higher or lower. Aces are wild. Or are they low? Nobody's sure.</div>
+  </div>
+
+
+  <!-- GAME 9: THE COMICS -->
+  <div id="game-comics" class="game-screen">
+    <div class="comics-header">
+      <div class="comics-halftone-bg"></div>
+      <h2>BORN HIGH COMICS</h2>
+      <div class="subtitle">Original strips for the chronically enlightened · New issues drop whenever we feel like it</div>
+    </div>
+
+    <div class="comics-nav">
+      <button class="comic-filter-btn active" onclick="filterComics('all', this)">ALL ISSUES</button>
+      <button class="comic-filter-btn" onclick="filterComics('adventure', this)">ADVENTURE</button>
+      <button class="comic-filter-btn" onclick="filterComics('philosophy', this)">PHILOSOPHY</button>
+      <button class="comic-filter-btn" onclick="filterComics('kitchen', this)">KITCHEN CHAOS</button>
+      <button class="comic-filter-btn" onclick="filterComics('cosmic', this)">COSMIC</button>
+    </div>
+
+    <div class="comics-scroll" id="comicsScroll"></div>
+  </div>
+
+</main>
+
+<footer>
+  <div>🌿 <strong style="color:var(--green)">Born High Cannabis Social Club</strong> · Members Arcade</div>
+  <div style="color:var(--border)">·</div>
+  <div>Built with <span class="footer-heart">♥</span> by <a href="https://businesshustle.co.za" target="_blank">Business Hustle</a></div>
+</footer>
+
+<!-- Bulletin Ad -->
+<div class="bulletin-ad" id="bulletinAd">
+  <div class="ad-label">
+    <span>📋 Kloof St Bulletin</span>
+    <span class="ad-close" onclick="dismissAd()">✕</span>
+  </div>
+  <span class="ad-icon" id="adIcon">🏪</span>
+  <div class="ad-headline" id="adHeadline">Loading vibes...</div>
+  <div class="ad-body" id="adBody">Stay tuned.</div>
+  <a href="https://kloofstreet.online" target="_blank" class="ad-cta">Visit Kloof Street →</a>
+</div>
+
+<!-- Toast -->
+<div class="toast" id="toast">
+  <span class="toast-icon" id="toast-icon">🌿</span>
+  <div id="toast-title">Achievement</div>
+  <div class="toast-msg" id="toast-msg"></div>
 </div>
 
 <script>
-// ── Admin auth (simple local password) ──────────────────────
-const ADMIN_PW = 'bornhigh2025'; // Change this to your actual password
+// ===== GLOBAL STATE =====
+let vibePoints = 0;
+let currentGame = 'home';
 
-function adminLogin() {
-  const pw = document.getElementById('admin-pw').value;
-  if(pw === ADMIN_PW) {
-    sessionStorage.setItem('bh_admin', '1');
-    document.getElementById('admin-gate').style.display = 'none';
-    document.getElementById('admin-panel').style.display = 'block';
-    showAdminTab('pin');
-    renderPinDisplay();
+function updateVibe(n) {
+  vibePoints += n;
+  document.getElementById('total-vibe').textContent = formatNum(vibePoints);
+}
+
+function formatNum(n) {
+  if (n >= 1e9) return (n/1e9).toFixed(1) + 'B';
+  if (n >= 1e6) return (n/1e6).toFixed(1) + 'M';
+  if (n >= 1e3) return (n/1e3).toFixed(1) + 'K';
+  return Math.floor(n).toString();
+}
+
+
+// ===================================================
+// BORN HIGH — AUTH + LEADERBOARD ENGINE
+// ===================================================
+
+const BH = {
+  // PIN management — staff set via admin.html, stored in localStorage
+  // Default daily PIN if none set: 4200
+  getPin() {
+    const stored = localStorage.getItem('bh_pin');
+    if (!stored) return '4200';
+    const { pin, date } = JSON.parse(stored);
+    const today = new Date().toDateString();
+    return date === today ? pin : '4200'; // expires daily
+  },
+
+  // Session
+  session: null,
+  avatars: ['🌿','🔥','💎','🌀','🍕','🛹','⭐','🌙','🦋','🐉','🎯','🧿'],
+
+  startSession(name) {
+    this.session = {
+      name: name.trim(),
+      id: Date.now().toString(36),
+      avatar: this.avatars[Math.floor(Math.random() * this.avatars.length)],
+      scores: {},
+      vibePoints: 0,
+      startedAt: Date.now(),
+    };
+    sessionStorage.setItem('bh_session', JSON.stringify(this.session));
+  },
+
+  loadSession() {
+    const s = sessionStorage.getItem('bh_session');
+    if (s) { this.session = JSON.parse(s); return true; }
+    return false;
+  },
+
+  // Leaderboard — keyed per game, stored in localStorage
+  LB_GAMES: [
+    { key: 'vibe_total', label: '🌿 Vibe Points', unit: 'VP', desc: 'Total session vibe points' },
+    { key: 'blunt', label: '🚬 Blunt Roller', unit: 'blunts', desc: 'Total blunts rolled' },
+    { key: 'munchie', label: '🍕 Munchie Madness', unit: 'pts', desc: 'Single game score' },
+    { key: 'skate', label: '🛹 Skate or Bake', unit: 'pts', desc: 'Best run score' },
+    { key: 'asteroid', label: '🌌 Asteroid Munchies', unit: 'pts', desc: 'Best game score' },
+    { key: 'vibe_seq', label: '🎵 Vibe Sequencer', unit: 'lvl', desc: 'Highest level reached' },
+    { key: 'higher', label: '🃏 Higher or Lower', unit: 'streak', desc: 'Best win streak' },
+  ],
+
+  submitScore(gameKey, score, displayScore) {
+    if (!this.session) return;
+    const key = 'bh_lb_' + gameKey;
+    let board = JSON.parse(localStorage.getItem(key) || '[]');
+
+    // Check if this player already has an entry
+    const existingIdx = board.findIndex(e => e.id === this.session.id);
+    const entry = {
+      id: this.session.id,
+      name: this.session.name,
+      avatar: this.session.avatar,
+      score: score,
+      display: displayScore || score,
+      ts: Date.now(),
+    };
+
+    if (existingIdx >= 0) {
+      if (score > board[existingIdx].score) {
+        board[existingIdx] = entry; // only update if better
+      }
+    } else {
+      board.push(entry);
+    }
+
+    board.sort((a,b) => b.score - a.score);
+    board = board.slice(0, 50); // keep top 50
+    localStorage.setItem(key, JSON.stringify(board));
+
+    // Update session vibe total
+    this.session.vibePoints = (this.session.vibePoints || 0) + score;
+    sessionStorage.setItem('bh_session', JSON.stringify(this.session));
+    this.submitScore('vibe_total', this.session.vibePoints, formatNum(this.session.vibePoints) + ' VP');
+  },
+
+  getBoard(gameKey) {
+    return JSON.parse(localStorage.getItem('bh_lb_' + gameKey) || '[]');
+  },
+
+  getPlayerRank(gameKey) {
+    if (!this.session) return null;
+    const board = this.getBoard(gameKey);
+    const idx = board.findIndex(e => e.id === this.session.id);
+    return idx >= 0 ? idx + 1 : null;
+  }
+};
+
+// ── Gate UI ──────────────────────────────────────────────────
+let pinBuffer = '';
+
+function onPinInput(el) {
+  const val = el.value.replace(/\D/g,'').slice(0,4);
+  el.value = val;
+  pinBuffer = val;
+  // Update digit display
+  for(let i=0;i<4;i++){
+    const d = document.getElementById('pd'+i);
+    d.textContent = val[i] || '–';
+    d.classList.toggle('filled', !!val[i]);
+  }
+  document.getElementById('pin-err').textContent = '';
+  if(val.length === 4) setTimeout(submitPin, 200);
+}
+
+function submitPin() {
+  const val = document.getElementById('pin-input').value.replace(/\D/g,'');
+  const correct = BH.getPin();
+  if(val === correct) {
+    document.getElementById('gate-step-1').classList.remove('active');
+    document.getElementById('gate-step-2').classList.add('active');
+    setTimeout(() => document.getElementById('name-input').focus(), 100);
   } else {
-    document.getElementById('admin-err').textContent = 'Wrong password.';
+    const inp = document.getElementById('pin-input');
+    inp.classList.add('error');
+    document.getElementById('pin-err').textContent = val.length < 4 ? 'Enter all 4 digits.' : 'Wrong code. Ask the budtender. 🌿';
+    setTimeout(() => inp.classList.remove('error'), 500);
   }
 }
 
-function adminLogout() {
-  sessionStorage.removeItem('bh_admin');
-  location.reload();
-}
-
-// Check existing session
-if(sessionStorage.getItem('bh_admin')) {
-  document.getElementById('admin-gate').style.display = 'none';
-  document.getElementById('admin-panel').style.display = 'block';
-  setTimeout(() => { showAdminTab('pin'); renderPinDisplay(); }, 0);
-}
-
-// ── Tabs ─────────────────────────────────────────────────────
-const TABS = ['pin','stats','lb','reset'];
-function showAdminTab(name) {
-  TABS.forEach(t => {
-    document.getElementById('tab-'+t).style.display = t===name ? 'block' : 'none';
-    document.getElementById('atab-'+t).style.borderColor = t===name ? 'var(--green)' : 'var(--border)';
-    document.getElementById('atab-'+t).style.color = t===name ? 'var(--green)' : 'var(--muted)';
-  });
-  if(name==='stats') renderStats();
-  if(name==='lb') { buildAdminGameSel(); renderAdminLB(LB_GAMES[0].key); }
-}
-
-// ── PIN management ───────────────────────────────────────────
-function getStoredPin() {
-  const s = localStorage.getItem('bh_pin');
-  if(!s) return null;
-  return JSON.parse(s);
-}
-
-function renderPinDisplay() {
-  const stored = getStoredPin();
-  const today = new Date().toDateString();
-  const disp = document.getElementById('current-pin-display');
-  const validity = document.getElementById('pin-validity');
-  if(!stored) {
-    disp.textContent = '4200';
-    validity.innerHTML = '<span class="pin-expired">No PIN set today — using default: 4200</span>';
-  } else if(stored.date === today) {
-    disp.textContent = stored.pin;
-    validity.textContent = '✅ Valid today · Set at ' + new Date(stored.setAt).toLocaleTimeString();
-  } else {
-    disp.textContent = stored.pin;
-    validity.innerHTML = '<span class="pin-expired">⚠️ This was yesterday\'s PIN. Set a new one.</span>';
+function submitName() {
+  const name = document.getElementById('name-input').value.trim();
+  if(!name || name.length < 2) {
+    document.getElementById('name-err').textContent = 'Give us at least 2 characters.';
+    return;
   }
+  BH.startSession(name);
+  unlockArcade();
 }
 
-function setPin() {
-  const val = document.getElementById('new-pin').value.replace(/\D/g,'');
-  if(val.length !== 4) { document.getElementById('pin-set-err').textContent = 'Must be exactly 4 digits.'; return; }
-  localStorage.setItem('bh_pin', JSON.stringify({ pin: val, date: new Date().toDateString(), setAt: Date.now() }));
-  document.getElementById('pin-set-err').textContent = '';
-  document.getElementById('pin-set-ok').textContent = '✅ PIN set to ' + val + ' for today!';
-  document.getElementById('new-pin').value = '';
-  renderPinDisplay();
-  setTimeout(() => document.getElementById('pin-set-ok').textContent = '', 3000);
+function unlockArcade() {
+  // Hide gate
+  const gate = document.getElementById('bh-gate');
+  gate.style.transition = 'opacity 0.5s';
+  gate.style.opacity = '0';
+  setTimeout(() => gate.style.display = 'none', 500);
+
+  // Show session UI
+  document.getElementById('session-info-block').style.display = 'block';
+  document.getElementById('lb-header-btn').style.display = 'flex';
+  document.getElementById('player-name-display').textContent = BH.session.avatar + ' ' + BH.session.name;
+  document.getElementById('player-tagline').textContent = 'Born High Cannabis Social Club';
+
+  showToast('🌿', 'Welcome, ' + BH.session.name + '!', 'You are on the board. Go score something.');
 }
 
-function genRandPin() {
-  const pin = String(Math.floor(1000 + Math.random()*9000));
-  document.getElementById('new-pin').value = pin;
+// Check for existing session (page refresh)
+// Use window.onload to guarantee DOM is ready
+window.addEventListener('load', function() {
+  if(BH.loadSession()) {
+    document.getElementById('bh-gate').style.display = 'none';
+    document.getElementById('session-info-block').style.display = 'block';
+    document.getElementById('lb-header-btn').style.display = 'flex';
+    document.getElementById('player-name-display').textContent = BH.session.avatar + ' ' + BH.session.name;
+    document.getElementById('player-tagline').textContent = 'Born High Cannabis Social Club';
+  } else {
+    setTimeout(function() {
+      var pi = document.getElementById('pin-input');
+      if(pi) pi.focus();
+    }, 400);
+  }
+});
+
+// ── Leaderboard UI ───────────────────────────────────────────
+let activeLBGame = 'vibe_total';
+
+function openLB() {
+  buildLBTabs();
+  renderLB(activeLBGame);
+  document.getElementById('lb-overlay').classList.add('open');
 }
+window.openLB = openLB;
 
-// ── Stats ────────────────────────────────────────────────────
-const LB_GAMES = [
-  { key:'vibe_total', label:'🌿 Vibe Points', unit:'VP' },
-  { key:'blunt', label:'🚬 Blunt Roller', unit:'blunts' },
-  { key:'munchie', label:'🍕 Munchie Madness', unit:'pts' },
-  { key:'skate', label:'🛹 Skate or Bake', unit:'pts' },
-  { key:'asteroid', label:'🌌 Asteroid Munchies', unit:'pts' },
-  { key:'vibe_seq', label:'🎵 Vibe Sequencer', unit:'lvl' },
-  { key:'higher', label:'🃏 Higher or Lower', unit:'streak' },
-];
+function closeLB() { document.getElementById('lb-overlay').classList.remove('open'); }
+window.closeLB = closeLB;
 
-function getBoard(key) { return JSON.parse(localStorage.getItem('bh_lb_'+key)||'[]'); }
-
-function renderStats() {
-  // Count unique players across all boards
-  const allIds = new Set();
-  LB_GAMES.forEach(g => getBoard(g.key).forEach(e => allIds.add(e.id)));
-  const totalEntries = LB_GAMES.reduce((s,g) => s + getBoard(g.key).length, 0);
-  const topViber = getBoard('vibe_total')[0];
-
-  document.getElementById('stats-grid').innerHTML = `
-    <div class="stat-box"><div class="sv">${allIds.size}</div><div class="sl">Players Today</div></div>
-    <div class="stat-box"><div class="sv">${totalEntries}</div><div class="sl">Total Scores</div></div>
-    <div class="stat-box"><div class="sv">${topViber ? topViber.name.slice(0,8) : '—'}</div><div class="sl">Top Player</div></div>
-    ${LB_GAMES.map(g => {
-      const b = getBoard(g.key);
-      return `<div class="stat-box"><div class="sv">${b[0]?.display||b[0]?.score||'—'}</div><div class="sl">${g.label} Best</div></div>`;
-    }).join('')}
-  `;
-}
-
-// ── Admin Leaderboard ────────────────────────────────────────
-let activeLBKey = LB_GAMES[0].key;
-
-function buildAdminGameSel() {
-  document.getElementById('admin-game-sel').innerHTML = LB_GAMES.map(g =>
-    `<button class="gsel-btn${g.key===activeLBKey?' active':''}" onclick="renderAdminLB('${g.key}',this)">${g.label}</button>`
+function buildLBTabs() {
+  const tabs = document.getElementById('lb-game-tabs');
+  tabs.innerHTML = BH.LB_GAMES.map(g =>
+    `<button class="lb-game-tab${g.key===activeLBGame?' active':''}"
+      onclick="renderLB('${g.key}',this)">${g.label}</button>`
   ).join('');
 }
 
-function renderAdminLB(key, btn) {
-  activeLBKey = key;
+function renderLB(key, btn) {
+  activeLBGame = key;
   if(btn) {
-    document.querySelectorAll('.gsel-btn').forEach(b => b.classList.remove('active'));
+    document.querySelectorAll('.lb-game-tab').forEach(t => t.classList.remove('active'));
     btn.classList.add('active');
   }
-  const game = LB_GAMES.find(g=>g.key===key);
-  const board = getBoard(key);
-  const medals = ['🥇','🥈','🥉'];
-  const container = document.getElementById('admin-lb-table');
+  const game = BH.LB_GAMES.find(g => g.key === key);
+  const board = BH.getBoard(key);
+  const body = document.getElementById('lb-body');
+  const myId = BH.session?.id;
+
   if(!board.length) {
-    container.innerHTML = '<div style="color:var(--muted);font-style:italic;padding:20px 0;font-size:0.78rem">No scores yet.</div>';
+    body.innerHTML = `<div class="lb-empty">No scores yet for ${game.label}.<br>Be the first. 🌿</div>`;
     return;
   }
-  container.innerHTML = `
-    <table>
-      <thead><tr><th>#</th><th>Player</th><th>Score</th><th>When</th></tr></thead>
-      <tbody>
-        ${board.slice(0,30).map((e,i) => `
-          <tr>
-            <td><span class="rank-medal">${i<3?medals[i]:'#'+(i+1)}</span></td>
-            <td>${e.avatar||'🌿'} ${e.name}</td>
-            <td class="score-val">${e.display||e.score} ${game.unit}</td>
-            <td style="color:var(--muted);font-size:0.65rem">${new Date(e.ts).toLocaleTimeString()}</td>
-          </tr>
-        `).join('')}
-      </tbody>
-    </table>
+
+  const rankColors = ['gold','silver','bronze'];
+  const medals = ['🥇','🥈','🥉'];
+
+  body.innerHTML = `
+    <div style="font-size:0.65rem;color:var(--muted);margin-bottom:16px;font-style:italic">${game.desc}</div>
+    ${board.slice(0,20).map((e,i) => {
+      const isMe = e.id === myId;
+      const rankClass = rankColors[i] || '';
+      const timeAgo = formatTimeAgo(e.ts);
+      return `
+        <div class="lb-entry${isMe?' me':''}">
+          <div class="lb-rank-num ${rankClass}">${i<3?medals[i]:'#'+(i+1)}</div>
+          <div class="lb-avatar">${e.avatar||'🌿'}</div>
+          <div class="lb-info">
+            <div class="lb-player-name">${escapeHtml(e.name)}${isMe?'<span class="me-tag">← you</span>':''}</div>
+            <div class="lb-time">${timeAgo}</div>
+          </div>
+          <div>
+            <div class="lb-score-val">${e.display||e.score}</div>
+            <div class="lb-score-label">${game.unit}</div>
+          </div>
+        </div>
+      `;
+    }).join('')}
+  `;
+}
+window.renderLB = renderLB;
+
+function formatTimeAgo(ts) {
+  const diff = Date.now() - ts;
+  const m = Math.floor(diff/60000);
+  if(m < 1) return 'just now';
+  if(m < 60) return m + 'm ago';
+  const h = Math.floor(m/60);
+  if(h < 24) return h + 'h ago';
+  return Math.floor(h/24) + 'd ago';
+}
+
+function escapeHtml(str) {
+  return str.replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+}
+
+// ── Score submission hooks — patch game end functions ────────
+// These wrap the existing score tallies and post to BH leaderboard
+
+// Blunt Roller: post every 30s if session active
+setInterval(() => {
+  if(BH.session && bluntState.total > 0) {
+    BH.submitScore('blunt', Math.floor(bluntState.total), formatNum(Math.floor(bluntState.total)) + ' blunts');
+    document.getElementById('total-vibe').textContent = formatNum(BH.session?.vibePoints || vibePoints);
+  }
+}, 30000);
+
+// Patch endMunchie
+const _origEndMunchie = window.endMunchie || null;
+window.__bhPatchMunchie = function(score) {
+  if(BH.session && score > 0) BH.submitScore('munchie', score, score + ' pts');
+};
+
+// Patch endSkate — done inside skate IIFE, we post via updateVibe hook
+const _origUpdateVibe = window.updateVibe;
+window.updateVibe = function(n) {
+  _origUpdateVibe(n);
+  if(BH.session) {
+    document.getElementById('total-vibe').textContent = formatNum(BH.session.vibePoints || vibePoints);
+  }
+};
+
+// Post-game score bridges (called from game end functions)
+window.bhPostScore = function(key, score, display) {
+  if(BH.session && score > 0) {
+    BH.submitScore(key, score, display);
+    document.getElementById('total-vibe').textContent = formatNum(BH.session.vibePoints || 0);
+  }
+};
+
+// ===== NAVIGATION =====
+function showGame(name) {
+  document.querySelectorAll('.game-screen').forEach(s => s.classList.remove('active'));
+  document.querySelectorAll('.game-tab').forEach(t => t.classList.remove('active'));
+
+  const screen = document.getElementById('game-' + name);
+  if (screen) screen.classList.add('active');
+
+  const tabs = document.querySelectorAll('.game-tab');
+  const labels = { home: 0, blunt: 1, grow: 2, munchie: 3, trip: 4, skate: 5, vibe: 6, asteroid: 7, higher: 8, comics: 9 };
+  if (tabs[labels[name]]) tabs[labels[name]].classList.add('active');
+
+  currentGame = name;
+  if (name === 'trip') initTrip();
+}
+
+// ===== TOAST =====
+let toastTimer;
+function showToast(icon, title, msg) {
+  clearTimeout(toastTimer);
+  document.getElementById('toast-icon').textContent = icon;
+  document.getElementById('toast-title').textContent = title;
+  document.getElementById('toast-msg').textContent = msg;
+  const t = document.getElementById('toast');
+  t.classList.add('show');
+  toastTimer = setTimeout(() => t.classList.remove('show'), 3500);
+}
+
+// ===== GAME 1: BLUNT ROLLER =====
+const UPGRADES = [
+  { id: 0, name: 'Rizla Gold', desc: 'Better papers. +1 per click.', icon: '📜', cost: 25, cps: 0, cpc: 1 },
+  { id: 1, name: 'Herb Grinder', desc: 'Automatic grind. +1/sec.', icon: '⚙️', cost: 100, cps: 1, cpc: 0 },
+  { id: 2, name: 'Apprentice Roller', desc: 'Hire someone decent. +3/sec.', icon: '🧑', cost: 400, cps: 3, cpc: 0 },
+  { id: 3, name: 'Gold Filter Tips', desc: 'Luxury vibes. +3 per click.', icon: '✨', cost: 800, cps: 0, cpc: 3 },
+  { id: 4, name: 'The Rolling Machine', desc: 'Industrial efficiency. +10/sec.', icon: '🏭', cost: 2000, cps: 10, cpc: 0 },
+  { id: 5, name: 'Himalayan Salt Lamp', desc: 'Improves the energy. +5/sec.', icon: '🪨', cost: 5000, cps: 5, cpc: 0 },
+  { id: 6, name: 'Cosmic Dispensary', desc: 'You are the supply chain now. +50/sec.', icon: '🌌', cost: 15000, cps: 50, cpc: 0 },
+];
+
+let bluntState = {
+  count: 0,
+  total: 0,
+  cps: 0,
+  cpc: 1,
+  owned: [],
+};
+
+const QUIPS = [
+  "You're really good at this.",
+  "Grandma called. She wants tips.",
+  "The Dalai Lama would be impressed.",
+  "Are you even looking at what you're doing?",
+  "Rolling at legendary speed.",
+  "Your ancestors are vibing.",
+  "Don't stop. Never stop.",
+  "The universe approves.",
+  "You have achieved bliss.",
+  "Even sober people respect this."
+];
+
+function renderUpgrades() {
+  const list = document.getElementById('upgrade-list');
+  list.innerHTML = '';
+  UPGRADES.forEach(u => {
+    const owned = bluntState.owned.includes(u.id);
+    const canAfford = bluntState.count >= u.cost;
+    const div = document.createElement('div');
+    div.className = 'upgrade-item' + (owned ? ' locked' : (canAfford ? '' : ' locked'));
+    div.innerHTML = `
+      <span class="upg-icon">${u.icon}</span>
+      <div class="upg-info">
+        <div class="upg-name">${u.name} ${owned ? '✓' : ''}</div>
+        <div class="upg-desc">${u.desc}</div>
+      </div>
+      <div class="upg-cost">${owned ? 'Owned' : formatNum(u.cost) + ' 🚬'}</div>
+    `;
+    if (!owned && canAfford) {
+      div.onclick = () => buyUpgrade(u.id);
+    }
+    list.appendChild(div);
+  });
+}
+
+function buyUpgrade(id) {
+  const u = UPGRADES[id];
+  if (bluntState.owned.includes(id) || bluntState.count < u.cost) return;
+  bluntState.count -= u.cost;
+  bluntState.owned.push(id);
+  bluntState.cps += u.cps;
+  bluntState.cpc += u.cpc;
+  renderUpgrades();
+  updateBluntUI();
+  showToast(u.icon, u.name + ' unlocked!', u.desc);
+}
+
+function rollBlunt(e) {
+  bluntState.count += bluntState.cpc;
+  bluntState.total += bluntState.cpc;
+  updateBluntUI();
+  spawnFloater(e, '+' + bluntState.cpc);
+  spawnSmoke(e);
+  randomQuip();
+  updateVibe(bluntState.cpc);
+}
+
+function spawnFloater(e, text) {
+  const zone = document.getElementById('bluntZone');
+  const rect = zone.getBoundingClientRect();
+  const el = document.createElement('div');
+  el.className = 'click-floater';
+  el.textContent = text;
+  el.style.left = (e.clientX - rect.left - 10) + 'px';
+  el.style.top = (e.clientY - rect.top - 20) + 'px';
+  zone.appendChild(el);
+  setTimeout(() => el.remove(), 1000);
+}
+
+function spawnSmoke(e) {
+  const zone = document.getElementById('bluntZone');
+  const rect = zone.getBoundingClientRect();
+  for (let i = 0; i < 5; i++) {
+    const p = document.createElement('div');
+    p.className = 'smoke-particle';
+    const dx = (Math.random() - 0.5) * 60;
+    const dy = -(Math.random() * 60 + 20);
+    p.style.setProperty('--dx', dx + 'px');
+    p.style.setProperty('--dy', dy + 'px');
+    p.style.left = (e.clientX - rect.left) + 'px';
+    p.style.top = (e.clientY - rect.top) + 'px';
+    zone.appendChild(p);
+    setTimeout(() => p.remove(), 1500);
+  }
+}
+
+let lastQuip = -1;
+function randomQuip() {
+  if (Math.random() > 0.15) return;
+  let idx;
+  do { idx = Math.floor(Math.random() * QUIPS.length); } while (idx === lastQuip);
+  lastQuip = idx;
+  document.getElementById('quipBox').textContent = '"' + QUIPS[idx] + '"';
+}
+
+function updateBluntUI() {
+  document.getElementById('blunt-count').textContent = formatNum(bluntState.count);
+  document.getElementById('blunt-per-sec').textContent = formatNum(bluntState.cps);
+  document.getElementById('blunt-total').textContent = formatNum(bluntState.total);
+  renderUpgrades();
+}
+
+setInterval(() => {
+  if (bluntState.cps > 0) {
+    bluntState.count += bluntState.cps / 10;
+    bluntState.total += bluntState.cps / 10;
+    updateVibe(bluntState.cps / 10);
+    updateBluntUI();
+  }
+}, 100);
+
+renderUpgrades();
+
+// ===== GAME 2: GROW ROOM =====
+const STAGES = [
+  { name: 'Germination', emoji: '🌱', threshold: 0 },
+  { name: 'Seedling', emoji: '🌿', threshold: 20 },
+  { name: 'Vegetative', emoji: '🍀', threshold: 45 },
+  { name: 'Flowering', emoji: '🌸', threshold: 70 },
+  { name: 'Harvest Ready', emoji: '🌾', threshold: 100 },
+];
+
+const HARVEST_VP = [50, 80, 120];
+
+let plants = [
+  { growth: 0, water: 100, nutrients: 100, lastWater: Date.now(), lastFeed: Date.now() },
+  { growth: 0, water: 100, nutrients: 100, lastWater: Date.now(), lastFeed: Date.now() },
+  { growth: 0, water: 100, nutrients: 100, lastWater: Date.now(), lastFeed: Date.now() },
+];
+
+let growHarvests = 0, growVP = 0, growStreak = 0;
+
+function getStage(growth) {
+  let s = STAGES[0];
+  for (const st of STAGES) { if (growth >= st.threshold) s = st; }
+  return s;
+}
+
+function updatePlantUI(i) {
+  const p = plants[i];
+  const stage = getStage(p.growth);
+  const bar = document.getElementById('grow-bar-' + i);
+  const stageEl = document.getElementById('grow-stage-' + i);
+  const emoji = document.getElementById('plant-emoji-' + i);
+  const btn = document.getElementById('harvest-' + i);
+  bar.style.width = Math.min(p.growth, 100) + '%';
+  stageEl.textContent = 'Stage: ' + stage.name + ' · Water: ' + Math.round(p.water) + '% · Nutes: ' + Math.round(p.nutrients) + '%';
+  emoji.textContent = stage.emoji;
+  btn.disabled = p.growth < 100;
+}
+
+function waterPlant(i) {
+  plants[i].water = Math.min(100, plants[i].water + 30);
+  plants[i].lastWater = Date.now();
+  showToast('💧', 'Watered!', 'Your plant is happy.');
+  updatePlantUI(i);
+}
+
+function feedPlant(i) {
+  plants[i].nutrients = Math.min(100, plants[i].nutrients + 30);
+  plants[i].lastFeed = Date.now();
+  showToast('🌿', 'Fed!', 'Nutrients topped up.');
+  updatePlantUI(i);
+}
+
+function harvestPlant(i) {
+  if (plants[i].growth < 100) return;
+  const vp = HARVEST_VP[i];
+  updateVibe(vp);
+  growVP += vp;
+  growHarvests++;
+  growStreak++;
+  plants[i] = { growth: 0, water: 100, nutrients: 100, lastWater: Date.now(), lastFeed: Date.now() };
+  document.getElementById('grow-harvests').textContent = growHarvests;
+  document.getElementById('grow-vp').textContent = growVP;
+  document.getElementById('grow-streak').textContent = growStreak;
+  showToast('🌾', 'Harvested!', '+' + vp + ' Vibe Points earned.');
+  updatePlantUI(i);
+}
+
+setInterval(() => {
+  const now = Date.now();
+  plants.forEach((p, i) => {
+    if (p.growth >= 100) return;
+    const waterBonus = p.water > 50 ? 1 : 0.3;
+    const nuteBonus = p.nutrients > 50 ? 1 : 0.3;
+    p.growth = Math.min(100, p.growth + 0.04 * waterBonus * nuteBonus);
+    p.water = Math.max(0, p.water - 0.02);
+    p.nutrients = Math.max(0, p.nutrients - 0.015);
+    updatePlantUI(i);
+  });
+}, 200);
+
+// ===== GAME 3: MUNCHIE MADNESS =====
+const MUNCHIE_FOODS = [
+  { emoji: '🍕', pts: 10 },
+  { emoji: '🍔', pts: 8 },
+  { emoji: '🍩', pts: 6 },
+  { emoji: '🍫', pts: 12 },
+  { emoji: '🍟', pts: 7 },
+  { emoji: '🍕', pts: 10 },
+  { emoji: '🍦', pts: 9 },
+  { emoji: '🧀', pts: 5 },
+  { emoji: '🥨', pts: 4 },
+  { emoji: '🍕', pts: 10 },
+];
+
+let munchieState = {
+  score: 0,
+  timeLeft: 30,
+  running: false,
+  holes: Array(20).fill(null),
+  timers: [],
+  gameTimer: null
+};
+
+function buildMunchieGrid() {
+  const grid = document.getElementById('munchieGrid');
+  grid.innerHTML = '';
+  for (let i = 0; i < 20; i++) {
+    const h = document.createElement('div');
+    h.className = 'munchie-hole';
+    h.id = 'hole-' + i;
+    h.innerHTML = '<span class="food-item" id="food-' + i + '"></span>';
+    h.onclick = () => hitHole(i);
+    grid.appendChild(h);
+  }
+}
+
+buildMunchieGrid();
+
+function startMunchie() {
+  munchieState.score = 0;
+  munchieState.timeLeft = 30;
+  munchieState.running = true;
+  document.getElementById('munchie-start-btn').textContent = 'Running...';
+  document.getElementById('munchie-start-btn').disabled = true;
+  document.getElementById('munchie-score').textContent = '0';
+
+  clearAllMunchieTimers();
+
+  munchieState.gameTimer = setInterval(() => {
+    munchieState.timeLeft--;
+    document.getElementById('munchie-timer').textContent = munchieState.timeLeft;
+    if (munchieState.timeLeft <= 0) endMunchie();
+  }, 1000);
+
+  scheduleNextFood();
+}
+
+function scheduleNextFood() {
+  if (!munchieState.running) return;
+  const delay = 400 + Math.random() * 600;
+  const t = setTimeout(() => {
+    spawnFood();
+    scheduleNextFood();
+  }, delay);
+  munchieState.timers.push(t);
+}
+
+function spawnFood() {
+  const emptyHoles = [];
+  for (let i = 0; i < 20; i++) {
+    if (!munchieState.holes[i]) emptyHoles.push(i);
+  }
+  if (emptyHoles.length === 0) return;
+  const idx = emptyHoles[Math.floor(Math.random() * emptyHoles.length)];
+  const isBroc = Math.random() < 0.12;
+  const food = isBroc ? { emoji: '🥦', pts: -5 } : MUNCHIE_FOODS[Math.floor(Math.random() * MUNCHIE_FOODS.length)];
+  munchieState.holes[idx] = food;
+  const hole = document.getElementById('hole-' + idx);
+  const foodEl = document.getElementById('food-' + idx);
+  hole.classList.add('active');
+  foodEl.textContent = food.emoji;
+  const disappear = setTimeout(() => {
+    clearHole(idx);
+  }, 1200 + Math.random() * 600);
+  munchieState.timers.push(disappear);
+}
+
+function hitHole(i) {
+  if (!munchieState.running || !munchieState.holes[i]) return;
+  const food = munchieState.holes[i];
+  munchieState.score += food.pts;
+  if (munchieState.score < 0) munchieState.score = 0;
+  document.getElementById('munchie-score').textContent = munchieState.score;
+  const hole = document.getElementById('hole-' + i);
+  hole.classList.add(food.pts > 0 ? 'hit' : 'missed');
+  clearHole(i);
+  setTimeout(() => { hole.classList.remove('hit', 'missed'); }, 300);
+}
+
+function clearHole(i) {
+  munchieState.holes[i] = null;
+  const hole = document.getElementById('hole-' + i);
+  const foodEl = document.getElementById('food-' + i);
+  hole.classList.remove('active');
+  foodEl.textContent = '';
+}
+
+function clearAllMunchieTimers() {
+  munchieState.timers.forEach(t => clearTimeout(t));
+  munchieState.timers = [];
+  if (munchieState.gameTimer) clearInterval(munchieState.gameTimer);
+  for (let i = 0; i < 20; i++) clearHole(i);
+}
+
+function endMunchie() {
+  munchieState.running = false;
+  clearAllMunchieTimers();
+  document.getElementById('munchie-timer').textContent = '0';
+  document.getElementById('munchie-start-btn').textContent = 'Play Again 🍕';
+  document.getElementById('munchie-start-btn').disabled = false;
+  document.getElementById('lb-you').textContent = munchieState.score;
+  updateVibe(munchieState.score);
+  showToast('🏆', 'Game Over!', 'You scored ' + munchieState.score + ' points! +' + munchieState.score + ' VP');
+}
+
+// ===== GAME 4: THE TRIP =====
+let tripMode = 'cosmic';
+let tripClicks = 0;
+let tripShapes = 0;
+let tripDepth = 1;
+let tripCanvas, tripCtx;
+let tripParticles = [];
+let tripAnimFrame;
+let tripInitialized = false;
+
+function setTripMode(mode) {
+  tripMode = mode;
+  document.querySelectorAll('.trip-btn').forEach(b => b.classList.remove('active-mode'));
+  document.getElementById('mode-' + mode).classList.add('active-mode');
+}
+
+function initTrip() {
+  if (tripInitialized) return;
+  tripCanvas = document.getElementById('tripCanvas');
+  tripCtx = tripCanvas.getContext('2d');
+  tripCanvas.width = tripCanvas.offsetWidth;
+  tripCanvas.height = tripCanvas.offsetWidth * 0.6;
+  tripCanvas.onclick = (e) => handleTripClick(e);
+  tripInitialized = true;
+  fillBg();
+  animateTrip();
+}
+
+function fillBg() {
+  const grad = tripCtx.createRadialGradient(
+    tripCanvas.width/2, tripCanvas.height/2, 0,
+    tripCanvas.width/2, tripCanvas.height/2, tripCanvas.width/2
+  );
+  grad.addColorStop(0, '#111a0e');
+  grad.addColorStop(1, '#0a0d08');
+  tripCtx.fillStyle = grad;
+  tripCtx.fillRect(0, 0, tripCanvas.width, tripCanvas.height);
+}
+
+function handleTripClick(e) {
+  const rect = tripCanvas.getBoundingClientRect();
+  const x = (e.clientX - rect.left) * (tripCanvas.width / rect.width);
+  const y = (e.clientY - rect.top) * (tripCanvas.height / rect.height);
+  tripClicks++;
+  tripDepth = Math.min(10, Math.ceil(tripClicks / 5));
+  document.getElementById('trip-clicks').textContent = tripClicks;
+  document.getElementById('trip-depth').textContent = tripDepth;
+  updateVibe(tripDepth);
+  spawnTripShape(x, y);
+}
+
+function spawnTripShape(x, y) {
+  const count = tripMode === 'mandala' ? 8 : tripMode === 'crystal' ? 6 : 1;
+  for (let c = 0; c < count; c++) {
+    const angle = (c / count) * Math.PI * 2;
+    const r = tripMode === 'mandala' || tripMode === 'crystal' ? 80 : 0;
+    const sx = x + Math.cos(angle) * r;
+    const sy = y + Math.sin(angle) * r;
+    const colors = {
+      cosmic: ['#4ade80','#a855f7','#fbbf24','#f472b6','#60a5fa'],
+      mandala: ['#fbbf24','#f97316','#f472b6','#a855f7'],
+      lava: ['#ef4444','#f97316','#fbbf24','#dc2626'],
+      crystal: ['#60a5fa','#a855f7','#e0f2fe','#c7d2fe'],
+    };
+    const palette = colors[tripMode];
+    const color = palette[Math.floor(Math.random() * palette.length)];
+    const sides = tripMode === 'crystal' ? 6 : tripMode === 'mandala' ? 8 : (3 + Math.floor(Math.random() * 5));
+    const size = 20 + Math.random() * 60 * (tripDepth / 5);
+    const particle = {
+      x: sx, y: sy,
+      vx: (Math.random() - 0.5) * (tripMode === 'lava' ? 0.5 : 1.5),
+      vy: (Math.random() - 0.5) * (tripMode === 'lava' ? 0.3 : 1.5),
+      size,
+      color,
+      alpha: 0.8 + Math.random() * 0.2,
+      decay: 0.003 + Math.random() * 0.004,
+      rotation: Math.random() * Math.PI * 2,
+      rotSpeed: (Math.random() - 0.5) * 0.04,
+      sides,
+      pulse: Math.random() * Math.PI * 2,
+    };
+    tripParticles.push(particle);
+    tripShapes++;
+  }
+  document.getElementById('trip-shapes').textContent = tripShapes;
+}
+
+function drawPolygon(ctx, x, y, sides, size, rotation) {
+  ctx.beginPath();
+  for (let i = 0; i < sides; i++) {
+    const a = rotation + (i / sides) * Math.PI * 2;
+    const px = x + Math.cos(a) * size;
+    const py = y + Math.sin(a) * size;
+    i === 0 ? ctx.moveTo(px, py) : ctx.lineTo(px, py);
+  }
+  ctx.closePath();
+}
+
+function animateTrip() {
+  if (!tripCanvas) { tripAnimFrame = requestAnimationFrame(animateTrip); return; }
+  tripCtx.fillStyle = 'rgba(10,13,8,0.04)';
+  tripCtx.fillRect(0, 0, tripCanvas.width, tripCanvas.height);
+
+  tripParticles = tripParticles.filter(p => p.alpha > 0.01);
+
+  tripParticles.forEach(p => {
+    p.x += p.vx;
+    p.y += p.vy;
+    p.rotation += p.rotSpeed;
+    p.alpha -= p.decay;
+    p.pulse += 0.05;
+
+    const pulsedSize = p.size * (1 + 0.1 * Math.sin(p.pulse));
+    tripCtx.save();
+    tripCtx.globalAlpha = p.alpha;
+
+    // Glow
+    const grd = tripCtx.createRadialGradient(p.x, p.y, 0, p.x, p.y, pulsedSize);
+    grd.addColorStop(0, p.color + 'ff');
+    grd.addColorStop(0.5, p.color + '80');
+    grd.addColorStop(1, p.color + '00');
+    tripCtx.fillStyle = grd;
+    tripCtx.beginPath();
+    tripCtx.arc(p.x, p.y, pulsedSize * 1.5, 0, Math.PI * 2);
+    tripCtx.fill();
+
+    // Shape
+    tripCtx.strokeStyle = p.color;
+    tripCtx.lineWidth = 1.5;
+    tripCtx.fillStyle = p.color + '30';
+    drawPolygon(tripCtx, p.x, p.y, p.sides, pulsedSize * 0.6, p.rotation);
+    tripCtx.fill();
+    tripCtx.stroke();
+
+    tripCtx.restore();
+  });
+
+  tripAnimFrame = requestAnimationFrame(animateTrip);
+}
+
+function clearTrip() {
+  tripParticles = [];
+  fillBg();
+  tripClicks = 0; tripShapes = 0; tripDepth = 1;
+  document.getElementById('trip-clicks').textContent = 0;
+  document.getElementById('trip-shapes').textContent = 0;
+  document.getElementById('trip-depth').textContent = 1;
+}
+
+// Mouse-track glow on game cards
+document.querySelectorAll('.game-card').forEach(card => {
+  card.addEventListener('mousemove', e => {
+    const rect = card.getBoundingClientRect();
+    card.style.setProperty('--mx', ((e.clientX - rect.left) / rect.width * 100) + '%');
+    card.style.setProperty('--my', ((e.clientY - rect.top) / rect.height * 100) + '%');
+  });
+});
+
+// Auto-quip idle timer
+setInterval(() => {
+  if (currentGame === 'blunt' && bluntState.cps > 0) {
+    document.getElementById('quipBox').textContent = '"' + QUIPS[Math.floor(Math.random() * QUIPS.length)] + '"';
+  }
+}, 8000);
+
+
+// ===== KLOOF STREET BULLETIN ADS =====
+const KLOOF_ADS = [
+  { icon: '🏄', headline: 'Lost: One surfboard, one sense of time', body: 'Last seen on Kloof Street. Owner was "just grabbing a quick coffee." That was Tuesday. Check kloofstreet.online.', },
+  { icon: '🧘', headline: 'Yoga studio seeks chill vibes', body: 'We have the mats. We have the incense. We just need you. Find us on Kloof Street before we achieve enlightenment without you.' },
+  { icon: '☕', headline: 'Cape Town\'s most philosophical barista', body: '"Is an oat latte still a latte?" he asked. Nobody knows. Come debate it on Kloof Street.' },
+  { icon: '🌿', headline: 'Wellness spa with strong opinions', body: 'Ubuntu Wellness & Cape Town Medi-Spa: where your pores go to think deeply. kloofstreet.online' },
+  { icon: '🦁', headline: 'On Safari called. You didn\'t answer.', body: 'They had the perfect adventure planned. Now the lions are waiting. Very patiently. Very hungry. kloofstreet.online' },
+  { icon: '🎨', headline: 'Local street art judging your life choices', body: 'It\'s fine. The murals on Kloof Street have seen worse. Come be seen.' },
+  { icon: '🍷', headline: 'Wine bar found with no Wi-Fi password', body: 'Experts say this is intentional. "Connection," the owner said mysteriously. Located spiritually on Kloof Street.' },
+  { icon: '🐈', headline: 'Cat seen leaving yoga class refreshed', body: 'Witnesses report she went straight to a Kloof Street café and ordered something oat-based. Iconic.' },
+  { icon: '🌞', headline: 'Dr Wendy Dicks would like a word', body: 'About your skin. Gently. Professionally. On Kloof Street. She\'s very nice, we promise.' },
+  { icon: '🏡', headline: 'Kloof Street: where Capetonians pretend to work', body: 'MacBooks open. Matcha in hand. Zero spreadsheets visible. Find your tribe. kloofstreet.online' },
+  { icon: '🛍️', headline: 'SALE: Crystals, candles & good decisions', body: '2 out of 3 items guaranteed at your nearest Kloof Street boutique. The good decisions are on you.' },
+  { icon: '🚗', headline: 'Parking on Kloof Street: a spiritual test', body: 'Pass it and you deserve whatever you came for. Fail it and... there\'s always Uber.' },
+];
+
+let adVisible = false;
+let adDismissTimer;
+
+function showBulletinAd() {
+  if (adVisible) return;
+  const ad = KLOOF_ADS[Math.floor(Math.random() * KLOOF_ADS.length)];
+  document.getElementById('adIcon').textContent = ad.icon;
+  document.getElementById('adHeadline').textContent = ad.headline;
+  document.getElementById('adBody').textContent = ad.body;
+  adVisible = true;
+  document.getElementById('bulletinAd').classList.add('show');
+  adDismissTimer = setTimeout(dismissAd, 9000);
+}
+
+function dismissAd() {
+  clearTimeout(adDismissTimer);
+  adVisible = false;
+  document.getElementById('bulletinAd').classList.remove('show');
+}
+
+// Show first ad after 20s, then randomly every 45–90s
+setTimeout(() => {
+  showBulletinAd();
+  setInterval(() => {
+    const delay = 45000 + Math.random() * 45000;
+    setTimeout(showBulletinAd, delay);
+  }, 90000);
+}, 20000);
+
+// Welcome toast
+setTimeout(() => showToast('🌿', 'Welcome to the Arcade', 'Pick a game. Embrace the vibe.'), 1500);
+
+// ===================================================
+// GAME 5: SKATE OR BAKE
+// ===================================================
+(function() {
+  let sc, ctx, running=false, raf, skater, obstacles, particles, score, dist, best=0, frame, jumpCount;
+  const GH=280, GW=720, GROUND=220, GRAVITY=0.7, JUMP_FORCE=-14;
+  const OBS = ['🚧','🚦','🐦','🗑️','🌵','🪨'];
+  const COLLECT = ['🍕','⭐','🌿','💎','🍩'];
+
+  function init() {
+    sc = document.getElementById('skateCanvas');
+    ctx = sc.getContext('2d');
+    sc.addEventListener('click', doJump);
+    document.addEventListener('keydown', e => { if(e.code==='Space'&&running){e.preventDefault();doJump();} });
+  }
+
+  function startSkate() {
+    if(!sc) init();
+    skater = {x:100, y:GROUND, vy:0, w:36, h:44, grounded:true};
+    obstacles = []; particles = []; score=0; dist=0; frame=0; jumpCount=0;
+    running = true;
+    document.getElementById('skate-start-btn').textContent = 'Running... 🛹';
+    document.getElementById('skate-start-btn').disabled = true;
+    if(raf) cancelAnimationFrame(raf);
+    loop();
+  }
+  window.startSkate = startSkate;
+
+  function doJump() {
+    if(!running) return;
+    if(skater.grounded) {
+      skater.vy = JUMP_FORCE; skater.grounded=false; jumpCount=1;
+    } else if(jumpCount < 2) {
+      skater.vy = JUMP_FORCE*0.8; jumpCount++;
+      spawnParticles(skater.x+18, skater.y, '✨', 4);
+    }
+  }
+
+  function spawnParticles(x,y,emoji,n) {
+    for(let i=0;i<n;i++) particles.push({x,y,emoji,vx:(Math.random()-0.5)*4,vy:-Math.random()*3-1,life:30});
+  }
+
+  function loop() {
+    if(!running){return;}
+    raf = requestAnimationFrame(loop);
+    frame++;
+    const speed = 4 + Math.floor(dist/200)*0.4;
+
+    // Update skater
+    skater.vy += GRAVITY;
+    skater.y += skater.vy;
+    if(skater.y >= GROUND) { skater.y=GROUND; skater.vy=0; skater.grounded=true; jumpCount=0; }
+
+    // Spawn obstacles & collectibles
+    if(frame % Math.max(55, 90 - Math.floor(dist/100)) === 0) {
+      const isCollect = Math.random()<0.35;
+      obstacles.push({
+        x: GW+40,
+        y: isCollect ? GROUND-30 : GROUND,
+        emoji: isCollect ? COLLECT[Math.floor(Math.random()*COLLECT.length)] : OBS[Math.floor(Math.random()*OBS.length)],
+        w:36, h:36,
+        collect: isCollect,
+        pts: isCollect ? (10+Math.floor(dist/50)*2) : 0
+      });
+    }
+
+    // Update obstacles
+    obstacles = obstacles.filter(o => {
+      o.x -= speed;
+      if(o.collect && !o.hit && collide(skater, o)) {
+        o.hit=true; score+=o.pts; dist++;
+        spawnParticles(o.x,o.y,'⭐',5);
+        return false;
+      }
+      if(!o.collect && collide(skater, o)) { endSkate(); return false; }
+      return o.x > -60;
+    });
+
+    // Update particles
+    particles = particles.filter(p => {
+      p.x+=p.vx; p.y+=p.vy; p.life--;
+      return p.life>0;
+    });
+
+    dist++;
+    score = Math.floor(dist/10);
+    document.getElementById('skate-score').textContent = score;
+    document.getElementById('skate-dist').textContent = Math.floor(dist) + 'm';
+
+    draw(speed);
+  }
+
+  function collide(a, b) {
+    return a.x+8 < b.x+b.w-8 && a.x+a.w-8 > b.x+8 && a.y+4 < b.y+b.h && a.y+a.h > b.y+4;
+  }
+
+  function draw(speed) {
+    ctx.clearRect(0,0,GW,GH);
+
+    // Sky gradient
+    const sky = ctx.createLinearGradient(0,0,0,GH);
+    sky.addColorStop(0,'#060d04'); sky.addColorStop(1,'#0e1a0a');
+    ctx.fillStyle=sky; ctx.fillRect(0,0,GW,GH);
+
+    // Stars
+    ctx.fillStyle='rgba(255,255,255,0.5)';
+    for(let i=0;i<30;i++){
+      const sx=(i*73+frame*0.3*(i%3?1:-1))%GW;
+      const sy=(i*37)%140;
+      ctx.fillRect(sx,sy,1,1);
+    }
+
+    // Ground
+    ctx.fillStyle='#1a2e14';
+    ctx.fillRect(0,GROUND+44,GW,GH-GROUND-44);
+    ctx.fillStyle='#2d4a20';
+    ctx.fillRect(0,GROUND+44,GW,4);
+
+    // Moving road dashes
+    ctx.fillStyle='rgba(74,222,128,0.2)';
+    for(let i=0;i<8;i++){
+      const rx=((i*120-frame*speed)%GW+GW)%GW;
+      ctx.fillRect(rx,GROUND+52,60,4);
+    }
+
+    // Obstacles & collectibles
+    ctx.font='28px serif';
+    ctx.textAlign='center';
+    obstacles.forEach(o => { ctx.fillText(o.emoji, o.x+18, o.y+28); });
+
+    // Skater
+    ctx.save();
+    ctx.font='36px serif';
+    const bob = skater.grounded ? Math.sin(frame*0.25)*2 : 0;
+    const tilt = skater.vy < 0 ? -0.2 : skater.vy > 2 ? 0.15 : 0;
+    ctx.translate(skater.x+18, skater.y+bob);
+    ctx.rotate(tilt);
+    ctx.fillText('🛹', -18, 36);
+    ctx.font='26px serif';
+    ctx.fillText('🧍', -14, 10);
+    ctx.restore();
+
+    // Particles
+    particles.forEach(p => {
+      ctx.globalAlpha = p.life/30;
+      ctx.font='16px serif';
+      ctx.fillText(p.emoji, p.x, p.y);
+    });
+    ctx.globalAlpha=1;
+    ctx.textAlign='left';
+  }
+
+  function endSkate() {
+    running=false;
+    cancelAnimationFrame(raf);
+    if(score > best) best = score;
+    document.getElementById('skate-best').textContent = best;
+    document.getElementById('skate-start-btn').textContent = 'Drop In Again 🛹';
+    document.getElementById('skate-start-btn').disabled = false;
+    updateVibe(score);
+    window.bhPostScore && bhPostScore('skate', score, score + ' pts');
+    showToast('🛹','Bailed!','You scored ' + score + ' pts. ' + (score>50?'Respect.':'Shake it off.'));
+
+    // Draw game over
+    const sc2 = document.getElementById('skateCanvas');
+    const c = sc2.getContext('2d');
+    c.fillStyle='rgba(10,13,8,0.75)';
+    c.fillRect(0,0,GW,GH);
+    c.fillStyle='#4ade80';
+    c.font='bold 28px Unbounded, sans-serif';
+    c.textAlign='center';
+    c.fillText('SLAMMED 🛹', GW/2, GH/2-20);
+    c.fillStyle='#6b7c64';
+    c.font='16px DM Mono, monospace';
+    c.fillText('Score: ' + score + '  ·  Best: ' + best, GW/2, GH/2+16);
+    c.textAlign='left';
+  }
+})();
+
+// ===================================================
+// GAME 6: VIBE SEQUENCER
+// ===================================================
+(function(){
+  let sequence=[], playerSeq=[], level=1, bestLevel=1, streak=0, accepting=false, playing=false;
+  const PAD_EMOJIS = ['🌿','🌀','🔥','💎'];
+  const PAD_TONES = [261.63, 329.63, 392.00, 523.25]; // C4 E4 G4 C5
+  let audioCtx;
+
+  function getAudio(){ if(!audioCtx) audioCtx=new (window.AudioContext||window.webkitAudioContext)(); return audioCtx; }
+
+  function playTone(freq, dur=0.18){
+    try{
+      const ac=getAudio();
+      const o=ac.createOscillator();
+      const g=ac.createGain();
+      o.connect(g); g.connect(ac.destination);
+      o.frequency.value=freq;
+      o.type='sine';
+      g.gain.setValueAtTime(0.3,ac.currentTime);
+      g.gain.exponentialRampToValueAtTime(0.001,ac.currentTime+dur);
+      o.start(); o.stop(ac.currentTime+dur);
+    }catch(e){}
+  }
+
+  function flashPad(i, dur=400){
+    const pad=document.querySelector('.vibe-pad[data-pad="'+i+'"]');
+    pad.classList.add('active-pad');
+    playTone(PAD_TONES[i]);
+    setTimeout(()=>pad.classList.remove('active-pad'), dur);
+  }
+
+  function startVibe(){
+    sequence=[]; playerSeq=[]; level=1; streak=0; accepting=false;
+    document.getElementById('vibe-start-btn').disabled=true;
+    document.getElementById('vibe-level').textContent=1;
+    document.getElementById('vibe-streak').textContent=0;
+    nextRound();
+  }
+  window.startVibe=startVibe;
+
+  function nextRound(){
+    playerSeq=[];
+    accepting=false;
+    sequence.push(Math.floor(Math.random()*4));
+    document.getElementById('vibe-status').textContent='Watch the pattern...';
+    playSequence();
+  }
+
+  function playSequence(){
+    let i=0;
+    const iv=setInterval(()=>{
+      if(i>=sequence.length){ clearInterval(iv); accepting=true; document.getElementById('vibe-status').textContent='Your turn! Repeat the sequence.'; return; }
+      flashPad(sequence[i]); i++;
+    }, 650);
+  }
+
+  function vibePress(i){
+    if(!accepting) return;
+    playerSeq.push(i);
+    flashPad(i, 200);
+    const pos=playerSeq.length-1;
+    if(playerSeq[pos]!==sequence[pos]){
+      accepting=false;
+      document.getElementById('vibe-status').textContent='😵 Wrong vibe. Starting over.';
+      if(level>bestLevel){ bestLevel=level; document.getElementById('vibe-best-level').textContent=bestLevel; }
+      updateVibe(streak*5);
+      window.bhPostScore && bhPostScore('vibe_seq', level, 'Level ' + level);
+      playTone(100, 0.4);
+      setTimeout(()=>{ sequence=[]; level=1; streak=0; document.getElementById('vibe-level').textContent=1; document.getElementById('vibe-streak').textContent=0; document.getElementById('vibe-start-btn').disabled=false; document.getElementById('vibe-status').textContent='Press Start to begin the sequence'; }, 1800);
+      return;
+    }
+    if(playerSeq.length===sequence.length){
+      accepting=false; level++; streak++;
+      document.getElementById('vibe-level').textContent=level;
+      document.getElementById('vibe-streak').textContent=streak;
+      document.getElementById('vibe-status').textContent='🌿 Perfect. Level ' + level + ' incoming...';
+      updateVibe(10);
+      setTimeout(nextRound, 1100);
+    }
+  }
+  window.vibePress=vibePress;
+})();
+
+// ===================================================
+// GAME 7: ASTEROID MUNCHIES
+// ===================================================
+(function(){
+  let sc, ctx, running=false, raf;
+  let ship, bullets, asteroids, particles, score, lives, wave, best=0, frame, keys={};
+  const GW=720, GH=380;
+  const SNACK_ROIDS=['🍕','🍔','🍩','🌮','🍟','🍫','🌯','🥐'];
+
+  function init(){
+    sc=document.getElementById('asteroidCanvas');
+    ctx=sc.getContext('2d');
+    document.addEventListener('keydown',e=>{ keys[e.code]=true; if(e.code==='Space'&&running){ e.preventDefault(); shoot(); } });
+    document.addEventListener('keyup',e=>{ keys[e.code]=false; });
+    sc.addEventListener('click', e=>{ if(running){ const r=sc.getBoundingClientRect(); aimShoot(e.clientX-r.left,e.clientY-r.top); } });
+  }
+
+  function startAsteroid(){
+    if(!sc) init();
+    ship={x:GW/2,y:GH/2,angle:-Math.PI/2,vx:0,vy:0,radius:14};
+    bullets=[]; asteroids=[]; particles=[];
+    score=0; lives=3; wave=1; frame=0; running=true;
+    document.getElementById('ast-start-btn').textContent='Flying... 🚀';
+    document.getElementById('ast-start-btn').disabled=true;
+    spawnWave();
+    if(raf) cancelAnimationFrame(raf);
+    astLoop();
+  }
+  window.startAsteroid=startAsteroid;
+
+  function spawnWave(){
+    for(let i=0;i<3+wave;i++){
+      let x,y;
+      do{ x=Math.random()*GW; y=Math.random()*GH; } while(Math.hypot(x-ship.x,y-ship.y)<120);
+      asteroids.push({ x,y,vx:(Math.random()-0.5)*1.5*(1+wave*0.15),vy:(Math.random()-0.5)*1.5*(1+wave*0.15),radius:30+Math.random()*20,emoji:SNACK_ROIDS[Math.floor(Math.random()*SNACK_ROIDS.length)],size:2 });
+    }
+  }
+
+  function shoot(){
+    bullets.push({ x:ship.x+Math.cos(ship.angle)*16, y:ship.y+Math.sin(ship.angle)*16, vx:Math.cos(ship.angle)*9, vy:Math.sin(ship.angle)*9, life:55 });
+  }
+
+  function aimShoot(mx,my){
+    const ang=Math.atan2(my-ship.y,mx-ship.x);
+    bullets.push({ x:ship.x+Math.cos(ang)*16, y:ship.y+Math.sin(ang)*16, vx:Math.cos(ang)*9, vy:Math.sin(ang)*9, life:55 });
+  }
+
+  let shootCooldown=0;
+  function astLoop(){
+    if(!running) return;
+    raf=requestAnimationFrame(astLoop);
+    frame++;
+    shootCooldown=Math.max(0,shootCooldown-1);
+
+    // Ship controls
+    if(keys['ArrowLeft']||keys['KeyA']) ship.angle-=0.06;
+    if(keys['ArrowRight']||keys['KeyD']) ship.angle+=0.06;
+    if(keys['ArrowUp']||keys['KeyW']||keys['Space']&&false){
+      ship.vx+=Math.cos(ship.angle)*0.25; ship.vy+=Math.sin(ship.angle)*0.25;
+    }
+    if(keys['Space']&&shootCooldown===0){ shoot(); shootCooldown=12; }
+    ship.vx*=0.97; ship.vy*=0.97;
+    ship.x=(ship.x+ship.vx+GW)%GW; ship.y=(ship.y+ship.vy+GH)%GH;
+
+    // Bullets
+    bullets=bullets.filter(b=>{ b.x+=b.vx; b.y+=b.vy; b.life--; return b.life>0&&b.x>0&&b.x<GW&&b.y>0&&b.y<GH; });
+
+    // Asteroids
+    asteroids.forEach(a=>{ a.x=(a.x+a.vx+GW)%GW; a.y=(a.y+a.vy+GH)%GH; });
+
+    // Bullet-asteroid collisions
+    bullets.forEach((b,bi)=>{
+      asteroids.forEach((a,ai)=>{
+        if(Math.hypot(b.x-a.x,b.y-a.y)<a.radius){
+          bullets.splice(bi,1);
+          if(a.size>1){
+            for(let k=0;k<2;k++) asteroids.push({ x:a.x+(Math.random()-0.5)*20,y:a.y+(Math.random()-0.5)*20,vx:(Math.random()-0.5)*3,vy:(Math.random()-0.5)*3,radius:a.radius*0.55,emoji:SNACK_ROIDS[Math.floor(Math.random()*SNACK_ROIDS.length)],size:1 });
+          }
+          for(let k=0;k<6;k++) particles.push({x:a.x,y:a.y,vx:(Math.random()-0.5)*5,vy:(Math.random()-0.5)*5,life:25,color:['#4ade80','#fbbf24','#f472b6'][k%3]});
+          asteroids.splice(ai,1);
+          score+=a.size===2?100:50; updateVibe(a.size===2?5:2);
+          document.getElementById('ast-score').textContent=score;
+        }
+      });
+    });
+
+    // Ship-asteroid collision
+    asteroids.forEach(a=>{
+      if(Math.hypot(ship.x-a.x,ship.y-a.y)<a.radius+ship.radius){
+        lives--;
+        document.getElementById('ast-lives').textContent='♥'.repeat(Math.max(0,lives));
+        ship.x=GW/2; ship.y=GH/2; ship.vx=0; ship.vy=0;
+        if(lives<=0){ endAsteroid(); }
+      }
+    });
+
+    // Next wave
+    if(asteroids.length===0){ wave++; document.getElementById('ast-level').textContent=wave; spawnWave(); showToast('🌌','Wave '+wave+'!','Nice shooting. It escalates.'); }
+
+    // Particles
+    particles=particles.filter(p=>{ p.x+=p.vx; p.y+=p.vy; p.life--; return p.life>0; });
+
+    // Draw
+    ctx.fillStyle='#05080a';
+    ctx.fillRect(0,0,GW,GH);
+
+    // Stars bg
+    ctx.fillStyle='rgba(255,255,255,0.6)';
+    for(let i=0;i<60;i++){ ctx.fillRect((i*137)%GW,(i*89)%GH,1,1); }
+
+    // Particles
+    particles.forEach(p=>{ ctx.globalAlpha=p.life/25; ctx.fillStyle=p.color; ctx.beginPath(); ctx.arc(p.x,p.y,3,0,Math.PI*2); ctx.fill(); });
+    ctx.globalAlpha=1;
+
+    // Asteroids
+    ctx.font='36px serif'; ctx.textAlign='center';
+    asteroids.forEach(a=>{ ctx.font=Math.round(a.radius*1.2)+'px serif'; ctx.fillText(a.emoji,a.x,a.y+a.radius*0.4); });
+
+    // Bullets
+    ctx.fillStyle='#4ade80';
+    bullets.forEach(b=>{ ctx.beginPath(); ctx.arc(b.x,b.y,3,0,Math.PI*2); ctx.fill(); });
+
+    // Ship
+    ctx.save();
+    ctx.translate(ship.x,ship.y);
+    ctx.rotate(ship.angle+Math.PI/2);
+    ctx.font='28px serif';
+    ctx.fillText('🚀',- 14,-14);
+    ctx.restore();
+
+    if((keys['ArrowUp']||keys['KeyW'])&&frame%3===0){
+      particles.push({x:ship.x-Math.cos(ship.angle)*16,y:ship.y-Math.sin(ship.angle)*16,vx:-Math.cos(ship.angle)*2+(Math.random()-0.5),vy:-Math.sin(ship.angle)*2+(Math.random()-0.5),life:10,color:'#fbbf24'});
+    }
+    ctx.textAlign='left';
+  }
+
+  function endAsteroid(){
+    running=false; cancelAnimationFrame(raf);
+    if(score>best) best=score;
+    document.getElementById('ast-best').textContent=best;
+    document.getElementById('ast-start-btn').textContent='Launch Again 🚀';
+    document.getElementById('ast-start-btn').disabled=false;
+    window.bhPostScore && bhPostScore('asteroid', score, score + ' pts');
+    ctx.fillStyle='rgba(5,8,10,0.8)';
+    ctx.fillRect(0,0,GW,GH);
+    ctx.fillStyle='#4ade80'; ctx.font='bold 26px Unbounded,sans-serif'; ctx.textAlign='center';
+    ctx.fillText('SHIP DESTROYED 🚀',GW/2,GH/2-16);
+    ctx.fillStyle='#6b7c64'; ctx.font='15px DM Mono,monospace';
+    ctx.fillText('Score: '+score+'  ·  Wave: '+wave+'  ·  Best: '+best,GW/2,GH/2+16);
+    ctx.textAlign='left';
+    showToast('🌌','Ship down!','Score: '+score+' · Wave '+wave+'. Deep breaths.');
+  }
+})();
+
+// ===================================================
+// GAME 8: HIGHER OR LOWER
+// ===================================================
+(function(){
+  const RANKS=['2','3','4','5','6','7','8','9','10','J','Q','K','A'];
+  const SUITS=['♠','♥','♦','♣'];
+  const SUIT_EMOJI=['♠️','♥️','♦️','♣️'];
+  const SUIT_COLOR=['#e8f5e2','#f472b6','#f472b6','#e8f5e2'];
+  let streak=0,bestStreak=0,totalScore=0,currentCard=null;
+
+  function randCard(){ return { rank:Math.floor(Math.random()*13), suit:Math.floor(Math.random()*4) }; }
+  function cardVal(c){ return c.rank; }
+
+  function renderCard(id,card){
+    const rankEl=document.getElementById(id==='hl-current'?'hl-rank':'hl-rank-next');
+    const suitEl=document.getElementById(id==='hl-current'?'hl-suit':'hl-suit-next');
+    const tl=document.getElementById(id==='hl-current'?'hl-corner-tl':'hl-corner-tl-next');
+    const br=document.getElementById(id==='hl-current'?'hl-corner-br':'hl-corner-br-next');
+    const r=RANKS[card.rank], s=SUITS[card.suit], sc2=SUIT_COLOR[card.suit];
+    if(rankEl){ rankEl.textContent=r; rankEl.style.color=sc2; }
+    if(suitEl){ suitEl.textContent=s; suitEl.style.color=sc2; }
+    if(tl){ tl.textContent=r+' '+s; tl.style.color=sc2; }
+    if(br){ br.textContent=r+' '+s; br.style.color=sc2; }
+  }
+
+  function initHL(){
+    currentCard=randCard();
+    renderCard('hl-current',currentCard);
+    document.getElementById('hl-rank').textContent=RANKS[currentCard.rank];
+    document.getElementById('hl-suit').textContent=SUITS[currentCard.suit];
+    document.getElementById('hl-suit').style.color=SUIT_COLOR[currentCard.suit];
+    document.getElementById('hl-rank').style.color=SUIT_COLOR[currentCard.suit];
+    document.getElementById('hl-corner-tl').textContent=RANKS[currentCard.rank]+' '+SUITS[currentCard.suit];
+    document.getElementById('hl-corner-tl').style.color=SUIT_COLOR[currentCard.suit];
+    document.getElementById('hl-corner-br').textContent=RANKS[currentCard.rank]+' '+SUITS[currentCard.suit];
+    document.getElementById('hl-corner-br').style.color=SUIT_COLOR[currentCard.suit];
+    document.getElementById('hl-result').textContent='';
+    document.getElementById('hl-result').className='hl-result';
+    const next=document.getElementById('hl-next');
+    next.className='playing-card facedown';
+    next.innerHTML='<div class="card-rank" style="font-size:2rem;color:var(--muted)">?</div>';
+    document.getElementById('hl-btns').style.display='flex';
+  }
+
+  function hlGuess(dir){
+    const next=randCard();
+    const cv=cardVal(currentCard), nv=cardVal(next);
+    const won=(dir==='high'&&nv>cv)||(dir==='low'&&nv<cv);
+    const tie=(nv===cv);
+
+    // Reveal next card
+    const nEl=document.getElementById('hl-next');
+    nEl.className='playing-card revealed';
+    nEl.innerHTML=`
+      <div class="card-corner" style="color:${SUIT_COLOR[next.suit]}">${RANKS[next.rank]} ${SUITS[next.suit]}</div>
+      <div class="card-rank" style="color:${SUIT_COLOR[next.suit]}">${RANKS[next.rank]}</div>
+      <div class="card-suit" style="color:${SUIT_COLOR[next.suit]}">${SUITS[next.suit]}</div>
+      <div class="card-corner br" style="color:${SUIT_COLOR[next.suit]}">${RANKS[next.rank]} ${SUITS[next.suit]}</div>
+    `;
+
+    const res=document.getElementById('hl-result');
+    document.getElementById('hl-btns').style.display='none';
+
+    if(tie){
+      res.textContent="It's a tie. Cosmic indifference.";
+      res.className='hl-result';
+      streak=0;
+    } else if(won){
+      streak++; totalScore+=streak*10;
+      if(streak>bestStreak) bestStreak=streak;
+      res.textContent=['🌿 Nice.','✨ Prophetic.','🔥 Vibing.','🧿 Third eye open.','👁️ You KNEW.'][Math.min(streak-1,4)];
+      res.className='hl-result win';
+      updateVibe(streak*5);
+    } else {
+      res.textContent=['💀 Ouch.','😵 Harsh.','🌀 The cards have spoken.','🫠 Bummer.'][Math.floor(Math.random()*4)];
+      res.className='hl-result lose';
+      streak=0;
+    }
+
+    document.getElementById('hl-streak').textContent=streak;
+    document.getElementById('hl-best').textContent=bestStreak;
+    document.getElementById('hl-score').textContent=totalScore;
+    if(won) window.bhPostScore && bhPostScore('higher', bestStreak, bestStreak + ' streak');
+    currentCard=next;
+
+    setTimeout(initHL, 1600);
+  }
+  window.hlGuess=hlGuess;
+
+  // Init on load
+  setTimeout(initHL, 200);
+})();
+
+
+// ===================================================
+// COMIC BOOK ENGINE v2 — Funnier. Better font.
+// ===================================================
+(function(){
+
+// Comic font stack - Permanent Marker for handwritten, Bangers for SFX
+const CF = "'Permanent Marker', 'Bangers', cursive";
+const SFX_F = "'Bangers', 'Permanent Marker', cursive";
+
+// ── PANEL BUILDER HELPERS ──────────────────────────────────────
+// Each comic is pure SVG - no external images, no font-face issues
+// Text uses dominant-baseline and text-anchor for reliable centering
+
+function bubble(x, y, w, h, text, tailDir='down', color='#fff', textColor='#000') {
+  const rx = 14;
+  const lines = wrapText(text, Math.floor(w/10));
+  const lineH = 20;
+  const textH = lines.length * lineH;
+  const bh = Math.max(h, textH + 20);
+
+  let tailPath = '';
+  if(tailDir === 'down') {
+    tailPath = `M${x+20},${y+bh} L${x+14},${y+bh+18} L${x+36},${y+bh}`;
+  } else if(tailDir === 'up') {
+    tailPath = `M${x+20},${y} L${x+14},${y-18} L${x+36},${y}`;
+  } else if(tailDir === 'left') {
+    tailPath = `M${x},${y+bh/2-10} L${x-18},${y+bh/2} L${x},${y+bh/2+10}`;
+  }
+
+  let linesHTML = lines.map((l,i) =>
+    `<text x="${x+w/2}" y="${y+14+(i+0.8)*lineH}" text-anchor="middle" font-family=${CF} font-size="13" font-weight="bold" fill="${textColor}">${l}</text>`
+  ).join('');
+
+  return `
+    <path d="M${x+rx},${y} h${w-2*rx} a${rx},${rx} 0 0 1 ${rx},${rx} v${bh-2*rx} a${rx},${rx} 0 0 1 -${rx},${rx} h-${w-2*rx} a${rx},${rx} 0 0 1 -${rx},-${rx} v-${bh+2-2*rx} a${rx},${rx} 0 0 1 ${rx},-${rx}z" fill="${color}" stroke="#111" stroke-width="2.5"/>
+    ${tailPath ? `<path d="${tailPath}" fill="${color}" stroke="#111" stroke-width="2.5" stroke-linejoin="round"/>` : ''}
+    ${linesHTML}
   `;
 }
 
-// ── Reset ────────────────────────────────────────────────────
-function clearGame(key) {
-  if(!confirm('Clear leaderboard for ' + key + '? Cannot be undone.')) return;
-  localStorage.removeItem('bh_lb_'+key);
-  renderAdminLB(key);
-  alert('Done.');
+function shoutBubble(x, y, w, h, text, color='#fff200') {
+  // Spiky shout bubble
+  const cx = x+w/2, cy = y+h/2, rx = w/2, ry = h/2;
+  const spikes = 12;
+  let pts = '';
+  for(let i=0; i<spikes*2; i++) {
+    const a = (i/spikes/2)*Math.PI*2 - Math.PI/2;
+    const r = i%2===0 ? 1 : 0.72;
+    pts += `${cx+Math.cos(a)*rx*r},${cy+Math.sin(a)*ry*r} `;
+  }
+  const lines = wrapText(text, Math.floor(w/10));
+  const lineH = 18;
+  let linesHTML = lines.map((l,i) =>
+    `<text x="${cx}" y="${cy - (lines.length-1)*lineH/2 + i*lineH + 5}" text-anchor="middle" font-family=${CF} font-size="12" font-weight="bold" fill="#000">${l}</text>`
+  ).join('');
+  return `<polygon points="${pts}" fill="${color}" stroke="#111" stroke-width="2.5"/>
+    ${linesHTML}`;
 }
 
-function clearAll() {
-  if(!confirm('Clear ALL leaderboard data for all games? This cannot be undone.')) return;
-  LB_GAMES.forEach(g => localStorage.removeItem('bh_lb_'+g.key));
-  alert('All leaderboard data cleared.');
+function thoughtBubble(x, y, w, h, text) {
+  const lines = wrapText(text, Math.floor(w/10));
+  const lineH = 19;
+  const bh = Math.max(h, lines.length * lineH + 16);
+  let linesHTML = lines.map((l,i) =>
+    `<text x="${x+w/2}" y="${y+12+(i+0.8)*lineH}" text-anchor="middle" font-family=${CF} font-size="13" font-weight="bold" fill="#222">${l}</text>`
+  ).join('');
+  return `
+    <ellipse cx="${x+w/2}" cy="${y+bh/2}" rx="${w/2}" ry="${bh/2}" fill="#fff" stroke="#111" stroke-width="2.5" stroke-dasharray="6,3"/>
+    <circle cx="${x+14}" cy="${y+bh+10}" r="6" fill="#fff" stroke="#111" stroke-width="2"/>
+    <circle cx="${x+8}" cy="${y+bh+20}" r="4" fill="#fff" stroke="#111" stroke-width="1.5"/>
+    <circle cx="${x+4}" cy="${y+bh+28}" r="2.5" fill="#fff" stroke="#111" stroke-width="1.5"/>
+    ${linesHTML}
+  `;
 }
+
+function sfx(x, y, text, color='#4ade80', size=38, rotate=-8) {
+  return `<text x="${x}" y="${y}" font-family=${SFX_F} font-size="${size}" fill="${color}" stroke="#111" stroke-width="3" paint-order="stroke" transform="rotate(${rotate},${x},${y})" font-weight="900">${text}</text>`;
+}
+
+function caption(x, y, w, text, bg='#111', fg='#fff') {
+  return `<rect x="${x}" y="${y}" width="${w}" height="24" fill="${bg}"/>
+    <text x="${x+8}" y="${y+17}" font-family=${CF} font-size="12" fill="${fg}" font-weight="bold">${text}</text>`;
+}
+
+function wrapText(text, maxChars) {
+  const words = text.split(' ');
+  const lines = [];
+  let line = '';
+  words.forEach(w => {
+    if((line+' '+w).trim().length > maxChars) { if(line) lines.push(line.trim()); line = w; }
+    else line = (line+' '+w).trim();
+  });
+  if(line) lines.push(line.trim());
+  return lines;
+}
+
+// ── COMIC DATA ─────────────────────────────────────────────────
+// Format: array of panels, each with w (relative units), svg content string
+// Total width units per strip = 12
+
+const COMICS = [
+// ════════════════════════════════════════════════════
+{
+  id:1, category:'memory',
+  title:"THE WALK OF CONFUSION",
+  episode:"Issue #1 · Why Did I Come In Here",
+  footer:"This happens to Harold 4-6 times per evening. Scientists are baffled.",
+  panels:[
+    { w:4, bg:'#fff8e1',
+      svg: (W,H) => `
+        ${caption(0,0,W,'THE LIVING ROOM. 9:47 PM.')}
+        <text x="${W/2}" y="${H*0.42}" text-anchor="middle" font-size="70">🛋️</text>
+        <text x="${W/2-10}" y="${H*0.68}" text-anchor="middle" font-size="48">🧍</text>
+        ${bubble(W*0.5, H*0.08, W*0.86, 44, "I need something from the kitchen.", 'down')}
+      `},
+    { w:4, bg:'#e8f5e9',
+      svg: (W,H) => `
+        ${caption(0,0,W,'THE KITCHEN. CONFIDENT.')}
+        <text x="${W/2}" y="${H*0.5}" text-anchor="middle" font-size="70">🚶</text>
+        <text x="${W/2+30}" y="${H*0.3}" text-anchor="middle" font-size="32">💨</text>
+        <text x="${W/2+50}" y="${H*0.4}" text-anchor="middle" font-size="24">💨</text>
+        ${sfx(W*0.05, H*0.55, 'STRIDE!', '#4ade80', 30, 5)}
+      `},
+    { w:4, bg:'#fce4ec',
+      svg: (W,H) => `
+        ${caption(0,0,W,'THE KITCHEN. EMPTY.')}
+        <text x="${W/2}" y="${H*0.5}" text-anchor="middle" font-size="64">😶</text>
+        <text x="${W/2}" y="${H*0.72}" text-anchor="middle" font-size="28">🍽️❓</text>
+        ${thoughtBubble(W*0.08, H*0.04, W*0.84, 60, "...why am I here.")}
+        ${sfx(W*0.55, H*0.72, '...', '#999', 36, 0)}
+      `},
+  ]
+},
+// ════════════════════════════════════════════════════
+{
+  id:2, category:'food',
+  title:"UBER EATS: A TRAGEDY",
+  episode:"Issue #2 · 47 Minutes or Your Sanity Back",
+  footer:"The driver's name was Chad. Chad drove in circles for 11 minutes.",
+  panels:[
+    { w:3, bg:'#fff3e0',
+      svg: (W,H) => `
+        ${caption(0,0,W,'10:32 PM. THE ORDER IS PLACED.')}
+        <text x="${W/2}" y="${H*0.48}" text-anchor="middle" font-size="56">📱</text>
+        <text x="${W/2}" y="${H*0.72}" text-anchor="middle" font-size="36">🤩</text>
+        ${bubble(W*0.05, H*0.06, W*0.9, 52, "25 mins!! I'm basically already eating.", 'down')}
+      `},
+    { w:3, bg:'#e3f2fd',
+      svg: (W,H) => `
+        ${caption(0,0,W,'10:57 PM. THE MAP.')}
+        <text x="${W/2}" y="${H*0.44}" text-anchor="middle" font-size="52">🗺️</text>
+        <text x="${W/2+20}" y="${H*0.44}" text-anchor="middle" font-size="28">🛵</text>
+        <text x="${W/2}" y="${H*0.7}" text-anchor="middle" font-size="32">😟</text>
+        ${bubble(W*0.05, H*0.06, W*0.9, 52, "He's been on my street for 8 minutes...", 'down')}
+      `},
+    { w:3, bg:'#fce4ec',
+      svg: (W,H) => `
+        ${caption(0,0,W,'11:14 PM. THE CALL.')}
+        <text x="${W/2}" y="${H*0.44}" text-anchor="middle" font-size="52">📞</text>
+        <text x="${W/2}" y="${H*0.68}" text-anchor="middle" font-size="36">😤</text>
+        ${bubble(W*0.05, H*0.06, W*0.86, 52, '"Your order is nearby." NEARBY IS NOT HERE CHAD.', 'down', '#fff200')}
+      `},
+    { w:3, bg:'#e8f5e9',
+      svg: (W,H) => `
+        ${caption(0,0,W,'11:31 PM. ACCEPTANCE.')}
+        <text x="${W/2}" y="${H*0.44}" text-anchor="middle" font-size="62">🧘</text>
+        <text x="${W/2}" y="${H*0.7}" text-anchor="middle" font-size="28">🍕✨</text>
+        ${thoughtBubble(W*0.04, H*0.04, W*0.92, 60, "The pizza arrives when it is meant to arrive.")}
+      `},
+  ]
+},
+// ════════════════════════════════════════════════════
+{
+  id:3, category:'philosophy',
+  title:"SHOWER THOUGHTS QUARTERLY",
+  episode:"Issue #5 · The One About Dolphins",
+  footer:"Peer reviewed by three people on a couch. Published immediately.",
+  panels:[
+    { w:4, bg:'#e0f7fa',
+      svg: (W,H) => `
+        ${caption(0,0,W,'THE SHOWER. 11 PM.')}
+        <text x="${W/2}" y="${H*0.46}" text-anchor="middle" font-size="62">🚿</text>
+        <text x="${W/2+30}" y="${H*0.36}" text-anchor="middle" font-size="24">💧</text>
+        <text x="${W/2+42}" y="${H*0.5}" text-anchor="middle" font-size="20">💧</text>
+        <text x="${W/2+28}" y="${H*0.62}" text-anchor="middle" font-size="22">💧</text>
+        ${thoughtBubble(W*0.04, H*0.04, W*0.7, 58, "Dolphins chose to go back to the ocean. They saw what we were building and LEFT.")}
+      `},
+    { w:4, bg:'#e8f5e9',
+      svg: (W,H) => `
+        ${caption(0,0,W,'THE ESCALATION.')}
+        <text x="${W/2}" y="${H*0.46}" text-anchor="middle" font-size="62">🐬</text>
+        <text x="${W*0.15}" y="${H*0.46}" text-anchor="middle" font-size="32">🌊</text>
+        <text x="${W*0.78}" y="${H*0.46}" text-anchor="middle" font-size="32">🌊</text>
+        ${thoughtBubble(W*0.04, H*0.04, W*0.92, 58, "And they were RIGHT. Dolphins are smarter than us AND they live in a pool.")}
+      `},
+    { w:4, bg:'#fff8e1',
+      svg: (W,H) => `
+        ${caption(0,0,W,'20 MINUTES LATER. STILL IN SHOWER.')}
+        <text x="${W/2}" y="${H*0.42}" text-anchor="middle" font-size="52">🚿</text>
+        <text x="${W/2}" y="${H*0.68}" text-anchor="middle" font-size="42">😮</text>
+        ${shoutBubble(W*0.04, H*0.04, W*0.92, 70, "I need to CALL someone about the dolphins.")}
+        ${sfx(W*0.04, H*0.7, 'REVELATION!', '#fbbf24', 26, -5)}
+      `},
+  ]
+},
+// ════════════════════════════════════════════════════
+{
+  id:4, category:'food',
+  title:"THE SNACK NEGOTIATION",
+  episode:"Issue #8 · Man vs. The Last Chip",
+  footer:"He ate it. There was no negotiation.",
+  panels:[
+    { w:4, bg:'#fff8e1',
+      svg: (W,H) => `
+        ${caption(0,0,W,'THE BAG. NEARLY EMPTY.')}
+        <text x="${W/2}" y="${H*0.44}" text-anchor="middle" font-size="80">🫙</text>
+        <text x="${W/2-10}" y="${H*0.68}" text-anchor="middle" font-size="40">😯</text>
+        ${bubble(W*0.04, H*0.05, W*0.92, 52, "One chip left. I should save it for later.", 'down')}
+      `},
+    { w:4, bg:'#fce4ec',
+      svg: (W,H) => `
+        ${caption(0,0,W,'5 SECONDS LATER.')}
+        <text x="${W/2}" y="${H*0.44}" text-anchor="middle" font-size="80">🍿</text>
+        <text x="${W/2}" y="${H*0.7}" text-anchor="middle" font-size="40">😶</text>
+        ${sfx(W*0.04, H*0.34, 'CRUNCH', '#ef4444', 34, -6)}
+        ${bubble(W*0.04, H*0.55, W*0.92, 42, "...define 'later'.", 'up')}
+      `},
+    { w:4, bg:'#e8f5e9',
+      svg: (W,H) => `
+        ${caption(0,0,W,'THE INTERNAL DEBRIEF.')}
+        <text x="${W/2}" y="${H*0.44}" text-anchor="middle" font-size="60">🧠</text>
+        <text x="${W/2}" y="${H*0.7}" text-anchor="middle" font-size="36">✅</text>
+        ${thoughtBubble(W*0.04, H*0.04, W*0.92, 62, "Later happened. I was the agent of later. No regrets.")}
+      `},
+  ]
+},
+// ════════════════════════════════════════════════════
+{
+  id:5, category:'paranoia',
+  title:"THE DOORBELL",
+  episode:"Issue #3 · Someone Is At The Door",
+  footer:"It was Amazon. It's always Amazon. He waited 40 minutes to check.",
+  panels:[
+    { w:3, bg:'#fff8e1',
+      svg: (W,H) => `
+        ${caption(0,0,W,'9:22 PM. THE COUCH.')}
+        <text x="${W/2}" y="${H*0.44}" text-anchor="middle" font-size="56">🛋️</text>
+        <text x="${W/2}" y="${H*0.68}" text-anchor="middle" font-size="36">😌</text>
+        ${bubble(W*0.05, H*0.05, W*0.9, 42, "Life is good. Nothing is wrong.", 'down')}
+      `},
+    { w:3, bg:'#fce4ec',
+      svg: (W,H) => `
+        <text x="${W/2}" y="${H*0.44}" text-anchor="middle" font-size="72">🔔</text>
+        ${sfx(W*0.08, H*0.6, 'DING DONG', '#ef4444', 28, -4)}
+        ${shoutBubble(W*0.08, H*0.05, W*0.84, 60, "SOMEONE. IS. AT. THE. DOOR.", '#fce4ec')}
+      `},
+    { w:3, bg:'#e3f2fd',
+      svg: (W,H) => `
+        ${caption(0,0,W,'THE RISK ASSESSMENT.')}
+        <text x="${W/2}" y="${H*0.5}" text-anchor="middle" font-size="52">🤔</text>
+        ${thoughtBubble(W*0.04, H*0.04, W*0.92, 78, "Could be: police, a murderer, my landlord, a murderer who IS my landlord...")}
+      `},
+    { w:3, bg:'#e8f5e9',
+      svg: (W,H) => `
+        ${caption(0,0,W,'40 MINUTES LATER.')}
+        <text x="${W/2}" y="${H*0.35}" text-anchor="middle" font-size="48">📦</text>
+        <text x="${W/2}" y="${H*0.62}" text-anchor="middle" font-size="36">😮‍💨</text>
+        ${bubble(W*0.05, H*0.05, W*0.9, 52, "Amazon. It was Amazon. It's always Amazon.", 'down')}
+      `},
+  ]
+},
+// ════════════════════════════════════════════════════
+{
+  id:6, category:'philosophy',
+  title:"TIME IS FAKE",
+  episode:"Issue #11 · A Study in Clocks",
+  footer:"He started watching a documentary at 11pm. It was light outside when it ended.",
+  panels:[
+    { w:4, bg:'#e8f5e9',
+      svg: (W,H) => `
+        ${caption(0,0,W,'11:00 PM. BEFORE.')}
+        <text x="${W/2}" y="${H*0.44}" text-anchor="middle" font-size="62">🕐</text>
+        <text x="${W/2}" y="${H*0.7}" text-anchor="middle" font-size="36">😊</text>
+        ${bubble(W*0.04, H*0.05, W*0.92, 42, "Just one episode. I'm responsible.", 'down')}
+      `},
+    { w:4, bg:'#1a1a2e',
+      svg: (W,H) => `
+        ${caption(0,0,W,'THE VOID. SOMEWHERE IN TIME.', '#4ade80', '#000')}
+        <text x="${W/2}" y="${H*0.44}" text-anchor="middle" font-size="62">📺</text>
+        <text x="${W*0.15}" y="${H*0.44}" text-anchor="middle" font-size="28">⭐</text>
+        <text x="${W*0.8}" y="${H*0.38}" text-anchor="middle" font-size="20">🌙</text>
+        <text x="${W*0.75}" y="${H*0.58}" text-anchor="middle" font-size="16">✨</text>
+        <text x="${W/2}" y="${H*0.72}" text-anchor="middle" font-size="36">😶</text>
+        ${sfx(W*0.04, H*0.86, 'EPISODE 6...', '#a855f7', 22, 0)}
+      `},
+    { w:4, bg:'#fff8e1',
+      svg: (W,H) => `
+        ${caption(0,0,W,'4:47 AM. AFTER.')}
+        <text x="${W/2}" y="${H*0.4}" text-anchor="middle" font-size="52">🌅</text>
+        <text x="${W/2}" y="${H*0.66}" text-anchor="middle" font-size="40">😳</text>
+        ${shoutBubble(W*0.04, H*0.04, W*0.92, 66, "THE SUN. WHY IS THERE SUN.")}
+        ${sfx(W*0.04, H*0.78, 'BETRAYED', '#fbbf24', 24, -3)}
+      `},
+  ]
+},
+// ════════════════════════════════════════════════════
+{
+  id:7, category:'paranoia',
+  title:"THE TEXT",
+  episode:"Issue #6 · Read at 2:17 AM",
+  footer:"She saw the typing dots start, stop, and start again for 11 minutes. Then: 'lol'",
+  panels:[
+    { w:3, bg:'#e8f5e9',
+      svg: (W,H) => `
+        ${caption(0,0,W,'THE MESSAGE ARRIVES.')}
+        <text x="${W/2}" y="${H*0.44}" text-anchor="middle" font-size="56">📱</text>
+        <text x="${W/2}" y="${H*0.7}" text-anchor="middle" font-size="34">😐</text>
+        ${bubble(W*0.05, H*0.05, W*0.9, 52, '"Hey, can we talk?"', 'down', '#e3f2fd')}
+      `},
+    { w:3, bg:'#fce4ec',
+      svg: (W,H) => `
+        ${caption(0,0,W,'THE SPIRAL BEGINS.')}
+        <text x="${W/2}" y="${H*0.5}" text-anchor="middle" font-size="56">😰</text>
+        ${thoughtBubble(W*0.04, H*0.04, W*0.92, 78, "Talk about WHAT. What have I done. What do they KNOW.")}
+      `},
+    { w:3, bg:'#fff3e0',
+      svg: (W,H) => `
+        ${caption(0,0,W,'THE INNER COURT.')}
+        <text x="${W/2}" y="${H*0.44}" text-anchor="middle" font-size="56">⚖️</text>
+        <text x="${W/2}" y="${H*0.7}" text-anchor="middle" font-size="32">😵</text>
+        ${thoughtBubble(W*0.04, H*0.04, W*0.92, 68, "I am being judged. By whom. For what. When did I do this thing.")}
+      `},
+    { w:3, bg:'#e8f5e9',
+      svg: (W,H) => `
+        ${caption(0,0,W,'THE REPLY. 47 MINS LATER.')}
+        <text x="${W/2}" y="${H*0.44}" text-anchor="middle" font-size="56">📱</text>
+        <text x="${W/2}" y="${H*0.7}" text-anchor="middle" font-size="34">😶</text>
+        ${bubble(W*0.05, H*0.05, W*0.9, 52, '"wanna watch a movie lol"', 'down', '#e3f2fd')}
+        ${sfx(W*0.04, H*0.7, 'RELIEF', '#4ade80', 26, -3)}
+      `},
+  ]
+},
+// ════════════════════════════════════════════════════
+{
+  id:8, category:'memory',
+  title:"THE LIGHTER PROBLEM",
+  episode:"Issue #9 · Has Anyone Seen My—",
+  footer:"It was in his hand. It was in his hand the whole time.",
+  panels:[
+    { w:4, bg:'#fff8e1',
+      svg: (W,H) => `
+        ${caption(0,0,W,'THE SEARCH BEGINS.')}
+        <text x="${W/2}" y="${H*0.44}" text-anchor="middle" font-size="64">🔍</text>
+        <text x="${W/2}" y="${H*0.7}" text-anchor="middle" font-size="36">🤔</text>
+        ${bubble(W*0.04, H*0.05, W*0.92, 42, "Where's my lighter. It was literally just here.", 'down')}
+      `},
+    { w:4, bg:'#e3f2fd',
+      svg: (W,H) => `
+        ${caption(0,0,W,'THE SEARCH ESCALATES.')}
+        <text x="${W*0.2}" y="${H*0.5}" text-anchor="middle" font-size="32">🛋️</text>
+        <text x="${W*0.4}" y="${H*0.5}" text-anchor="middle" font-size="28">🪴</text>
+        <text x="${W*0.6}" y="${H*0.5}" text-anchor="middle" font-size="30">📚</text>
+        <text x="${W*0.8}" y="${H*0.5}" text-anchor="middle" font-size="28">🍕</text>
+        <text x="${W/2}" y="${H*0.75}" text-anchor="middle" font-size="38">😤</text>
+        ${sfx(W*0.05, H*0.15, 'SEARCH!', '#60a5fa', 28, -5)}
+      `},
+    { w:4, bg:'#e8f5e9',
+      svg: (W,H) => `
+        ${caption(0,0,W,'THE REVELATION.')}
+        <text x="${W/2-10}" y="${H*0.44}" text-anchor="middle" font-size="64">🔥</text>
+        <text x="${W/2}" y="${H*0.7}" text-anchor="middle" font-size="38">😐</text>
+        ${shoutBubble(W*0.04, H*0.04, W*0.92, 60, "It was in my hand.")}
+        ${sfx(W*0.04, H*0.72, 'always.', '#4ade80', 28, 2)}
+      `},
+  ]
+},
+];
+
+// ── RENDERER ──────────────────────────────────────────────────
+let activeCategory = 'all';
+const CATEGORIES = ['all','memory','food','philosophy','paranoia'];
+const CAT_LABELS = {all:'ALL ISSUES',memory:'MEMORY LOSS',food:'FOOD DRAMA',philosophy:'DEEP THOUGHTS',paranoia:'MILD PARANOIA'};
+
+function filterComics(cat, btn) {
+  activeCategory = cat;
+  document.querySelectorAll('.comic-filter-btn').forEach(b => b.classList.remove('active'));
+  btn.classList.add('active');
+  renderComics();
+}
+window.filterComics = filterComics;
+
+// Rebuild filter buttons with correct labels
+function rebuildFilters() {
+  const nav = document.querySelector('.comics-nav');
+  if(!nav) return;
+  nav.innerHTML = CATEGORIES.map(cat =>
+    `<button class="comic-filter-btn${cat==='all'?' active':''}" onclick="filterComics('${cat}',this)">${CAT_LABELS[cat]}</button>`
+  ).join('');
+}
+
+function renderComics() {
+  const container = document.getElementById('comicsScroll');
+  if(!container) return;
+  container.innerHTML = '';
+  const filtered = activeCategory === 'all' ? COMICS : COMICS.filter(c => c.category === activeCategory);
+
+  if(!filtered.length) {
+    container.innerHTML = `<div style="text-align:center;padding:60px;color:var(--muted);font-style:italic">No strips in this category. The artist is horizontal.</div>`;
+    return;
+  }
+
+  filtered.forEach((comic, idx) => {
+    const totalW = comic.panels.reduce((s,p) => s+(p.w||4), 0);
+    const PANEL_H = 220;
+
+    // Build SVG for entire strip
+    let svgPanels = '';
+    let xOff = 0;
+    comic.panels.forEach((panel,pi) => {
+      const pw = Math.round((panel.w / totalW) * 100);
+      const content = panel.svg ? panel.svg(panel.w*80, PANEL_H) : '';
+      const bgCol = panel.bg || '#fff';
+      svgPanels += `
+        <g transform="translate(${xOff},0)">
+          <rect width="${panel.w*80}" height="${PANEL_H}" fill="${bgCol}"/>
+          ${content}
+          <rect width="${panel.w*80}" height="${PANEL_H}" fill="none" stroke="#111" stroke-width="3"/>
+        </g>
+      `;
+      xOff += panel.w * 80;
+    });
+
+    const totalSVGW = totalW * 80;
+
+    const strip = document.createElement('div');
+    strip.className = 'comic-strip';
+    strip.innerHTML = `
+      <div class="comic-title-bar">
+        <span class="ct-name">${comic.title}</span>
+        <span class="ct-episode">${comic.episode}</span>
+      </div>
+      <div style="width:100%;overflow:hidden;background:#fff">
+        <svg viewBox="0 0 ${totalSVGW} ${PANEL_H}" width="100%" xmlns="http://www.w3.org/2000/svg"
+          style="display:block;font-family:'Permanent Marker',cursive">
+          <!-- Halftone -->
+          <defs>
+            <pattern id="ht${idx}" width="8" height="8" patternUnits="userSpaceOnUse">
+              <circle cx="4" cy="4" r="1" fill="rgba(0,0,0,0.045)"/>
+            </pattern>
+          </defs>
+          ${svgPanels}
+          <rect width="${totalSVGW}" height="${PANEL_H}" fill="url(#ht${idx})" pointer-events="none"/>
+          <rect width="${totalSVGW}" height="${PANEL_H}" fill="none" stroke="#111" stroke-width="4"/>
+        </svg>
+      </div>
+      <div class="comic-footer-bar">${comic.footer}</div>
+    `;
+
+    strip.addEventListener('click', e => spawnKapow(e));
+    container.appendChild(strip);
+    setTimeout(() => strip.classList.add('pop-in'), idx * 70);
+  });
+}
+
+function spawnKapow(e) {
+  const words = ['KAPOW!','ZAP!','BOOF!','MUNCH!','VIBES!','OOF!','CHILL!','POW!','SNACK!','WOW!','DUDE.','...wait'];
+  const colors = ['#4ade80','#fbbf24','#f472b6','#a855f7','#60a5fa','#ef4444'];
+  const el = document.createElement('div');
+  el.className = 'kapow-float';
+  el.textContent = words[Math.floor(Math.random()*words.length)];
+  el.style.color = colors[Math.floor(Math.random()*colors.length)];
+  el.style.left = (e.clientX - 50) + 'px';
+  el.style.top = (e.clientY - 50) + 'px';
+  document.body.appendChild(el);
+  setTimeout(() => el.remove(), 1200);
+}
+
+// Hook into showGame
+const _prevShowGame = window.showGame;
+window.showGame = function(name) {
+  _prevShowGame(name);
+  if(name === 'comics') {
+    setTimeout(() => { rebuildFilters(); renderComics(); }, 60);
+  }
+};
+
+// Home card
+setTimeout(() => {
+  const grid = document.querySelector('.games-grid');
+  if(grid && !document.querySelector('[data-comics-card]')) {
+    const card = document.createElement('div');
+    card.className = 'game-card';
+    card.setAttribute('data-comics-card','1');
+    card.onclick = () => window.showGame('comics');
+    card.innerHTML = `
+      <span class="game-card-icon">📖</span>
+      <div class="game-card-title">High Times Comics</div>
+      <div class="game-card-desc">8 original strips: the walk of confusion, Uber Eats tragedy, dolphin theories, lighter problems & more. Click panels for KAPOW.</div>
+      <span class="game-card-tag">● Original Comics</span>
+    `;
+    grid.appendChild(card);
+  }
+}, 400);
+
+})();
 </script>
 </body>
 </html>
