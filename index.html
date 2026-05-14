@@ -1896,6 +1896,177 @@
 
   .pin-digit.filled { border-color: var(--green); background: rgba(74,222,128,0.08); }
 
+
+  /* ========== RESPONSIVE ========== */
+  @media (max-width: 900px) {
+    main { padding: 20px 16px; }
+    header { padding: 16px 20px; }
+
+    /* Nav tabs scroll horizontally */
+    .arcade-nav {
+      overflow-x: auto;
+      flex-wrap: nowrap;
+      padding-bottom: 4px;
+      gap: 6px;
+    }
+    .arcade-nav::-webkit-scrollbar { height: 3px; }
+    .game-tab { white-space: nowrap; flex-shrink: 0; padding: 8px 14px; font-size: 0.68rem; }
+
+    /* Dashboard home */
+    .games-grid { grid-template-columns: 1fr 1fr; gap: 12px; }
+    .dashboard-hero { padding: 24px 18px; }
+    .hero-headline { font-size: 1.8rem; }
+    .hero-sub { font-size: 0.78rem; }
+
+    /* Blunt roller */
+    #game-blunt.active { grid-template-columns: 1fr; }
+    .upgrade-panel { max-height: 320px; overflow-y: auto; }
+    .blunt-stats { grid-template-columns: repeat(3,1fr); gap: 8px; }
+    .stat-card .stat-val { font-size: 1.1rem; }
+
+    /* Grow room */
+    #game-grow.active { grid-template-columns: 1fr; }
+    .grow-bottom { flex-wrap: wrap; gap: 14px; }
+
+    /* Munchie */
+    #game-munchie.active { grid-template-columns: 1fr; }
+    .munchie-grid { grid-template-columns: repeat(5,1fr); gap: 6px; }
+    .munchie-hole { border-radius: 8px; }
+
+    /* Trip */
+    .trip-controls { gap: 8px; }
+    .trip-btn { padding: 8px 14px; font-size: 0.68rem; }
+
+    /* Skate */
+    #skateCanvas { border-radius: 10px; }
+
+    /* Higher Lower */
+    .playing-card { width: 110px; height: 155px; }
+    .card-rank { font-size: 2rem; }
+    .card-suite { font-size: 1.5rem; }
+
+    /* Leaderboard modal */
+    .lb-modal { max-height: 95vh; border-radius: 14px 14px 0 0; }
+    #lb-overlay { align-items: flex-end; padding: 0; }
+    .lb-game-tabs { gap: 0; }
+    .lb-game-tab { padding: 10px 10px; font-size: 0.6rem; }
+
+    /* Comics */
+    .comics-header h2 { font-size: 2.2rem; }
+    .comics-nav { gap: 6px; }
+    .comic-filter-btn { padding: 5px 12px; font-size: 0.78rem; }
+
+    /* Gate */
+    .gate-brand { font-size: 1.3rem; }
+    .pin-digit { width: 44px; height: 56px; font-size: 1.4rem; }
+  }
+
+  @media (max-width: 600px) {
+    header { padding: 12px 16px; }
+    .logo span { font-size: 1rem; }
+    .logo .leaf { font-size: 1.3rem; }
+    .tagline { display: none; }
+
+    main { padding: 14px 12px; }
+
+    /* Single column home grid on small screens */
+    .games-grid { grid-template-columns: 1fr; gap: 10px; }
+    .game-card { padding: 20px; }
+    .game-card-icon { font-size: 2.2rem; }
+
+    /* Blunt */
+    .blunt-stats { grid-template-columns: repeat(3,1fr); gap: 6px; }
+    .stat-card { padding: 10px 8px; }
+    .stat-card .stat-val { font-size: 0.95rem; }
+    .stat-card .stat-label { font-size: 0.55rem; }
+    .blunt-btn { width: 110px; height: 110px; }
+    .blunt-btn .btn-icon { font-size: 2rem; }
+    .blunt-clickzone { width: 200px; height: 200px; }
+
+    /* Grow room */
+    #game-grow.active { grid-template-columns: 1fr; gap: 12px; }
+    .plant-emoji { font-size: 3rem; }
+    .grow-bottom { flex-direction: column; text-align: center; }
+
+    /* Munchie */
+    .munchie-grid { gap: 4px; }
+    .munchie-hole { font-size: 1.6rem; border-radius: 6px; }
+    .munchie-score-big { font-size: 1.6rem; }
+
+    /* Skate & Asteroid — keep canvas scrollable */
+    .game-canvas-wrap { overflow-x: hidden; }
+    #skateCanvas, #asteroidCanvas { max-width: 100%; height: auto; }
+
+    /* Vibe sequencer */
+    .vibe-pads { max-width: 320px; gap: 10px; }
+    .vibe-pad { border-radius: 10px; font-size: 1.6rem; }
+
+    /* Higher Lower */
+    .card-arena { gap: 20px; }
+    .playing-card { width: 95px; height: 135px; border-radius: 10px; }
+    .card-rank { font-size: 1.6rem; }
+    .hl-btn { padding: 12px 22px; font-size: 0.75rem; }
+
+    /* Trip */
+    .trip-stats { gap: 18px; }
+    .trip-stat .ts-val { font-size: 1.2rem; }
+    .trip-controls { gap: 6px; }
+    .trip-btn { padding: 8px 10px; font-size: 0.62rem; }
+
+    /* Comics */
+    .comics-header { padding: 20px 12px 16px; }
+    .comics-header h2 { font-size: 1.8rem; }
+    .comics-header .subtitle { font-size: 0.72rem; }
+    .comics-nav { gap: 5px; }
+    .comic-filter-btn { padding: 4px 10px; font-size: 0.72rem; }
+    .comic-strip { box-shadow: 4px 4px 0 #000; }
+    .comic-title-bar .ct-name { font-size: 1rem; }
+    .comic-title-bar .ct-episode { display: none; }
+
+    /* Gate */
+    .gate-leaf { font-size: 3rem; }
+    .gate-brand { font-size: 1.1rem; }
+    .gate-wrap { gap: 20px; }
+    .gate-card { padding: 22px 18px; }
+    .pin-display { gap: 8px; }
+    .pin-digit { width: 40px; height: 52px; font-size: 1.3rem; border-radius: 8px; }
+    .gate-input { font-size: 0.95rem; padding: 12px; }
+    .gate-submit { padding: 14px; font-size: 0.78rem; }
+
+    /* Leaderboard */
+    .lb-modal-header { padding: 18px 20px 12px; }
+    .lb-modal-header h2 { font-size: 1.1rem; }
+    .lb-body { padding: 14px 16px 20px; }
+    .lb-game-tab { padding: 8px 8px; font-size: 0.58rem; }
+
+    /* Scrolling ticker */
+    .scrolling-ticker { padding: 8px 0; }
+    .ticker-inner { font-size: 0.62rem; }
+
+    /* Footer */
+    footer { flex-direction: column; gap: 4px; padding: 12px 16px; text-align: center; font-size: 0.65rem; }
+
+    /* Toast */
+    .toast { right: 12px; bottom: 12px; max-width: calc(100vw - 24px); }
+
+    /* Bulletin ad */
+    .bulletin-ad { left: 12px; bottom: 70px; max-width: calc(100vw - 24px); }
+
+    /* Skate tip / game tip */
+    .game-tip { font-size: 0.62rem; padding: 0 8px; }
+  }
+
+  /* Touch targets — minimum 44px for all interactive elements */
+  @media (hover: none) {
+    .game-tab { min-height: 44px; }
+    .plant-btn { min-height: 44px; }
+    .trip-btn { min-height: 44px; }
+    .upgrade-item { min-height: 52px; }
+    .hl-btn { min-height: 52px; }
+    .munchie-hole { min-height: 56px; }
+    .comic-filter-btn { min-height: 40px; }
+  }
+
   /* Scrollbar */
   ::-webkit-scrollbar { width: 6px; }
   ::-webkit-scrollbar-track { background: var(--bg); }
@@ -1926,7 +2097,7 @@
           <div class="pin-digit" id="pd2">–</div>
           <div class="pin-digit" id="pd3">–</div>
         </div>
-        <input class="gate-input" id="pin-input" type="number" maxlength="4" placeholder="4-digit code"
+        <input class="gate-input" id="pin-input" type="tel" maxlength="4" placeholder="4-digit code"
           oninput="onPinInput(this)" onkeydown="if(event.key==='Enter')submitPin()" autocomplete="off" inputmode="numeric"/>
         <div class="gate-err" id="pin-err"></div>
         <button class="gate-submit" onclick="submitPin()">Unlock Arcade 🌿</button>
@@ -2569,23 +2740,25 @@ function unlockArcade() {
   document.getElementById('player-name-display').textContent = BH.session.avatar + ' ' + BH.session.name;
   document.getElementById('player-tagline').textContent = 'Born High Cannabis Social Club';
 
-  showToast('🌿', 'Welcome, ' + BH.session.name + '!', 'You're on the board. Go score something.');
+  showToast('🌿', 'Welcome, ' + BH.session.name + '!', 'You are on the board. Go score something.');
 }
 
 // Check for existing session (page refresh)
-if(BH.loadSession()) {
-  document.addEventListener('DOMContentLoaded', () => {
+// Use window.onload to guarantee DOM is ready
+window.addEventListener('load', function() {
+  if(BH.loadSession()) {
     document.getElementById('bh-gate').style.display = 'none';
     document.getElementById('session-info-block').style.display = 'block';
     document.getElementById('lb-header-btn').style.display = 'flex';
     document.getElementById('player-name-display').textContent = BH.session.avatar + ' ' + BH.session.name;
     document.getElementById('player-tagline').textContent = 'Born High Cannabis Social Club';
-  });
-} else {
-  document.addEventListener('DOMContentLoaded', () => {
-    setTimeout(() => document.getElementById('pin-input').focus(), 400);
-  });
-}
+  } else {
+    setTimeout(function() {
+      var pi = document.getElementById('pin-input');
+      if(pi) pi.focus();
+    }, 400);
+  }
+});
 
 // ── Leaderboard UI ───────────────────────────────────────────
 let activeLBGame = 'vibe_total';
